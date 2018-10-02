@@ -10,10 +10,8 @@ using  namespace Json ;
 
 class JsonPacket:public Value
 {
-
 public:
-    typedef  Value JsonValue1;
-    typedef  Value JsonValue;
+    typedef Value JsonValue;
     JsonPacket(string str)
     {
         JsonValue v;
@@ -24,6 +22,7 @@ public:
         }else
             val=v;
     }
+
     JsonPacket(vector<JsonPacket> ar)
     {
         JsonValue v;
@@ -33,17 +32,11 @@ public:
         }
         val=v;
     }
-    //    JsonPacket(JsonValue v)
-    //    {
-    //        val=v;
-    //    }
-    //    JsonPacket(const JsonPacket &v)
-    //    {
-    //        val=v.value();
-    //    }
+
     JsonPacket()
     {
     }
+
     void operator =(string str)
     {
         JsonValue v;
@@ -54,22 +47,13 @@ public:
         }else
             val=v;
     }
+
     void operator =(JsonPacket pkt)
     {
-        prt(info,"get pkt");
         val=pkt.value();
     }
-    void set(string str)
-    {
-        JsonValue v;
-        Reader r;
-        bool rst=r.parse(str,v);
-        if(!rst){
-            prt(info,"parse err");
-        }else
-            val=v;
-    }
-    void set(vector<JsonPacket> ar)
+
+    void operator =(vector<JsonPacket> ar)
     {
         JsonValue v;
         int sz=ar.size();
@@ -82,14 +66,12 @@ public:
     void set(string name,T value)
     {
         if(!name_exist(name,"set")){
-            prt(info,"setting key: %s fail",name.data());
+            prt(info,"no keyword:%s",name.data());
+            // throw Exception("no keyword");
             //print_backstrace();
         }
         else
             val[name]=value;
-#if 0
-        check_type(val[name]);
-#endif
     }
     void set(string name,JsonPacket p)
     {
@@ -106,7 +88,6 @@ public:
         val[name].clear();
         if(!name_exist(name,"set")){
             prt(info,"setting name: %s fail",name.data());
-            //print_backstrace();
         }
         else
         {
@@ -117,12 +98,12 @@ public:
     JsonPacket get(string name)
     {
         if(name_exist(name,"get")){
-            JsonPacket pkt;
-            //            pkt.set(val[name]);
+            JsonPacket pkt(val[name]);
             return pkt;
         }
-        else
+        else{
             return JsonPacket();
+        }
     }
     string get_string(string name)
     {
@@ -146,7 +127,6 @@ public:
     {
         if(name_exist(name,"get")){
             return  val[name].asBool();
-
         }
         else
             return false;
@@ -164,15 +144,15 @@ public:
     {
         vector <JsonPacket>  pa;
         if(name_exist(name,"get")){
-              JsonValue v=val[name];
-              bool is_a= v.isArray();
-              if(is_a){
+            JsonValue v=val[name];
+            bool is_a= v.isArray();
+            if(is_a){
                 int sz=v.size();
                 for(int i=0;i<sz;i++){
                     pa.push_back(v);
                 }
-              }
-              return pa;
+            }
+            return pa;
         }
         else
             return pa;
@@ -206,65 +186,24 @@ public:
     void add(string name,vector<JsonPacket> pkts)
     {
         val[name].clear();
-        if(!name_exist(name,"add")){
-
-        }
-        else
-        {
-            //   prt(info,"adding exist name: %s ",name.data());
-            //print_backstrace();
-        }
         for(JsonPacket p:pkts)
             val[name].append(p.value());
     }
     void add(string name,JsonPacket pkt)
     {
         val[name].clear();
-        if(!name_exist(name,"add")){
-
-        }
-        else
-        {
-            //   prt(info,"adding exist name: %s ",name.data());
-            //print_backstrace();
-        }
         val[name]=pkt.value();
-
     }
     template <typename T>
     void add(string name,T value)
     {
-        if(!name_exist(name,"add")){
-            val[name].clear();
-        }
-        else{
-            //   prt(info,"adding exist key: %s ,already exist",name.data());
-            //print_backstrace();
-        }
         val[name]=value;
-
-
-#if 0
-        check_type(val[name]);
-#endif
     }
     template <typename T>
     void add(string name,vector<T> va)
     {
-        if(!name_exist(name,"add")){
-            val[name].clear();
-        }
-        else{
-            //   prt(info,"adding exist key: %s ,already exist",name.data());
-            //print_backstrace();
-        }
         for(T t:va)
             val[name].append(t);
-
-
-#if 0
-        check_type(val[name]);
-#endif
     }
 
     int to_int()
@@ -376,7 +315,6 @@ public:
         }
         return rt;
     }
-
     vector<JsonPacket> to_array()
     {
         vector<JsonPacket>  ar;
@@ -385,7 +323,6 @@ public:
             throw Exception("empty val");
         }
         if(val.empty()){
-
             return ar;
         }
         if(!val.isArray()){
@@ -394,9 +331,9 @@ public:
             return ar;
         }
         for(Value v:val){
-            ar.push_back(val);
+            ar.push_back(v);
         }
-        return to_array();
+        return ar;
     }
 
 private:
@@ -422,6 +359,7 @@ private:
         JsonValue v=val;
         rst=v[name].isNull();
         if(rst&&(str=="get"||str=="set")){
+            throw Exception("no keyword");
             //prt(info," (%s) not exist or no data",name.data());
             //print_backstrace();
             return false;
@@ -447,7 +385,6 @@ private:
     JsonValue val;
 };
 
-
 class JsonData{
 protected:
     JsonPacket config;
@@ -455,11 +392,9 @@ public:
     JsonData(JsonPacket pkt)
     {
         config=pkt;
-        // prt(info,"json string: %s",config.str().data());
     }
     JsonData()
     {
-
     }
     virtual void encode()=0;
     virtual void decode()=0;
@@ -468,32 +403,19 @@ public:
         return config;
     }
 };
-class JsonObject{
+class JsonDataWithTitle:public JsonData{
 private:
     string title;
-protected:
-    JsonPacket config;
 public:
-    JsonObject(JsonPacket pkt,string tt):title(tt)
+    JsonDataWithTitle(JsonPacket pkt,string tt):title(tt),JsonData(pkt.get(title))
     {
-        config=pkt.get(title);
-
     }
-    JsonObject()
+    JsonDataWithTitle()
     {
-
     }
-    JsonObject(string tt):title(tt)
+    JsonDataWithTitle(string tt):title(tt)
     {
 
-    }
-    virtual void encode()=0;
-    virtual void decode()=0;
-    JsonPacket data()
-    {
-        JsonPacket p;
-        p.add(title,config);
-        return p;
     }
 };
 template<typename TP>
@@ -506,10 +428,8 @@ public:
     }
     virtual ~VdData()
     {
-
     }
-
-    TP get_data()
+    TP data()
     {
         return private_data;
     }

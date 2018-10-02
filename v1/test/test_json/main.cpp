@@ -24,7 +24,13 @@ void test_str1()
 }
 void test_str2()
 {
-    JsonPacket pkt2(string(TEST_STR2));
+    try{
+    JsonPacket pkt7(string(TEST_STR2));
+    }
+    catch(exception e){
+    prt(info,"333");
+    }
+      JsonPacket pkt2(string(TEST_STR2));
     try{
         prt(info,"%s",pkt2.str().data());
         prt(info,"%s",pkt2.get_string("name").data());
@@ -37,15 +43,21 @@ void test_str2()
 
 
     JsonPacket pkt3;
-    pkt3=pkt2;
-//    prt(info,"pkt3 %s",pkt3.str().data());
+   pkt3=pkt2;
+    // pkt3="pkt2";
+     prt(info,"pkt3 %s",pkt3.str().data());
 
-//    try{
+    //try
+     {
+
+     //    JsonPacket pp(pkt2.get("books").to_array().front());
+//         JsonPacket pp(pkt2.get("books").to_array());
+//               prt(info,"-> %s",pp.str().data());
 //        prt(info,"%s",pkt2.str().data());
 //        prt(info,"%s",pkt2.get("name").to_string().data());
-//        prt(info,"%s",JsonPacket(pkt2.get("books").to_array().front()).\
-//                get("book12").to_string().data());
-//    }
+        prt(info,"%s",JsonPacket(pkt2.get("books").to_array().front()).\
+                get("book1").to_string().data());
+    }
 //    catch(Exception e){
 //        prt(info,"get exception1 %s",e.what());
 //    }
@@ -54,8 +66,13 @@ void test_str2()
 int main()
 {
     prt(info,"test start");
-    test_str2();
-
+    try{
+        test_str2();
+    }
+    catch(exception e)
+    {
+        prt(info," ex");
+    }
     prt(info,"test end");
     return 0;
 }
