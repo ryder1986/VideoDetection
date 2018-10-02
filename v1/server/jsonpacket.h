@@ -14,6 +14,7 @@ public:
     typedef Value JsonValue;
     JsonPacket(string str)
     {
+        str_data=str;
         JsonValue v;
         Reader r;
         bool rst=r.parse(str,v);
@@ -51,6 +52,7 @@ public:
     void operator =(JsonPacket pkt)
     {
         val=pkt.value();
+        str_data=pkt.str();
     }
 
     void operator =(vector<JsonPacket> ar)
@@ -290,7 +292,7 @@ public:
     {
         if(val.empty()){
             assert(!val.empty());
-            throw Exception("empty val");
+            //throw Exception();
         }
         if(val.empty()){
             prt(info,"to  string :no content, return a null string");
@@ -320,7 +322,7 @@ public:
         vector<JsonPacket>  ar;
         if(val.empty()){
             assert(!val.empty());
-            throw Exception("empty val");
+            //throw Exception("empty val");
         }
         if(val.empty()){
             return ar;
@@ -339,7 +341,9 @@ public:
 private:
     JsonPacket(JsonValue v)
     {
+
         val=v;
+        str_data=str();
     }
     void show_value_type(JsonValue val)
     {
@@ -359,7 +363,7 @@ private:
         JsonValue v=val;
         rst=v[name].isNull();
         if(rst&&(str=="get"||str=="set")){
-            throw Exception("no keyword");
+            //throw Exception("no keyword");
             //prt(info," (%s) not exist or no data",name.data());
             //print_backstrace();
             return false;
@@ -383,6 +387,7 @@ private:
     }
 private:
     JsonValue val;
+    string str_data;
 };
 
 class JsonData{
@@ -407,8 +412,9 @@ class JsonDataWithTitle:public JsonData{
 private:
     string title;
 public:
-    JsonDataWithTitle(JsonPacket pkt,string tt):title(tt),JsonData(pkt.get(title))
+    JsonDataWithTitle(JsonPacket pkt1,string tt):JsonData(pkt1.get(tt))
     {
+        title=tt;
     }
     JsonDataWithTitle()
     {
@@ -423,6 +429,10 @@ class VdData{
 protected:
     TP private_data;
 public:
+    VdData()
+    {
+
+    }
     VdData(TP d):private_data(d)
     {
     }

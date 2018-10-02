@@ -10,10 +10,15 @@
 #include <mutex>
 #include <thread>
 #include <bitset>
+//#include <list>
 #include <iterator>
-#define NDEBUG
+
+//#include <ifaddrs.h>
+//#include "tool.h"
+//#define NDEBUG
 #include "assert.h"
 using namespace std;
+
 #ifdef IS_WIN
 #include <direct.h>
 #endif
@@ -97,8 +102,12 @@ inline void print_backstrace(void)
                 cout<<"--->"<<tmp<<endl;
             else
                 cout<<"--->"<<tmp.substr(0,40)<<"......"<<endl;
+
+
         }
     }
+
+
     free(strings);
     cout<<"@@@@@@@@@@@@@backtrace end "<<endl;
 }
@@ -108,6 +117,8 @@ inline void print_backstrace(void)
 }
 #endif
 using namespace std;
+
+
 class LogFile{
     FILE *fp ;
 public:
@@ -149,6 +160,8 @@ private:
         mkdir(dirname,0755);
 
 #endif
+
+
         // FILE *fp = NULL;
         time_t timer;
         struct tm *tblock;
@@ -205,6 +218,8 @@ public:
         NONE
     };
 public:
+
+
     static mutex lock;
 private:
     static LogFile log_file1;
@@ -563,6 +578,8 @@ inline  char *get_sql_time()
         prt(info,"ok");
     }else{
         prt(info,"err");
+
+
     }
     return buf2;
 }
