@@ -94,7 +94,7 @@
        </item>
        <item row="2" column="0">
         <widget class="QWidget" name="widget_text2" native="true">
-         <widget class="QPushButton" name="pushButton_5">
+         <widget class="QPushButton" name="pushButton_load">
           <property name="geometry">
            <rect>
             <x>9</x>

@@ -41,3 +41,8 @@ void MainWindow::on_pushButton_delcam_clicked()
     int del_index=ui->lineEdit_delcam->text().toInt();
     del_from_vector(del_index,players);
 }
+
+void MainWindow::on_pushButton_load_clicked()
+{
+    get_config();
+}

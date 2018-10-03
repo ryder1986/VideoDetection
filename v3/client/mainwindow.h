@@ -73,6 +73,11 @@ private slots:
 
     void on_pushButton_delcam_clicked();
 
+    void on_pushButton_load_clicked();
+    void get_config()
+    {
+        clt.get_config();
+    }
 private:
     Ui::MainWindow *ui;
     QUdpSocket *udpSocket;

@@ -33,6 +33,7 @@ public:
     int send(const char *buf,int len)
     {
         int ret= Socket::SendDataByTcp(skt,buf,len);
+
         if(ret){
             prt(info,"send start(%d bytes)<========",ret);
             printf("%s",buf);
@@ -40,6 +41,7 @@ public:
         }else{
             prt(info,"send fail",ret);
         }
+        return ret;
     }
     int recv()
     {
