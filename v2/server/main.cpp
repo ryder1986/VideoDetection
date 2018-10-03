@@ -1,6 +1,7 @@
 #include <iostream>
 #include<configmanager.h>
 #include "app.h"
+#include <thread>
 using namespace std;
 
 int main()
@@ -9,5 +10,9 @@ int main()
 
     ConfigManager cfg;
     App app(&cfg);
+
+    while(true){
+        sleep(1000);
+    }
     return 0;
 }

@@ -85,33 +85,47 @@ public:
     Tcpserver(int p):port(p),quit(false)
     {
         fd= Socket::StartTcpServerSock(port,1000,1000);
-        auto func=bind(&Tcpserver::listen,this);
-        trd=new thread([func](){func();});
+        if(fd>0){
+            auto func=bind(&Tcpserver::listen,this);
+            trd=new thread([func](){func();});
+        }else{
+            prt(info,"bind port fail");
+        }
     }
     Tcpserver(int p,function <void(Session *,char *,int)>fc):port(p),quit(false),fct(fc)
     {
         fd= Socket::StartTcpServerSock(port,1000,1000);
-        auto func=bind(&Tcpserver::listen,this);
-        trd=new thread([func](){func();});
+        if(fd>0){
+            auto func=bind(&Tcpserver::listen,this);
+            trd=new thread([func](){func();});
+        }else{
+            prt(info,"bind port fail");
+        }
     }
     Tcpserver(vector<Session*> *&clts,int p,function <void(Session *,char *,int)>fc):port(p),quit(false),fct(fc)
     {
         clts=&clients;
         fd= Socket::StartTcpServerSock(port,1000,1000);
-        auto func=bind(&Tcpserver::listen,this);
-        trd=new thread([func](){func();});
+        if(fd>0){
+            auto func=bind(&Tcpserver::listen,this);
+            trd=new thread([func](){func();});
+        }else{
+            prt(info,"bind port fail");
+        }
     }
     ~Tcpserver()
     {
         quit=true;
-        trd->join();
-        int sz=clients.size();
-        for(int i=sz-1;i>=0;i--)
-        {
-            delete clients[i];
-            clients.pop_back();
+        if(trd){
+            trd->join();
+            int sz=clients.size();
+            for(int i=sz-1;i>=0;i--)
+            {
+                delete clients[i];
+                clients.pop_back();
+            }
+            delete trd;
         }
-        delete trd;
     }
 
     void listen()
@@ -199,9 +213,12 @@ private:
 
     string get_ip()
     {
-        char ip[16];
-        char mac[16];
-        char mask[16];
+        char ip[20];
+        memset(ip,0,20);
+        char mac[20];
+        memset(mac,0,20);
+        char mask[20];
+        memset(mask,0,20);
         Socket::get_ipaddr(ip,mac,mask);
         return string(ip);
     }

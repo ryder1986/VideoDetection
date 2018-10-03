@@ -44,10 +44,10 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="comboBox_search"/>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="pushButton_search">
             <property name="text">
              <string>search</string>
             </property>
@@ -57,6 +57,42 @@
         </widget>
        </item>
        <item row="1" column="0">
+        <widget class="QWidget" name="widget" native="true">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_addcam">
+            <property name="text">
+             <string>add</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLineEdit" name="lineEdit_addcam">
+            <property name="text">
+             <string>rtsp://192.168.2.103:8554/live/test1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_delcam">
+            <property name="text">
+             <string>del</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLineEdit" name="lineEdit_delcam"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QWidget" name="widget_text2" native="true">
          <widget class="QPushButton" name="pushButton_5">
           <property name="geometry">
@@ -116,7 +152,13 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QWidget" name="widget_video" native="true"/>
+     <widget class="QWidget" name="widget_video" native="true">
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_video"/>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>

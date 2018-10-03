@@ -13,7 +13,7 @@ class MvdProcessor : public VideoProcessor
 public:
     m_args* alg_mem_malloc_test()
     {
-        printf("malloc.......\n");
+        //printf("malloc.......\n");
         //int ret = -1;
         int size;
 
@@ -60,7 +60,7 @@ public:
         if (p->pCfgs == NULL) {
             printf("alg malloc err\n");
         }else{
-            printf("alg malloc ok \n");
+            printf("mvd alg malloc ok \n");
         }
 
         memset(p->pCfgs, 0, sizeof(ALGCFGS));

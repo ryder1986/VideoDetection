@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,10 +25,37 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    playerwidget.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    misc.h \
+    playerwidget.h
 
 FORMS += \
         mainwindow.ui
+SERVER_PATH=../server
+
+INCLUDEPATH+=$$SERVER_PATH
+HEADERS+=$$SERVER_PATH/tool.h
+SOURCES+=$$SERVER_PATH/tool.cpp
+HEADERS+=$$SERVER_PATH/videosource.h
+SOURCES+=$$SERVER_PATH/videosource.cpp
+HEADERS+=$$SERVER_PATH/jsonpacket.h
+INCLUDEPATH+=$$SERVER_PATH/cppjson/include
+SOURCES += $$SERVER_PATH/cppjson/json_reader.cpp $$SERVER_PATH/cppjson/json_writer.cpp  $$SERVER_PATH/cppjson/json_value.cpp
+win32{
+    DEFINES+=IS_WIN
+}
+unix{
+    DEFINES+=IS_UNIX
+    LIBS+=-lopencv_core
+    LIBS+=-lopencv_video
+    LIBS+=-lopencv_imgcodecs
+    LIBS+=-lopencv_highgui
+    LIBS+=-lopencv_ml
+    LIBS+=-lopencv_videoio
+    LIBS+=-lopencv_imgproc
+}
+

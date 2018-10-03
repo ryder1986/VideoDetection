@@ -10,12 +10,11 @@
 #include <opencv2/objdetect/objdetect.hpp>
 #endif
 #ifdef IS_WIN
-    #include <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 #endif
 #if 1
 #define USE_CVCAP 1
 //#undef USE_CVCAP
-
 #ifdef  USE_CVCAP
 #else
 #include "ffmpegvideocapture.h"
@@ -119,7 +118,9 @@ private:
     void check_point()
     {
         if(vcap.isOpened()){
-            double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
+            //double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
+        }else{
+            prt(info,"url: %s is Not running",url.data());
         }
     }
 private:
@@ -128,6 +129,7 @@ private:
 #else
     FfmpegVideoCapture vcap;
 #endif
+    Timer1 watch_dog;
     //  PdVideoCapture vcap;
     //  VideoCapture vcap;
     vector <Mat> frame_list;
@@ -138,7 +140,7 @@ private:
     int frame_rate;
     string url;
     volatile bool quit_flg;
-    Timer1 t1;
+
 
     thread *src_trd;
     Mat png_frame;

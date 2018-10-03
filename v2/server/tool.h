@@ -541,6 +541,26 @@ void _start_async(callable&& f, arguments&&... args)
 
     //prt(info,"test end<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 }
+template <typename T>
+void del_from_vector(int del_index,T &con )
+{
+    if(del_index>0&&del_index<=con.size()){
+        delete con[del_index-1];
+        con.erase(con.begin()+del_index-1);
+    }else{
+        prt(info,"invalid del index %d",del_index);
+    }
+}
+template <typename T,typename F>
+void insert_into_vector(int insert_index,T &con ,F mem )
+{
+    if(insert_index>=0&&insert_index<=con.size()){
+
+        con.insert(con.begin()+insert_index,mem);
+    }else{
+        prt(info,"invalid del index %d",insert_index);
+    }
+}
 #ifdef IS_UNIX
 #include <sys/time.h>
 inline long get_time()

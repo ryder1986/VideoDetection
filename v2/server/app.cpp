@@ -8,7 +8,7 @@ App::App(ConfigManager *p_config_manager):str_stream(""),
     VdData(p_config_manager->get_config()),lservice(),p_cm(p_config_manager),udp_fd(0)
 {
     stream_cmd=NULL;
-    restart_all();
+
     static Tcpserver server_cmd(stream_cmd,
                                 12345,
                                 bind(&App::process_client_cmd,
@@ -17,7 +17,7 @@ App::App(ConfigManager *p_config_manager):str_stream(""),
                                      placeholders::_3
                                      )
                                 );
-
+    restart_all();
 }
 
 App::~App()

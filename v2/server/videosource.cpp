@@ -2,15 +2,16 @@
 #include <thread>
 #include <functional>
 
-VideoSource::VideoSource(string path):t1(bind(&VideoSource::check_point,this)),
-    frame_rate(0),vcap(path),is_pic(false),src_trd(NULL)
+VideoSource::VideoSource(string path):watch_dog(bind(&VideoSource::check_point,this)),
+    frame_rate(0),is_pic(false),src_trd(NULL)
 {
     only_key_frame=false;
     try_times=0;
-    //  Timer1 t1(bind(&VideoSource::check_point,this));
-    t1.start(1000);
-    prt(info,"%s",path.data());
     url=path;
+    watch_dog.start(1000);
+    vcap.open(path);
+    prt(info,"start %s result: %d",path.data(),vcap.isOpened());
+
     quit_flg=false;
     //  thread(bind(&VideoSource::run,this)).detach();
     // _start_async(bind(&VideoSource::run,this));
@@ -20,17 +21,17 @@ VideoSource::VideoSource(string path):t1(bind(&VideoSource::check_point,this)),
         prt(info,"read png");
         is_pic=true;
     }else
-         src_trd=new thread(bind(&VideoSource::run,this));
+        src_trd=new thread(bind(&VideoSource::run,this));
 }
 
-VideoSource::VideoSource(string path,bool only_keyframe):t1(bind(&VideoSource::check_point,this)),
+VideoSource::VideoSource(string path,bool only_keyframe):watch_dog(bind(&VideoSource::check_point,this)),
     frame_rate(0),vcap(path),is_pic(false),src_trd(NULL)
 {
     only_key_frame=only_keyframe;
 
     try_times=0;
     //  Timer1 t1(bind(&VideoSource::check_point,this));
-    t1.start(1000);
+    watch_dog.start(1000);
     prt(info,"%s",path.data());
     url=path;
     quit_flg=false;
@@ -40,19 +41,19 @@ VideoSource::VideoSource(string path,bool only_keyframe):t1(bind(&VideoSource::c
         prt(info,"read png");
         is_pic=true;
     }else
-         src_trd=new thread(bind(&VideoSource::run,this));
+        src_trd=new thread(bind(&VideoSource::run,this));
 }
 VideoSource::~VideoSource()
 {
     prt(info,"quiting video %s", url.data());
     quit_flg=true;
     if(src_trd){
-    if(src_trd->joinable())
-        src_trd->join();
+        if(src_trd->joinable())
+            src_trd->join();
         delete src_trd;
         prt(info,"quiting video thread %s", url.data());
     }
-    t1.stop();
+    watch_dog.stop();
     prt(info,"quit video: %s done", url.data());
 }
 void VideoSource::run()
