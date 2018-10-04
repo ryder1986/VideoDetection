@@ -58,6 +58,7 @@ public:
             }
         }
         end_this(this);
+        return 0;
     }
     string ip()
     {
@@ -164,6 +165,7 @@ private:
         thread([s](){
             delete s;
         }).detach();
+        s=NULL;
     }
 
     bool quit;
