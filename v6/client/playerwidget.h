@@ -38,7 +38,7 @@ protected:
                          bind(&PlayerWidget::draw_circle,
                               this,placeholders::_1,
                               placeholders::_2,placeholders::_3,placeholders::_4));
-
+        //prt(info,"playing ts %d",output_data.Timestamp);
         output_data.draw(
                          camera_data,
                          bind(&PlayerWidget::draw_line,
@@ -187,6 +187,7 @@ private:
         int ts;
      //   bool ret=src.get_frame(bgr_frame);
         bool ret=src.get_frame(bgr_frame,ts);
+        //prt(info,"get ts %d",ts);
         if(ret){
             cv::cvtColor(bgr_frame,rgb_frame,CV_BGR2RGB);
             img=QImage((const uchar*)(rgb_frame.data),

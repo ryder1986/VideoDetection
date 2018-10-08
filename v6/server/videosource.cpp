@@ -104,11 +104,12 @@ void VideoSource::run()
                 //     int ts=vcap.get(CV_CAP_PROP_POS_FRAMES);;
                 //    int ts=vcap.get(CV_CAP_PROP_FRAME_COUNT);
 
-                int ts=vcap.get(CV_CAP_PROP_POS_AVI_RATIO);
-                int ts1=vcap.get(CV_CAP_PROP_POS_FRAMES);
-                int ts2=vcap.get(CV_CAP_PROP_FRAME_COUNT);
-                int ts3=vcap.get(CV_CAP_PROP_POS_MSEC);
-                prt(info," %d %d %d ",ts1,ts2,ts3);
+              //  int ts=vcap.get(CV_CAP_PROP_POS_AVI_RATIO);
+//                double ts1=vcap.get(CV_CAP_PROP_POS_FRAMES);
+//                double ts2=vcap.get(CV_CAP_PROP_FRAME_COUNT);
+//                double ts3=vcap.get(CV_CAP_PROP_POS_MSEC);
+               long  ts=cvGetTickCount();
+               // prt(info,"%ld ", tc);
                                //prt(info,"timestamp  %dms", ts);
                 frame_rate++;
                 lock.lock();
@@ -118,7 +119,7 @@ void VideoSource::run()
                 }
                 if(frame_list.size()<3&&frame.rows>0&&frame.cols>0){
                     frame_list.push_back(frame);
-                    cur_ms_list.push_back(ts);
+                    cur_ms_list.push_back(ts/1000000);
                 }
                 lock.unlock();
                 if(frame_wait_time)
