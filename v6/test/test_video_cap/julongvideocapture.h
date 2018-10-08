@@ -1,5 +1,5 @@
-#ifndef DahuaVideoCapture_H
-#define DahuaVideoCapture_H
+#ifndef JulongVideoCapture_H
+#define JulongVideoCapture_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -26,9 +26,9 @@ static  int old_time;
 static  int new_time;
 vector<AVPacket > g_pkts;
 mutex pkts_lock;
-class DahuaVideoCapture{
+class JulongVideoCapture{
 public:
-    DahuaVideoCapture(string url):url(url)
+    JulongVideoCapture(string url):url(url)
     {
         opened=false;
         width=0;
@@ -42,7 +42,7 @@ public:
         }
 
     }
-    ~DahuaVideoCapture()
+    ~JulongVideoCapture()
     {
 
     }
@@ -258,4 +258,4 @@ public:
 
 };
 
-#endif // DahuaVideoCapture_H
+#endif // JulongVideoCapture_H
