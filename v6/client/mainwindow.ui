@@ -25,6 +25,34 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
+        <widget class="QPushButton" name="pushButton_play">
+         <property name="text">
+          <string>play</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_stop">
+         <property name="text">
+          <string>stop</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_playmode">
+         <item>
+          <property name="text">
+           <string>all</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="checkBox_showoutput">
          <property name="text">
           <string>show output</string>
@@ -79,7 +107,7 @@
           <item row="0" column="0">
            <widget class="QLineEdit" name="lineEdit_addcam">
             <property name="text">
-             <string>rtsp://192.168.2.215:8554/live/test1</string>
+             <string>rtsp://192.168.1.95:554/av0_1</string>
             </property>
            </widget>
           </item>
@@ -154,6 +182,42 @@
            <string>test</string>
           </property>
          </widget>
+         <widget class="QTextEdit" name="textEdit_netbuffer">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>110</y>
+            <width>161</width>
+            <height>161</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton_clear_buffer">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>270</y>
+            <width>80</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>clear buffer</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_netbuffer">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>90</y>
+            <width>59</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>net buffer</string>
+          </property>
+         </widget>
         </widget>
        </item>
        <item row="0" column="0">
@@ -208,7 +272,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>25</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

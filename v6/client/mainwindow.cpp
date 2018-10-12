@@ -59,19 +59,43 @@ void MainWindow::on_pushButton_load_clicked()
     request_get_config();
 }
 
+void MainWindow::server_msg(QString msg)
+{
+    //ui->plainTextEdit_recive->setPlainText(msg);//show what we got
+    string str(msg.toUtf8());
+    ui->textEdit_netbuffer->setPlainText(msg);
+    ReplyPkt event(str);
+    switch(event.Operation){
+    case AppInputData::Operation::GET_CONFIG:
+    {
+        cfg=event.Data;
+        prt(info,"%s",cfg.data().str().data());
+        //            stop_config();
+        //            start_config();
+        break;
+    }
+    case AppInputData::Operation::INSERT_CAMERA:
+    {
+        request_get_config();
+        break;
+    }
+    default:break;
+    }
+}
+
 void MainWindow::widget_append_camera(CameraInputData d)
 {
 
-   // ui->ccomboBox_cameras->addItem(d.Url.data());
+    // ui->ccomboBox_cameras->addItem(d.Url.data());
     PlayerWidget *player=new PlayerWidget(d);
     connect(player,SIGNAL(camera_request(RequestPkt,PlayerWidget *)),this,SLOT(camera_request(RequestPkt,PlayerWidget*)));
     players.push_back(player);
     ui->gridLayout_video->addWidget(player);
-//    connect(player,SIGNAL(cam_data_change(CameraInputData,QWidget*)),\
-//            this,SLOT(generate_current_config(CameraInputData,QWidget*)));
+    //    connect(player,SIGNAL(cam_data_change(CameraInputData,QWidget*)),\
+    //            this,SLOT(generate_current_config(CameraInputData,QWidget*)));
 
-//    connect(player,SIGNAL(signal_camera(PlayerWidget*,int,JsonPacket)),\
-//            this,SLOT(slot_camera(PlayerWidget*,int,JsonPacket)));
+    //    connect(player,SIGNAL(signal_camera(PlayerWidget*,int,JsonPacket)),\
+    //            this,SLOT(slot_camera(PlayerWidget*,int,JsonPacket)));
 
 //    connect(player,SIGNAL(click_event(PlayerWidget *,int)),\
 //            this,SLOT(player_event(PlayerWidget*,int)));
@@ -79,4 +103,20 @@ void MainWindow::widget_append_camera(CameraInputData d)
 void MainWindow::widget_remove_camera(QWidget *w)
 {
     ui->gridLayout_video->removeWidget(w);
+}
+
+void MainWindow::on_pushButton_play_clicked()
+{
+    stop_config();
+    start_config();
+}
+
+void MainWindow::on_pushButton_stop_clicked()
+{
+    stop_config();
+}
+
+void MainWindow::on_pushButton_clear_buffer_clicked()
+{
+    ui->textEdit_netbuffer->clear();
 }

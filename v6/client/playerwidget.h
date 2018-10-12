@@ -40,18 +40,18 @@ protected:
                               placeholders::_2,placeholders::_3,placeholders::_4));
         //prt(info,"playing ts %d",output_data.Timestamp);
         output_data.draw(
-                         camera_data,
-                         bind(&PlayerWidget::draw_line,
-                              this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4),
-                         bind(&PlayerWidget::draw_circle,
-                              this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4),
-                         bind(&PlayerWidget::draw_text,
-                              this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4)
+                    camera_data,
+                    bind(&PlayerWidget::draw_line,
+                         this,placeholders::_1,
+                         placeholders::_2,placeholders::_3,placeholders::_4),
+                    bind(&PlayerWidget::draw_circle,
+                         this,placeholders::_1,
+                         placeholders::_2,placeholders::_3,placeholders::_4),
+                    bind(&PlayerWidget::draw_text,
+                         this,placeholders::_1,
+                         placeholders::_2,placeholders::_3,placeholders::_4)
 
-                         );
+                    );
         if(!img.isNull()){
             this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         }
@@ -158,10 +158,10 @@ public slots:
     void mouseReleaseEvent(QMouseEvent *e)
     {
         prt(info,"mouse release");
-         RequestPkt req1;
-         if( camera_data.release(req1)){
-                emit camera_request(req1,this);
-         }
+        RequestPkt req1;
+        if( camera_data.release(req1)){
+            emit camera_request(req1,this);
+        }
     }
 
     void mouseDoubleClickEvent(QMouseEvent *e)
@@ -185,7 +185,7 @@ private:
         cv::Mat rgb_frame;
         cv::Mat bgr_frame;
         int ts;
-     //   bool ret=src.get_frame(bgr_frame);
+        //   bool ret=src.get_frame(bgr_frame);
         bool ret=src.get_frame(bgr_frame,ts);
         //prt(info,"get ts %d",ts);
         if(ret){
@@ -205,8 +205,8 @@ private:
     CameraOutputData output_data;
 
     QPainter *current_painter;
-//    QMenu player_menu;
-//    QAction choose_fvd;
+    //    QMenu player_menu;
+    //    QAction choose_fvd;
 };
 
 #endif // PLAYERWIDGET_H
