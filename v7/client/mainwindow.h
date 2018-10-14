@@ -138,7 +138,7 @@ private slots:
         for(PlayerWidget *w:players){
             widget_remove_camera(w);
             w->hide();
-            delete w;
+          //  delete w;//TODO: add deleting method
         }
         players.clear();
         thread_lock.unlock();

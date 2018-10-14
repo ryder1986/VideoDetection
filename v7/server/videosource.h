@@ -55,7 +55,7 @@ public:
         if(get_pic(frame))
             return true;
         int ret=false;
-        lock.lock();
+        frame_lock.lock();
         if(frame_list.size()>0){
             frame_list.front().copyTo(frame);
             frame_list.erase(frame_list.begin());
@@ -63,7 +63,7 @@ public:
         }else{
             ret=false;
         }
-        lock.unlock();
+        frame_lock.unlock();
         return ret;
     }
 
@@ -103,7 +103,7 @@ public:
 
 
         bool ret=false;
-        lock.lock();
+        frame_lock.lock();
 
         if(frame_list.size()>0){
           //  frame_list.front().copyTo(frame);
@@ -124,7 +124,7 @@ public:
         }else{
             ret=false;
         }
-        lock.unlock();
+        frame_lock.unlock();
         return ret;
     }
 private:
@@ -151,6 +151,7 @@ private:
 
     int frame_wait_time;
     mutex lock;
+    mutex frame_lock;
     int frame_rate;
     string url;
     volatile bool quit_flg;

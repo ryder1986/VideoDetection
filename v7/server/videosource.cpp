@@ -72,6 +72,7 @@ VideoSource::~VideoSource()
 void VideoSource::run()
 {
     //     vcap.open(path);
+    lock.lock();
 #ifdef USE_CVCAP
     vcap=VideoCapture(url);
 #else
@@ -85,15 +86,21 @@ void VideoSource::run()
     }
 
     if(1){
-        frame_wait_time=0;
+        frame_wait_time=10;
     }else{
         frame_wait_time=40;
     }
 
+    lock.unlock();
     Mat frame;
     int flag_retry=0;
-    while(!quit_flg){
-     //   lock.lock();
+    while(true){
+
+        lock.lock();
+        if(quit_flg){
+            break;
+        }
+
         if( vcap.isOpened()){
             flag_retry=0;
             frame.release();
@@ -132,20 +139,27 @@ void VideoSource::run()
                 {
                     //prt(info,"running %s",url.data());
                 }
+                frame_lock.lock();
                 if(frame_list.size()<3&&frame.rows>0&&frame.cols>0){
                     frame_list.push_back(frame);
                     cur_ms_list.push_back(ts/1000000);
                 }
+                frame_lock.unlock();
 
                 if(frame_wait_time)
                     this_thread::sleep_for(chrono::milliseconds( frame_wait_time));
             }
         }else{
+#if 1
+            this_thread::sleep_for(chrono::seconds(1));
+#else
             if(flag_retry++<10){
+                //if(flag_retry++<10){
                 this_thread::sleep_for(chrono::milliseconds(100));
             }else{
                 this_thread::sleep_for(chrono::seconds(1));
             }
+#endif
 #ifdef USE_CVCAP
             vcap=VideoCapture(url);
 #else
@@ -153,11 +167,13 @@ void VideoSource::run()
 #endif
             prt(info,"open url err:%s",url.data());
         }
-       // lock.unlock();
-        //this_thread::sleep_for(chrono::milliseconds(10));
+        lock.unlock();
+        this_thread::sleep_for(chrono::milliseconds(10));
     }
     prt(info,"thread is quiting");
+    lock.lock();
     if( vcap.isOpened())
         vcap.release();
+    lock.unlock();
 }
 
