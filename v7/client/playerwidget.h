@@ -103,12 +103,17 @@ protected:
                              placeholders::_2,placeholders::_3,placeholders::_4),
                         bind(&PlayerWidget::draw_text,
                              this,placeholders::_1,
-                             placeholders::_2,placeholders::_3,placeholders::_4)
+                             placeholders::_2,placeholders::_3,placeholders::_4,
+                             placeholders::_5)
 
                         );
+
+        draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
         if(!img.isNull()){
             this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         }
+
+
         lock.unlock();
 #endif
     }
@@ -154,7 +159,7 @@ protected:
         current_painter->drawEllipse(QPoint(center.x,center.y),rad,rad);
         current_painter->setPen(pen_ori);
     }
-    void draw_text(VdPoint center,int rad,int colour,int size)
+    void draw_text(string text,VdPoint center,int rad,int colour,int size)
     {
 
         switch (colour) {
@@ -172,7 +177,8 @@ protected:
         }
 
         QPen pen_ori=current_painter->pen();
-        current_painter->drawEllipse(QPoint(center.x,center.y),rad,rad);
+        //current_painter->drawEllipse(QPoint(center.x,center.y),rad,rad);
+        current_painter->drawText(center.x,center.y,QString(text.data()));
         current_painter->setPen(pen_ori);
     }
     void  initializeGL()
@@ -271,6 +277,7 @@ private:
         int ts;
         //   bool ret=src.get_frame(bgr_frame);
         bool ret=src.get_frame(bgr_frame,ts);
+        timestamp=ts;
         //prt(info,"get ts %d",ts);
         if(ret){
             cv::cvtColor(bgr_frame,rgb_frame,CV_BGR2RGB);
@@ -284,6 +291,7 @@ private:
     VideoSource src;
     QMutex lock;
     QImage img;
+    int timestamp;
     QTimer *tick_timer;
     CameraInputData camera_data;
     CameraOutputData output_data;

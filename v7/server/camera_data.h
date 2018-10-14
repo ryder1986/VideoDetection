@@ -218,6 +218,12 @@ public:
                 continue;
             }
             dt.draw(draw_line,draw_circle,draw_text,data.DetectRegion[i]);
+            draw_text(data.Url,VdPoint(200,200),100,PaintableData::Blue,30);
+
+            char buf[20];
+            sprintf(buf,"data  ts:%d",Timestamp);
+            string str(buf);
+            draw_text(str,VdPoint(200,300),100,PaintableData::Blue,30);
         }
     }
 };
