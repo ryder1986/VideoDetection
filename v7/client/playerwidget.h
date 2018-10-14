@@ -10,6 +10,39 @@
 #include "camera_data.h"
 #include <QMenu>
 #include <QAction>
+
+class MyAction:public QAction
+{
+    Q_OBJECT
+public:
+    MyAction(QWidget *w):QAction(w)
+    {
+        connect(this,SIGNAL(triggered(bool)),this,SLOT(trig(bool)));
+    }
+
+    MyAction(RequestPkt pk,string text,QWidget *w):QAction(w)
+    {
+        connect(this,SIGNAL(triggered(bool)),this,SLOT(trig(bool)));
+        txt=text;
+        pkt=pk;
+        this->setText(QString(txt.data()));
+    }
+
+signals:
+    void choose(MyAction *p);
+
+public slots:
+    void trig(bool )
+    {
+        emit choose(this);
+    }
+public:
+    RequestPkt pkt;
+    string txt;
+    bool checked;
+
+
+};
 class PlayerWidget : public QWidget
 {
     Q_OBJECT
@@ -60,19 +93,19 @@ protected:
                               placeholders::_2,placeholders::_3,placeholders::_4));
         //prt(info,"playing ts %d",output_data.Timestamp);
         if(camera_data.data().str().size()>10)//TODO:better way?
-        output_data.draw(
-                    camera_data,
-                    bind(&PlayerWidget::draw_line,
-                         this,placeholders::_1,
-                         placeholders::_2,placeholders::_3,placeholders::_4),
-                    bind(&PlayerWidget::draw_circle,
-                         this,placeholders::_1,
-                         placeholders::_2,placeholders::_3,placeholders::_4),
-                    bind(&PlayerWidget::draw_text,
-                         this,placeholders::_1,
-                         placeholders::_2,placeholders::_3,placeholders::_4)
+            output_data.draw(
+                        camera_data,
+                        bind(&PlayerWidget::draw_line,
+                             this,placeholders::_1,
+                             placeholders::_2,placeholders::_3,placeholders::_4),
+                        bind(&PlayerWidget::draw_circle,
+                             this,placeholders::_1,
+                             placeholders::_2,placeholders::_3,placeholders::_4),
+                        bind(&PlayerWidget::draw_text,
+                             this,placeholders::_1,
+                             placeholders::_2,placeholders::_3,placeholders::_4)
 
-                    );
+                        );
         if(!img.isNull()){
             this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         }
@@ -156,11 +189,41 @@ public slots:
     {
         this->update();
     }
+    void choose_method(bool )
+    {
+        prt(info,"choose method");
 
+    }    void choose_method1( )
+    {
+        prt(info,"choose method ss  ");
+
+    }
+    void choose_item (MyAction *act )
+    {
+        if(act->checked){
+            prt(info,"%s select",act->text().toStdString().data());
+            emit camera_request(act->pkt,this);
+        }
+    }
     void mousePressEvent(QMouseEvent *e)
     {
         prt(info,"mouse press");
+        QMenu *menu=new QMenu();
         if(e->button()==Qt::RightButton){
+            vector <RequestPkt> reqs;
+            vector <string> texts;
+            camera_data.right_press(QPoint_2_VdPoint(map_point(e->pos())),reqs,texts);
+
+            if(reqs.size()>0&&reqs.size()==texts.size()){
+                for(int i=0;i<reqs.size();i++){
+                    MyAction *ma=new MyAction(reqs[i],texts[i],this);
+                    connect(ma,&MyAction::choose,this,&PlayerWidget::choose_item);
+                    actions.push_back(ma);
+                    menu->addAction(ma);
+                }
+
+            }
+            menu->exec(QCursor::pos());
 
         }else{
             camera_data.press(QPoint_2_VdPoint((map_point(e->pos()))));
@@ -226,6 +289,7 @@ private:
     CameraOutputData output_data;
 
     QPainter *current_painter;
+    vector< MyAction *> actions;
     //    QMenu player_menu;
     //    QAction choose_fvd;
 };

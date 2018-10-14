@@ -101,6 +101,23 @@ public:
         return rd;
     }
 
+    static DetectRegionInputData get_region_test_data()
+    {
+
+        DummyProcessorInputData di=DummyProcessorInputData::get_dummy_test_data();
+     //   DetectRegionInputData dri=DetectRegionInputData::get_region_test_data(di.data(),LABEL_PROCESSOR_DUMMY);
+
+        vector <VdPoint>ExpectedAreaVers;
+        ExpectedAreaVers.push_back(VdPoint(0,0));
+        ExpectedAreaVers.push_back(VdPoint(640,0));
+        ExpectedAreaVers.push_back(VdPoint(640,480));
+        ExpectedAreaVers.push_back(VdPoint(0,480));
+
+        DetectRegionInputData rd(di.data(),LABEL_PROCESSOR_DUMMY,ExpectedAreaVers);
+        return rd;
+    }
+
+
     static RequestPkt get_request(int op,int index ,JsonPacket arg)
     {
         switch (op) {
@@ -127,6 +144,24 @@ public:
             return true;
         }
         return true;
+    }
+    enum CMD{
+        SET_MVD=0,
+        SET_DUMMY,
+        CMD_COUNT
+    };
+
+    bool right_press(VdPoint pnt,vector<RequestPkt> &pkts,vector<string> &text)
+    {
+        if((point_index=p_on_v(ExpectedAreaVers,pnt))){
+
+            return true;
+        }
+        if(p_on_vl(ExpectedAreaVers,pnt)){
+
+            return true;
+        }
+        return false;
     }
     void change_processor_2_dummy()
     {

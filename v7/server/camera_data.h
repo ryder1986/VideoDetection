@@ -14,6 +14,11 @@ public:
     };
     string Url;
     vector <DetectRegionInputData >DetectRegion;
+    static inline string get_default_url()
+    {
+        return "rtsp://192.168.1.95:554/av0_1";
+    }
+
     CameraInputData(JsonPacket pkt):JsonData(pkt)
     {
         decode();
@@ -30,6 +35,7 @@ public:
         DetectRegion[index-1]=data;
         encode();
     }
+
     void insert_region(JsonPacket data,int index)
     {
         vector <DetectRegionInputData >::iterator begin=DetectRegion.begin();
@@ -65,40 +71,75 @@ public:
     virtual bool press(VdPoint pnt)
     {
         for(int i=0;i<DetectRegion.size();i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-           dt.press(pnt);
+            DetectRegionInputData &dt= DetectRegion[i];
+            dt.press(pnt);
         }
         return true;
     }
-    virtual bool right_press(VdPoint pnt)
+    virtual bool press_right_button(VdPoint pnt)
     {
+        //        for(int i=0;i<DetectRegion.size();i++){
+        //           DetectRegionInputData &dt= DetectRegion[i];
+        //           dt.press(pnt);
+        //        }
+        return true;
+    }
+    JsonPacket get_url_pkt()
+    {
+        JsonPacket p;
+        p.add("Url",CameraInputData::get_default_url());
+        return p;
+    }
+
+    virtual bool right_press(VdPoint pnt,vector<RequestPkt> &pkts,vector<string> &text)
+    {
+        vector<RequestPkt> pkts_tmp;
         for(int i=0;i<DetectRegion.size();i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-         //  dt.right_press(pnt);
+            DetectRegionInputData &dt= DetectRegion[i];
+            if(dt.right_press(pnt,pkts_tmp,text)){
+                for(RequestPkt p:pkts_tmp){
+                    pkts.push_back(get_request_pkt(CameraInputData::MODIFY_REGION,i+1,\
+                                                   p.data()));
+                }
+                RequestPkt  req_del_region=get_request_pkt(CameraInputData::DELETE_REGION,i+1,\
+                                                             JsonPacket());
+                pkts.push_back(req_del_region);
+                text.push_back("del this region");
+                return true;
+            }
         }
+
+        // req_mod=get_request_pkt(CameraInputData::MODIFY_REGION,i+1,req1.data());
+        RequestPkt  req_append_region=get_request_pkt(CameraInputData::INSERT_REGION,DetectRegion.size(),\
+                                                      DetectRegionInputData::get_region_test_data().data());
+        pkts.push_back(req_append_region);
+        text.push_back("append region");
+        RequestPkt req_reset_url=get_request_pkt(CameraInputData::CHANGE_URL,0,get_url_pkt());
+        pkts.push_back(req_reset_url);
+        text.push_back("reset url");
         return true;
     }
     virtual bool move(VdPoint pnt)
     {
         for(int i=0;i<DetectRegion.size();i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-           dt.move(pnt);
+            DetectRegionInputData &dt= DetectRegion[i];
+            dt.move(pnt);
         }
         return true;
     }
     virtual bool double_click(VdPoint pnt)
     {
         for(int i=0;i<DetectRegion.size();i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-           dt.double_click(pnt);
+            DetectRegionInputData &dt= DetectRegion[i];
+            dt.double_click(pnt);
         }
         return true;
     }
     virtual void release()
     {
         for(int i=0;i<DetectRegion.size();i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-           dt.release();
+            DetectRegionInputData &dt= DetectRegion[i];
+            dt.release();
         }
 
     }
@@ -110,11 +151,11 @@ public:
     {
         RequestPkt req1;
         for(int i=0;i<DetectRegion.size();i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-           if(dt.release(req1)){
+            DetectRegionInputData &dt= DetectRegion[i];
+            if(dt.release(req1)){
                 req=get_request_pkt(CameraInputData::MODIFY_REGION,i+1,req1.data());
                 return true;
-           }
+            }
         }
         return false;
     }
@@ -126,8 +167,8 @@ public:
     {
         int sz=DetectRegion.size();
         for(int i=0;i<sz;i++){
-           DetectRegionInputData &dt= DetectRegion[i];
-           dt.draw(draw_line,draw_circle);
+            DetectRegionInputData &dt= DetectRegion[i];
+            dt.draw(draw_line,draw_circle);
         }
     }
     static CameraInputData get_camera_test_data(vector <DetectRegionInputData> regions,string url)
@@ -166,13 +207,17 @@ public:
 
     template <typename A,typename B,typename C>
     void draw(CameraInputData data,
-            A draw_line,
-            B draw_circle,C draw_text)
+              A draw_line,
+              B draw_circle,C draw_text)
     {
         int sz=DetectionResult.size();
         for(int i=0;i<sz;i++){
-           DetectRegionOutputData &dt= DetectionResult[i];
-           dt.draw(draw_line,draw_circle,draw_text,data.DetectRegion[i]);
+            DetectRegionOutputData &dt= DetectionResult[i];
+            if(i>=data.DetectRegion.size()){
+                prt(info,"region %d outof range ",i);
+                continue;
+            }
+            dt.draw(draw_line,draw_circle,draw_text,data.DetectRegion[i]);
         }
     }
 };
