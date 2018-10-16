@@ -5,6 +5,7 @@ unix{
     INCLUDEPATH+=/root/source/opencv-3.2.0/build/__install/include
     LIBS+=-L/root/source/opencv-3.2.0/build/__install/lib
     LIBS+=-L/root/source/ffmpeg-3.4.4/__install/lib
+    QMAKE_CFLAGS+=-w
 }else{
     DEFINES+=IS_WIN
 }

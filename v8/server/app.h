@@ -42,6 +42,18 @@ private:
                                     this,placeholders::_1,
                                     placeholders::_2));
     }
+    void save_data()
+    {
+        DeviceConfigData data(private_data);
+        p_cm->set_config(data.data().str());//get
+    }
+    JsonPacket load_data()
+    {
+        DeviceConfigData data( p_cm->get_config());
+        private_data=data.data();
+    }
+
+
     void restart_all()
     {
         stop_cams();

@@ -111,6 +111,32 @@ public:
     }
 };
 
+class DeviceConfigData:public JsonData{
+public:
+    AppInputData DeviceConfig;
+    DeviceConfigData(JsonPacket pkt):JsonData(pkt)
+    {
+         decode();
+    }
+    DeviceConfigData(AppInputData appdata):DeviceConfig(appdata)
+    {
+         encode();
+    }
+    DeviceConfigData()
+    {
+         //decode();
+    }
+    void decode()
+    {
+
+        DECODE_JSONDATA_MEM(DeviceConfig);
+    }
+    void encode()
+    {
+        ENCODE_JSONDATA_MEM(DeviceConfig);
+    }
+};
+
 class AppOutputData:public JsonData{
 public:
     int CameraIndex;

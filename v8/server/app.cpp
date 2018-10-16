@@ -5,7 +5,7 @@ App::App()
 
 }
 App::App(ConfigManager *p_config_manager):str_stream(""),
-    VdData(p_config_manager->get_config()),lservice(),p_cm(p_config_manager),udp_fd(0)
+    VdData(DeviceConfigData(p_config_manager->get_config()).DeviceConfig.data()),lservice(),p_cm(p_config_manager),udp_fd(0)
 {
     stream_cmd=NULL;
 
@@ -92,7 +92,7 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     {
         p_cm->set_config(e.Argument.str());//get config
         prt(info,"set config with string:\n %s",e.Argument.str().data());
-        AppInputData dt(p_cm->get_config());
+        AppInputData dt(DeviceConfigData(p_cm->get_config()).DeviceConfig.data());
         private_data=AppInputData(dt);
         restart_all();
         ret=true;
@@ -103,7 +103,7 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     case AppInputData::Operation::INSERT_CAMERA:
     {
         if( add_camera(e.Index,e.Argument)){
-            p_cm->set_config(private_data.data().str());//get config
+            save_data();
             ret=true;
         }
         ReplyPkt p(ret,AppInputData::Operation::MODIFY_CAMERA,JsonPacket());
@@ -113,7 +113,7 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     case AppInputData::Operation::MODIFY_CAMERA:
     {
         if(mod_camera(e.Index,e.Argument)){
-            p_cm->set_config(private_data.data().str());
+            save_data();
             ret=true;
         }
         ReplyPkt p(ret,AppInputData::Operation::MODIFY_CAMERA,JsonPacket());
@@ -124,7 +124,7 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     {
         ret=false;
         if(del_camera(e.Index)){
-            p_cm->set_config(private_data.data().str());
+            save_data();
             ret=true;
         }
         ReplyPkt p(ret,AppInputData::Operation::DELETE_CAMERA,JsonPacket());

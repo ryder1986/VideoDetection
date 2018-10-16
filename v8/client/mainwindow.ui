@@ -107,7 +107,7 @@
           <item row="0" column="0">
            <widget class="QLineEdit" name="lineEdit_addcam">
             <property name="text">
-             <string>rtsp://192.168.103.80:8554/live/test1</string>
+             <string>rtsp://192.168.1.95:554/av0_1</string>
             </property>
            </widget>
           </item>
@@ -272,7 +272,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

@@ -68,15 +68,13 @@ void MainWindow::server_msg(QString msg)
     switch(event.Operation){
     case AppInputData::Operation::GET_CONFIG:
     {
-        cfg=event.Data;
+        cfg=DeviceConfigData(event.Data).DeviceConfig;
         prt(info,"%s",cfg.data().str().data());
-        //            stop_config();
-        //            start_config();
         break;
     }
     case AppInputData::Operation::INSERT_CAMERA:
     {
-        request_get_config();
+        //request_get_config();
         break;
     }
     default:break;
