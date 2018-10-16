@@ -122,7 +122,9 @@ void VideoSource::run()
                 prt(info,"%s get frame error,retrying ... ", url.data());
                 continue;
             }else{
-                // int ts=vcap.get(CV_CAP_PROP_POS_MSEC);
+             int ts=vcap.get(CV_CAP_PROP_POS_MSEC);
+               //    int ts=vcap.get(CV_CAP_PROP_POS_AVI_RATIO);
+
                 //     int ts=vcap.get(CV_CAP_PROP_POS_FRAMES);;
                 //    int ts=vcap.get(CV_CAP_PROP_FRAME_COUNT);
 
@@ -130,9 +132,9 @@ void VideoSource::run()
                 //                double ts1=vcap.get(CV_CAP_PROP_POS_FRAMES);
                 //                double ts2=vcap.get(CV_CAP_PROP_FRAME_COUNT);
                 //                double ts3=vcap.get(CV_CAP_PROP_POS_MSEC);
-                long  ts=cvGetTickCount();
+               // long  ts=cvGetTickCount();
                 // prt(info,"%ld ", tc);
-                //prt(info,"timestamp  %dms", ts);
+                prt(info,"timestamp  %d ", ts);
                 frame_rate++;
 
                 if(!(frame_rate%30))

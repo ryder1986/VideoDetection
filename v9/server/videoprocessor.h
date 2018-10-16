@@ -802,19 +802,27 @@ public:
         return ret;
     }
     template <typename A>
-    void draw_vers_line()
+    void draw_vers_line(vector<VdPoint> ps,A draw_line)
     {
+      //  draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
+        if(ps.size()>=4){
+            for(int i=0;i<ps.size()-1;i++){
+                draw_line(ps[i],ps[i+1],PaintableData::Colour::Blue,2);
+            }
+            draw_line(ps.front(),ps.back(),PaintableData::Colour::Blue,2);
 
+        }
     }
 
     template <typename A,typename B,typename C>
-    void draw(
+    void draw(int offx,int offy,
          A draw_line,
          B draw_circle,C draw_text)
     {
         for(LaneDataJsonData r: LaneData)
         {
-
+            draw_vers_line(r.FarArea,draw_line);
+            draw_vers_line(r.NearArea,draw_line);
         }
     }
 };

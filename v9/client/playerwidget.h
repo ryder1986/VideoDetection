@@ -120,7 +120,8 @@ protected:
                              placeholders::_5)
 
                         );
-#if DRAW_TS
+
+#if 1
         draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
         draw_text(QString("data ts late for : ").append(QString::number(timestamp-output_data.Timestamp)).append(" ms").toStdString().data(),VdPoint(200,350),100,PaintableData::Red,30);
 #endif

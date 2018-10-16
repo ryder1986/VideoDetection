@@ -47,6 +47,30 @@ public:
         encode();
     }
 
+    inline VdRect reshape_2_rect(vector <VdPoint> area)
+    {
+        int x_min=10000;
+        int y_min=10000;
+        int x_max=0;
+        int y_max=0;
+        for(VdPoint pkt: area) {
+            int x=pkt.x;
+            int y=pkt.y;
+            if(x<x_min)
+                x_min=x;
+            if(x>x_max)
+                x_max=x;
+            if(y<y_min)
+                y_min=y;
+            if(y>y_max)
+                y_max=y;
+        }
+        x_min=x_min>0?x_min:0;
+        y_min=y_min>0?y_min:0;
+        x_max=x_max>0?x_max:0;
+        y_max=y_max>0?y_max:0;
+        return VdRect(x_min,y_min,x_max-x_min,y_max-y_min);
+    }
     void set_point(VdPoint p,int index)
     {
         ExpectedAreaVers[index-1]=p;
@@ -256,7 +280,7 @@ public:
         if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
         {
             draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
-
+            VdRect r= reshape_2_rect(ExpectedAreaVers);
            // DummyProcessorInputData data=Result;
 //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
 //                       draw_circle, draw_text);
@@ -264,8 +288,9 @@ public:
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
             draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
+            VdRect r= reshape_2_rect(ExpectedAreaVers);
             MvdProcessorInputData data(ProcessorData);
-            data.draw(draw_line, draw_circle,draw_text);
+            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
      //       MvdProcessorInputData data=Result;
        //     dat
 //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
