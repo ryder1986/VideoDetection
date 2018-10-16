@@ -690,7 +690,12 @@ public:
         event_type=0;
         ori_pnt=VdPoint(0,0);
     }
-
+//    PaintableData(PaintableData &pd) {
+//        seizing=pd.seizing;
+//        point_index=pd.point_index;
+//        event_type=pd.event_type;
+//        ori_pnt=pd.ori_pnt;
+//    }
 public:
     inline int p_on_v(const vector <VdPoint> points,VdPoint p,int distance=10)
     {

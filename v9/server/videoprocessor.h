@@ -105,8 +105,8 @@ public:
     }
     template <typename A,typename B,typename C>
     void draw(int offx,int offy,
-            A draw_line,
-            B draw_circle,C draw_text)
+              A draw_line,
+              B draw_circle,C draw_text)
     {
         for(VdPoint p:Points){
             draw_circle(VdPoint(p.x+offx,p.y+offy),Radii,PaintableData::Colour::Red,2);
@@ -580,26 +580,26 @@ public:
 
 class LinePoint:public JsonData{
 public:
-	VdPoint StartPoint;
-	VdPoint EndPoint;
-	LinePoint(JsonPacket p):JsonData(p)
-	{
-		decode();
-	}
-	LinePoint(VdPoint pt1,VdPoint pt2):StartPoint(pt1),EndPoint(pt2)
-	{
-		encode();
-	}
-	void decode()
-	{
+    VdPoint StartPoint;
+    VdPoint EndPoint;
+    LinePoint(JsonPacket p):JsonData(p)
+    {
+        decode();
+    }
+    LinePoint(VdPoint pt1,VdPoint pt2):StartPoint(pt1),EndPoint(pt2)
+    {
+        encode();
+    }
+    void decode()
+    {
         DECODE_JSONDATA_MEM(StartPoint);
         DECODE_JSONDATA_MEM(EndPoint);
-	}
-	void encode()
-	{
+    }
+    void encode()
+    {
         ENCODE_JSONDATA_MEM(StartPoint);
         ENCODE_JSONDATA_MEM(EndPoint);
-	}
+    }
 };
 class DegreeJsonData:public JsonData{
 public:
@@ -693,13 +693,13 @@ public:
     {
         DECODE_INT_MEM(Type);
         DECODE_JSONDATA_ARRAY_MEM(Vers);
-		DECODE_INT_MEM(Direction);
+        DECODE_INT_MEM(Direction);
     }
     void encode()
     {
         ENCODE_INT_MEM(Type);
         ENCODE_JSONDATA_ARRAY_MEM(Vers);
-		DECODE_INT_MEM(Direction);
+        DECODE_INT_MEM(Direction);
     }
 };
 class MvdProcessorInputData:public JsonData,public PaintableData{
@@ -711,18 +711,27 @@ public:
     vector <LaneDataJsonData> LaneData; // lane info
     vector <VdPoint> DetectLine;
     vector <EventRegion> Events;
-  //   OppositeDirDriveRegion;
+    //   OppositeDirDriveRegion;
     MvdProcessorInputData(){}
     MvdProcessorInputData(JsonPacket pkt):JsonData(pkt)
     {
         decode();
     }
-//    MvdProcessorInputData(  vector <VdPoint> bl,BaseLineJsonData be,int i1, int i2, vector <LaneDataJsonData>  ld, vector <VdPoint>de):
-//        BasicCoil(bl), BaseLine(be), NearPointDistance(i1), FarPointDistance(i2), LaneData(ld),DetectLine(de)
+    MvdProcessorInputData(JsonPacket pkt,PaintableData pd)
+    {
+        seizing=pd.seizing;
+        point_index=pd.point_index;
+        event_type=pd.event_type;
+        ori_pnt=pd.ori_pnt;
+        config=pkt;
+        decode();
+    }
+    //    MvdProcessorInputData(  vector <VdPoint> bl,BaseLineJsonData be,int i1, int i2, vector <LaneDataJsonData>  ld, vector <VdPoint>de):
+    //        BasicCoil(bl), BaseLine(be), NearPointDistance(i1), FarPointDistance(i2), LaneData(ld),DetectLine(de)
 
-//    {
-//        encode();
-//    }
+    //    {
+    //        encode();
+    //    }
     MvdProcessorInputData(  vector <VdPoint> bl,BaseLineJsonData be,int i1, int i2,
                             vector <LaneDataJsonData>  ld, vector <VdPoint>de
                             ,vector <EventRegion> es):
@@ -732,6 +741,7 @@ public:
     {
         encode();
     }
+
     void decode()
     {
         DECODE_JSONDATA_ARRAY_MEM(BasicCoil);
@@ -740,7 +750,7 @@ public:
         DECODE_INT_MEM(FarPointDistance);
         DECODE_JSONDATA_ARRAY_MEM(LaneData);
         DECODE_JSONDATA_ARRAY_MEM(DetectLine);
-    //    DECODE_JSONDATA_ARRAY_MEM(Events);
+        //    DECODE_JSONDATA_ARRAY_MEM(Events);
     }
     void encode()
     {
@@ -750,7 +760,7 @@ public:
         ENCODE_INT_MEM(FarPointDistance);
         ENCODE_JSONDATA_ARRAY_MEM(LaneData);
         ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
-     //   ENCODE_JSONDATA_ARRAY_MEM(Events);
+        //   ENCODE_JSONDATA_ARRAY_MEM(Events);
     }
     void add_lane(JsonPacket pkt)
     {
@@ -764,16 +774,16 @@ public:
         LaneData.erase(LaneData.end()-1);
         encode();
     }
-//    void append_event(EventRegion e)
-//    {
-//        Events.push_back(e);
-//        encode();
-//    }
-//    void del_event()
-//    {
-//        Events.erase(Events.begin()+Events.size());
-//        decode();
-//    }
+    //    void append_event(EventRegion e)
+    //    {
+    //        Events.push_back(e);
+    //        encode();
+    //    }
+    //    void del_event()
+    //    {
+    //        Events.erase(Events.begin()+Events.size());
+    //        decode();
+    //    }
     bool set_point(VdPoint new_p,int index)
     {
         bool ret=false;
@@ -801,10 +811,47 @@ public:
         }
         return ret;
     }
+
+    bool press(VdPoint pnt)
+    {
+//        if((point_index=p_on_v(ExpectedAreaVers,pnt))){
+//            seizing=true;
+//            event_type=PaintableData::Event::MoveVer;
+//            return true;
+//        }
+//        if(p_on_vl(ExpectedAreaVers,pnt)){
+//            seizing=true;
+//            ori_pnt=pnt;
+//            event_type=PaintableData::Event::MoveAll;
+//            return true;
+//        }
+        prt(info,"mvd press")
+                return false;
+    }
+    bool right_press(VdPoint pnt)
+    {
+        //  seizing=true;
+        prt(info,"mvd right press")
+                return false;
+    }
+    bool move(VdPoint pnt)
+    {
+        return false;
+    }
+    bool double_click(VdPoint pnt)
+    {
+
+        return false;
+    }
+    void release()
+    {
+        seizing=false;
+
+    }
     template <typename A>
     void draw_vers_line(vector<VdPoint> ps,A draw_line)
     {
-      //  draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
+        //  draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
         if(ps.size()>=4){
             for(int i=0;i<ps.size()-1;i++){
                 draw_line(ps[i],ps[i+1],PaintableData::Colour::Blue,2);
@@ -816,13 +863,29 @@ public:
 
     template <typename A,typename B,typename C>
     void draw(int offx,int offy,
-         A draw_line,
-         B draw_circle,C draw_text)
+              A draw_line,
+              B draw_circle,C draw_text)
     {
         for(LaneDataJsonData r: LaneData)
         {
+            for(int i=0;i<r.FarArea.size();i++){
+                r.FarArea[i].x+=offx;
+                r.FarArea[i].y+=offy;
+            }
             draw_vers_line(r.FarArea,draw_line);
+
+            for(int i=0;i<r.NearArea.size();i++){
+                r.NearArea[i].x+=offx;
+                r.NearArea[i].y+=offy;
+            }
             draw_vers_line(r.NearArea,draw_line);
+
+
+//            for(int i=0;i<r.LaneArea.size();i++){
+//                r.LaneArea[i].x+=offx;
+//                r.LaneArea[i].y+=offy;
+//            }
+//            draw_vers_line(r.LaneArea,draw_line);
         }
     }
 };
@@ -837,12 +900,12 @@ public:
     int PersonFlow1;
     int PersonFlow2;
     int CurrentPersionCount;
-	vector<VdRect> InvalidStopData;
-	vector<VdRect> ReverseDriveData;
-	vector<VdRect> DriveAwayData;
-	vector<VdRect> NoPedestrainData;
-	vector<LinePoint> CongestionData;
-	vector<VdRect>	AbandonedObjectData;
+    vector<VdRect> InvalidStopData;
+    vector<VdRect> ReverseDriveData;
+    vector<VdRect> DriveAwayData;
+    vector<VdRect> NoPedestrainData;
+    vector<LinePoint> CongestionData;
+    vector<VdRect>	AbandonedObjectData;
     MvdProcessorOutputData(JsonPacket p):JsonData(p)
     {
         decode();
@@ -862,12 +925,12 @@ public:
         PersonFlow1(p1),
         PersonFlow2(p2),
         CurrentPersionCount(ct),
-		InvalidStopData(is_rct),
-		ReverseDriveData(rd_rct),
-		DriveAwayData(da_rct),
-		NoPedestrainData(np_rct),
-		CongestionData(cpt),
-		AbandonedObjectData(ao_rct)
+        InvalidStopData(is_rct),
+        ReverseDriveData(rd_rct),
+        DriveAwayData(da_rct),
+        NoPedestrainData(np_rct),
+        CongestionData(cpt),
+        AbandonedObjectData(ao_rct)
     {
         encode();
     }
@@ -883,12 +946,12 @@ public:
         DECODE_INT_MEM(PersonFlow1);
         DECODE_INT_MEM(PersonFlow2);
         DECODE_INT_MEM(CurrentPersionCount);
-		DECODE_JSONDATA_ARRAY_MEM(InvalidStopData);
-		DECODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
-		DECODE_JSONDATA_ARRAY_MEM(DriveAwayData);
-		DECODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
-		DECODE_JSONDATA_ARRAY_MEM(CongestionData);
-		DECODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
+        DECODE_JSONDATA_ARRAY_MEM(InvalidStopData);
+        DECODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
+        DECODE_JSONDATA_ARRAY_MEM(DriveAwayData);
+        DECODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
+        DECODE_JSONDATA_ARRAY_MEM(CongestionData);
+        DECODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
 
     }
     void encode()
@@ -928,12 +991,12 @@ public:
 
     template <typename A,typename B,typename C>
     void draw(int offx,int offy,
-            A draw_line,
-            B draw_circle,C draw_text)
+              A draw_line,
+              B draw_circle,C draw_text)
     {
-//        for(VdPoint p:Points){
-//            draw_circle(VdPoint(p.x+offx,p.y+offy),Radii,PaintableData::Colour::Red,2);
-//        }
+        //        for(VdPoint p:Points){
+        //            draw_circle(VdPoint(p.x+offx,p.y+offy),Radii,PaintableData::Colour::Red,2);
+        //        }
 
         vector <VdRect>rcts;
         for(ObjectRect r:MvdDetectedObjects){
