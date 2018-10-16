@@ -23,6 +23,9 @@ public:
     MyAction(RequestPkt pk,string text,QWidget *w):QAction(w)
     {
         connect(this,SIGNAL(triggered(bool)),this,SLOT(trig(bool)));
+
+       // connect(this,SIGNAL(()),this,SLOT(dest(QObject *)));
+
         txt=text;
         pkt=pk;
         this->setText(QString(txt.data()));
@@ -32,6 +35,10 @@ signals:
     void choose(MyAction *p);
 
 public slots:
+    void dest(QObject *)
+    {
+        prt(info,"des %s",txt.data());
+    }
     void trig(bool )
     {
         emit choose(this);
@@ -59,7 +66,6 @@ public:
         cv::Mat bgr_frame;
         cv::Mat rgb_frame;
         int ts;
-        //   bool ret=src.get_frame(bgr_frame);
         bgr_frame =cv::imread("/root/test.png");
         //prt(info,"get ts %d",ts);
         if(!bgr_frame.empty()){
@@ -109,6 +115,7 @@ protected:
                         );
 
         draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
+        draw_text(QString("data ts late for : ").append(QString::number(timestamp-output_data.Timestamp)).append(" ms").toStdString().data(),VdPoint(200,350),100,PaintableData::Red,30);
         if(!img.isNull()){
             this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         }
@@ -117,7 +124,7 @@ protected:
         lock.unlock();
 #endif
     }
-    void draw_line(VdPoint s,VdPoint e,int colour,int size)
+    inline void draw_line(VdPoint s,VdPoint e,int colour,int size)
     {
 
         switch (colour) {
@@ -138,7 +145,7 @@ protected:
         current_painter->drawLine(QPoint(s.x,s.y),QPoint(e.x,e.y));
         current_painter->setPen(pen_ori);
     }
-    void draw_circle(VdPoint center,int rad,int colour,int size)
+    inline void draw_circle(VdPoint center,int rad,int colour,int size)
     {
 
         switch (colour) {
@@ -159,7 +166,7 @@ protected:
         current_painter->drawEllipse(QPoint(center.x,center.y),rad,rad);
         current_painter->setPen(pen_ori);
     }
-    void draw_text(string text,VdPoint center,int rad,int colour,int size)
+    inline void draw_text(string text,VdPoint center,int rad,int colour,int size)
     {
 
         switch (colour) {
@@ -177,7 +184,6 @@ protected:
         }
 
         QPen pen_ori=current_painter->pen();
-        //current_painter->drawEllipse(QPoint(center.x,center.y),rad,rad);
         current_painter->drawText(center.x,center.y,QString(text.data()));
         current_painter->setPen(pen_ori);
     }
@@ -206,15 +212,25 @@ public slots:
     }
     void choose_item (MyAction *act )
     {
-        if(act->checked){
+       // if(act->checked){
             prt(info,"%s select",act->text().toStdString().data());
             emit camera_request(act->pkt,this);
-        }
+        //}
+          //  clear_menu();
     }
+    void clear_menu()
+    {
+          prt(info,"clear menu");
+        for(QAction *a:actions){
+            menu.removeAction(a);
+            delete a;
+        }
+        actions.clear();
+    }
+
     void mousePressEvent(QMouseEvent *e)
     {
         prt(info,"mouse press");
-        QMenu *menu=new QMenu();
         if(e->button()==Qt::RightButton){
             vector <RequestPkt> reqs;
             vector <string> texts;
@@ -223,13 +239,15 @@ public slots:
             if(reqs.size()>0&&reqs.size()==texts.size()){
                 for(int i=0;i<reqs.size();i++){
                     MyAction *ma=new MyAction(reqs[i],texts[i],this);
-                    connect(ma,&MyAction::choose,this,&PlayerWidget::choose_item);
+                    connect(ma,&MyAction::choose,this,&PlayerWidget::choose_item,Qt::DirectConnection);
+
                     actions.push_back(ma);
-                    menu->addAction(ma);
+                    menu.addAction(ma);
+
                 }
 
             }
-            menu->exec(QCursor::pos());
+            menu.exec(QCursor::pos());
 
         }else{
             camera_data.press(QPoint_2_VdPoint((map_point(e->pos()))));
@@ -298,6 +316,7 @@ private:
 
     QPainter *current_painter;
     vector< MyAction *> actions;
+    QMenu menu;
     //    QMenu player_menu;
     //    QAction choose_fvd;
 };

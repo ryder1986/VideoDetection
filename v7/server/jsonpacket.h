@@ -695,7 +695,7 @@ public:
     inline int p_on_v(const vector <VdPoint> points,VdPoint p,int distance=10)
     {
         for(int i=0;i<points.size();i++){
-            prt(info,"%d -> %d",points[i].x,p.x);
+            //prt(info,"%d -> %d",points[i].x,p.x);
             if((abs(points[i].x-p.x)<distance)&&((abs(points[i].y-p.y))<distance)){
                 return (i+1);
             }
