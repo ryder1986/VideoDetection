@@ -173,7 +173,7 @@ public:
     }
 
     template <typename A>
-      bool right_press(VdPoint pnt,A exec_menu)
+    bool right_press(VdPoint pnt,A exec_menu)
     {
         if((point_index=p_on_v(ExpectedAreaVers,pnt))){
            // exec_menu((bind(&DetectRegionInputData::change_processor_2_dummy,this),this);
@@ -235,8 +235,11 @@ public:
         }
         return false;
     }
-    template <typename A,typename B>
-    void draw(A draw_line, B draw_circle)
+
+    template <typename A,typename B,typename C>
+    void draw(
+         A draw_line,
+         B draw_circle,C draw_text)
     {
         for(int i=1;i<ExpectedAreaVers.size();i++){
             if(!seizing)
@@ -248,6 +251,26 @@ public:
             draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Blue,2);
         else
             draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
+
+
+        if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
+        {
+            draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
+
+           // DummyProcessorInputData data=Result;
+//            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
+//                       draw_circle, draw_text);
+        }
+        if(SelectedProcessor== LABEL_PROCESSOR_MVD)
+        {
+            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
+            MvdProcessorInputData data(ProcessorData);
+            data.draw(draw_line, draw_circle,draw_text);
+     //       MvdProcessorInputData data=Result;
+       //     dat
+//            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
+//                       draw_circle, draw_text);
+        }
 
     }
 };

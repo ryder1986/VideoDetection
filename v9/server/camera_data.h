@@ -160,15 +160,15 @@ public:
         return false;
     }
 
-    template <typename A,typename B>
+    template <typename A,typename B,typename C>
     void draw(
          A draw_line,
-         B draw_circle)
+         B draw_circle,C draw_text)
     {
         int sz=DetectRegion.size();
         for(int i=0;i<sz;i++){
             DetectRegionInputData &dt= DetectRegion[i];
-            dt.draw(draw_line,draw_circle);
+            dt.draw(draw_line,draw_circle,draw_text);
         }
     }
     static CameraInputData get_camera_test_data(vector <DetectRegionInputData> regions,string url)

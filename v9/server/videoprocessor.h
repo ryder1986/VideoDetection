@@ -114,7 +114,7 @@ public:
     }
 
 };
-class DummyProcessorInputData:public JsonData{
+class DummyProcessorInputData:public JsonData,public PaintableData{
 
 public:
     bool Horizon;
@@ -577,40 +577,7 @@ public:
         ENCODE_BOOL_MEM(NearCarExist);
     }
 };
-//class VdRect:public JsonData
-//{
-//public:
-//	int x;
-//	int y;
-//	int w;
-//	int h;
-//	VdRect(JsonPacket pkt):JsonData(pkt)
-//	{
-//		decode();
-//	}
-//	VdRect(int x,int y,int w, int h):x(x),y(y),w(w),h(h)
-//	{
-//		encode();
-//	}
-//	VdRect()
-//	{
 
-//	}
-//	void decode()
-//	{
-//		DECODE_INT_MEM(x);
-//		DECODE_INT_MEM(y);
-//		DECODE_INT_MEM(w);
-//		DECODE_INT_MEM(h);
-//	}
-//	void encode()
-//	{
-//		ENCODE_INT_MEM(x);
-//		ENCODE_INT_MEM(y);
-//		DECODE_INT_MEM(w);
-//		DECODE_INT_MEM(h);
-//	}
-//};
 class LinePoint:public JsonData{
 public:
 	VdPoint StartPoint;
@@ -735,7 +702,7 @@ public:
 		DECODE_INT_MEM(Direction);
     }
 };
-class MvdProcessorInputData:public JsonData{
+class MvdProcessorInputData:public JsonData,public PaintableData{
 public:
     vector <VdPoint> BasicCoil;// standard rect
     BaseLineJsonData BaseLine;// a line can adjust car real length
@@ -833,6 +800,22 @@ public:
             ret=true;
         }
         return ret;
+    }
+    template <typename A>
+    void draw_vers_line()
+    {
+
+    }
+
+    template <typename A,typename B,typename C>
+    void draw(
+         A draw_line,
+         B draw_circle,C draw_text)
+    {
+        for(LaneDataJsonData r: LaneData)
+        {
+
+        }
     }
 };
 class MvdProcessorOutputData:public JsonData{
@@ -950,21 +933,6 @@ public:
         }
         for(VdRect r:rcts)
             draw_rect(r,draw_line);
-//        for(ObjectRect r:MvdDetectedObjects){
-//            draw_line()
-//        }
-
-//        for(int i=1;i<MvdDetectedObjects.size();i++){
-//            if(!seizing)
-//                draw_line(MvdDetectedObjects[i-1],ExpectedAreaVers[i],PaintableData::Colour::Blue,2);
-//            else
-//                draw_line(ExpectedAreaVers[i-1],ExpectedAreaVers[i],PaintableData::Colour::Red,2);
-//        }
-//        if(!seizing)
-//            draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Blue,2);
-//        else
-//            draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
-
     }
 };
 #endif // VIDEOPROCESSOR_H

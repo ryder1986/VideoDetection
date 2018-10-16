@@ -98,7 +98,12 @@ protected:
                               placeholders::_2,placeholders::_3,placeholders::_4),
                          bind(&PlayerWidget::draw_circle,
                               this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4));
+                              placeholders::_2,placeholders::_3,placeholders::_4),
+                         bind(&PlayerWidget::draw_text,
+                              this,placeholders::_1,
+                              placeholders::_2,placeholders::_3,placeholders::_4,
+                              placeholders::_5)
+                         );
 // draw output
         if(camera_data.data().str().size()>10)//TODO:better way?
             output_data.draw(

@@ -727,12 +727,19 @@ public:
         }
         return false;
     }
+#if 0
     virtual bool press(VdPoint pnt)=0;
     virtual bool move(VdPoint pnt)=0;
     virtual bool double_click(VdPoint pnt)=0;
     virtual void release()=0;
-    template <typename A,typename B>
-    void draw(A draw_line,B draw_circle);
+#else
+    virtual bool press(VdPoint pnt){return false;}
+    virtual bool move(VdPoint pnt){return false;}
+    virtual bool double_click(VdPoint pnt){return false;}
+    virtual void release(){}
+#endif
+    template <typename A,typename B,typename C>
+    void draw(A draw_line,B draw_circle,C draw_text);
     void release_event()
     {
         seizing=false;
