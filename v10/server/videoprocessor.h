@@ -762,6 +762,70 @@ public:
         ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
         //   ENCODE_JSONDATA_ARRAY_MEM(Events);
     }
+
+    static LaneDataJsonData get_test_lane()
+    {
+        int ox=100;
+        int oy=100;
+        vector <VdPoint> FarArea1; // far rect
+        FarArea1.push_back(VdPoint(0+ox,100+oy));
+        FarArea1.push_back(VdPoint(100+ox,100+oy));
+        FarArea1.push_back(VdPoint(100+ox,150+oy));
+        FarArea1.push_back(VdPoint(0+ox,150+oy));
+        vector <VdPoint> NearArea1; // near rect
+        NearArea1.push_back(VdPoint(0+ox,0+200+oy));
+        NearArea1.push_back(VdPoint(100+ox,0+200+oy));
+        NearArea1.push_back(VdPoint(100+ox,250+oy));
+        NearArea1.push_back(VdPoint(0+ox,0+250+oy));
+        vector <VdPoint> LaneArea1; // whole rect
+        LaneArea1.push_back(VdPoint(0+ox,0+oy));
+        LaneArea1.push_back(VdPoint(100+ox,0+oy));
+        LaneArea1.push_back(VdPoint(100+ox,300+oy));
+        LaneArea1.push_back(VdPoint(0+ox,300+oy));
+        int lane_no=18;
+        LaneDataJsonData d1(lane_no,FarArea1,NearArea1,LaneArea1);
+        return d1;
+    }
+    static MvdProcessorInputData get_mvd_test_data()
+    {
+
+
+        // MvdProcessorInputData d(VdPoint(100,200),VdPoint(400,200)); return d;
+        vector <VdPoint> BasicCoil;// standard rect
+        BasicCoil.push_back(VdPoint(0,0));
+        BasicCoil.push_back(VdPoint(400,0));
+        BasicCoil.push_back(VdPoint(400,400));
+        BasicCoil.push_back(VdPoint(0,400));
+        BaseLineJsonData BaseLine(VdPoint(0,0),VdPoint(50,50),5);// a line can adjust car real length
+        int NearPointDistance=20;//distance to camera
+        int FarPointDistance=100;
+        vector <LaneDataJsonData> LineData; // lane info
+
+
+        LineData.push_back(get_test_lane());
+
+
+        vector <VdPoint> detect_line;
+        VdPoint p1(100,200);
+        VdPoint p2(400,200);
+        detect_line.push_back(p1);
+        detect_line.push_back(p2);
+
+        vector <EventRegion> regs;
+        VdPoint pp1(0,0);
+        VdPoint pp2(400,0);
+        VdPoint pp3(400,400);
+        VdPoint pp4(0,400);
+        vector<VdPoint> ps;
+        ps.push_back(pp1);
+        ps.push_back(pp2);
+        ps.push_back(pp3);
+        ps.push_back(pp4);
+        regs.push_back(EventRegion(ps,EventRegion::OVER_SPEED));
+        MvdProcessorInputData dt(BasicCoil,BaseLine,NearPointDistance,FarPointDistance,LineData,detect_line,regs);
+
+        return dt;
+    }
     void add_lane(JsonPacket pkt)
     {
         LaneDataJsonData dt(pkt);
@@ -814,17 +878,17 @@ public:
 
     bool press(VdPoint pnt)
     {
-//        if((point_index=p_on_v(ExpectedAreaVers,pnt))){
-//            seizing=true;
-//            event_type=PaintableData::Event::MoveVer;
-//            return true;
-//        }
-//        if(p_on_vl(ExpectedAreaVers,pnt)){
-//            seizing=true;
-//            ori_pnt=pnt;
-//            event_type=PaintableData::Event::MoveAll;
-//            return true;
-//        }
+        //        if((point_index=p_on_v(ExpectedAreaVers,pnt))){
+        //            seizing=true;
+        //            event_type=PaintableData::Event::MoveVer;
+        //            return true;
+        //        }
+        //        if(p_on_vl(ExpectedAreaVers,pnt)){
+        //            seizing=true;
+        //            ori_pnt=pnt;
+        //            event_type=PaintableData::Event::MoveAll;
+        //            return true;
+        //        }
         prt(info,"mvd press")
                 return false;
     }
@@ -881,11 +945,11 @@ public:
             draw_vers_line(r.NearArea,draw_line);
 
 
-//            for(int i=0;i<r.LaneArea.size();i++){
-//                r.LaneArea[i].x+=offx;
-//                r.LaneArea[i].y+=offy;
-//            }
-//            draw_vers_line(r.LaneArea,draw_line);
+            //            for(int i=0;i<r.LaneArea.size();i++){
+            //                r.LaneArea[i].x+=offx;
+            //                r.LaneArea[i].y+=offy;
+            //            }
+            //            draw_vers_line(r.LaneArea,draw_line);
         }
     }
 };

@@ -175,8 +175,8 @@ public:
         PaintableData pd;
         if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
         {
-//            draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
-//            VdRect r= reshape_2_rect(ExpectedAreaVers);
+            //            draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
+            //            VdRect r= reshape_2_rect(ExpectedAreaVers);
             // DummyProcessorInputData data=Result;
             //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
             //                       draw_circle, draw_text);
@@ -186,10 +186,10 @@ public:
             MvdProcessorInputData mid(ProcessorData,paintable_data);
 
             mid.press(pnt);
-//            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
-//            VdRect r= reshape_2_rect(ExpectedAreaVers);
-//            MvdProcessorInputData data(ProcessorData);
-//            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
+            //            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
+            //            VdRect r= reshape_2_rect(ExpectedAreaVers);
+            //            MvdProcessorInputData data(ProcessorData);
+            //            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
             //       MvdProcessorInputData data=Result;
             //     dat
             //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
@@ -205,8 +205,16 @@ public:
 
     bool right_press(VdPoint pnt,vector<RequestPkt> &pkts,vector<string> &text)
     {
+        RequestPkt p;
         if((point_index=p_on_v(ExpectedAreaVers,pnt))){
-
+            text.push_back("change to mvd");
+            text.push_back("change to dummy");
+            p=get_request(DetectRegionInputData::CHANGE_PROCESSOR,0,
+            get_region_test_data(MvdProcessorInputData::get_mvd_test_data().data(),LABEL_PROCESSOR_MVD).data());
+            pkts.push_back(p);
+            p=get_request(DetectRegionInputData::CHANGE_PROCESSOR,0,
+                          get_region_test_data(DummyProcessorInputData::get_dummy_test_data().data(),LABEL_PROCESSOR_DUMMY).data());
+            pkts.push_back(p);
             return true;
         }
         if(p_on_vl(ExpectedAreaVers,pnt)){
