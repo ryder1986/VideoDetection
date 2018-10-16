@@ -91,13 +91,15 @@ protected:
         }
         QPainter img_painter(&img);
         current_painter=&img_painter;
+
+// draw input
         camera_data.draw(bind(&PlayerWidget::draw_line,
                               this,placeholders::_1,
                               placeholders::_2,placeholders::_3,placeholders::_4),
                          bind(&PlayerWidget::draw_circle,
                               this,placeholders::_1,
                               placeholders::_2,placeholders::_3,placeholders::_4));
-        //prt(info,"playing ts %d",output_data.Timestamp);
+// draw output
         if(camera_data.data().str().size()>10)//TODO:better way?
             output_data.draw(
                         camera_data,
@@ -113,9 +115,10 @@ protected:
                              placeholders::_5)
 
                         );
-
+#if DRAW_TS
         draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
         draw_text(QString("data ts late for : ").append(QString::number(timestamp-output_data.Timestamp)).append(" ms").toStdString().data(),VdPoint(200,350),100,PaintableData::Red,30);
+#endif
         if(!img.isNull()){
             this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         }

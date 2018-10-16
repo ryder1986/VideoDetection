@@ -315,6 +315,12 @@ public:
             data.draw(DetectionRect.x,DetectionRect.y, draw_line,
                        draw_circle, draw_text);
         }
+        if(data.SelectedProcessor== LABEL_PROCESSOR_MVD)
+        {
+            MvdProcessorOutputData data=Result;
+            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
+                       draw_circle, draw_text);
+        }
 
     }
 

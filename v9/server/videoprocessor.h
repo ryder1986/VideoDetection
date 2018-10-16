@@ -919,5 +919,52 @@ public:
         ENCODE_JSONDATA_ARRAY_MEM(CongestionData);
         ENCODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
     }
+    template <typename A>
+    void draw_rect(VdRect rect ,A draw_line )
+    {
+        VdPoint p1(rect.x,rect.y);
+        VdPoint p2(rect.x+rect.w,rect.y);
+        VdPoint p3(rect.x+rect.w,rect.y+rect.h);
+        VdPoint p4(rect.x,rect.y+rect.h);
+
+        draw_line(p1,p2,PaintableData::Colour::Red,2);
+        draw_line(p2,p3,PaintableData::Colour::Red,2);
+        draw_line(p3,p4,PaintableData::Colour::Red,2);
+        draw_line(p1,p4,PaintableData::Colour::Red,2);
+
+
+    }
+
+    template <typename A,typename B,typename C>
+    void draw(int offx,int offy,
+            A draw_line,
+            B draw_circle,C draw_text)
+    {
+//        for(VdPoint p:Points){
+//            draw_circle(VdPoint(p.x+offx,p.y+offy),Radii,PaintableData::Colour::Red,2);
+//        }
+
+        vector <VdRect>rcts;
+        for(ObjectRect r:MvdDetectedObjects){
+            rcts.push_back(VdRect(r.x+offx,r.y+offy,r.w,r.h));
+        }
+        for(VdRect r:rcts)
+            draw_rect(r,draw_line);
+//        for(ObjectRect r:MvdDetectedObjects){
+//            draw_line()
+//        }
+
+//        for(int i=1;i<MvdDetectedObjects.size();i++){
+//            if(!seizing)
+//                draw_line(MvdDetectedObjects[i-1],ExpectedAreaVers[i],PaintableData::Colour::Blue,2);
+//            else
+//                draw_line(ExpectedAreaVers[i-1],ExpectedAreaVers[i],PaintableData::Colour::Red,2);
+//        }
+//        if(!seizing)
+//            draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Blue,2);
+//        else
+//            draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
+
+    }
 };
 #endif // VIDEOPROCESSOR_H

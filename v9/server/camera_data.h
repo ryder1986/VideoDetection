@@ -162,8 +162,8 @@ public:
 
     template <typename A,typename B>
     void draw(
-            A draw_line,
-            B draw_circle)
+         A draw_line,
+         B draw_circle)
     {
         int sz=DetectRegion.size();
         for(int i=0;i<sz;i++){
