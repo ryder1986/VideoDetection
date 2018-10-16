@@ -39,7 +39,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_playmode">
+        <widget class="QComboBox" name="comboBox_play_index">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="editable">
+          <bool>false</bool>
+         </property>
          <item>
           <property name="text">
            <string>all</string>
@@ -57,6 +63,9 @@
          <property name="text">
           <string>show output</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -64,17 +73,10 @@
          <property name="text">
           <string>show input</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_default_url">
-         <property name="text">
-          <string>default url</string>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_default_url"/>
        </item>
       </layout>
      </widget>
@@ -97,6 +99,13 @@
           </size>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_delcam">
+            <property name="text">
+             <string>del</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_addcam">
             <property name="text">
@@ -111,19 +120,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_delcam">
-            <property name="text">
-             <string>del</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
-           <widget class="QLineEdit" name="lineEdit_delcam">
-            <property name="text">
-             <string>1</string>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="comboBox_del_index"/>
           </item>
          </layout>
         </widget>
@@ -230,10 +228,10 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <widget class="QLineEdit" name="lineEdit"/>
+           <widget class="QLineEdit" name="lineEdit_ip"/>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pushButton_connect">
             <property name="text">
              <string>connect</string>
             </property>

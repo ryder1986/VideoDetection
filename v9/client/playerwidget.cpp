@@ -4,6 +4,9 @@
 PlayerWidget::PlayerWidget(CameraInputData data,QWidget *parent) : QWidget(parent),src(data.Url)
   //PlayerWidget::PlayerWidget(CameraInputData data,QWidget *parent) : QWidget(parent),src("/root/test.mp4")
 {
+    show_input=true;
+    show_output=true;
+
     camera_data=data;
     tick_timer=new QTimer();
     connect(tick_timer,SIGNAL(timeout()),this,SLOT(timeout()));

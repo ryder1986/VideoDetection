@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&searcher,SIGNAL(find_ip(QString)),this,SLOT(search_server_result(QString)));
     connect(&clt,SIGNAL(server_msg(QString)),this,SLOT(server_msg(QString)));
     start_udp();
+    play_mode=ALL_CAM;
 }
 
 MainWindow::~MainWindow()
@@ -30,7 +31,7 @@ void MainWindow::on_pushButton_search_clicked()
 
 void MainWindow::on_comboBox_search_activated(const QString &arg1)
 {
-     clt.connect_to_server(arg1);
+    clt.connect_to_server(arg1);
 }
 //#include "mvdprocessor.h"
 void MainWindow::on_pushButton_addcam_clicked()
@@ -39,7 +40,7 @@ void MainWindow::on_pushButton_addcam_clicked()
     DetectRegionInputData dri=DetectRegionInputData::get_region_test_data(di.data(),LABEL_PROCESSOR_DUMMY);
     vector<DetectRegionInputData> dris;
     dris.push_back(dri);
-   // CameraInputData  d=CameraInputData::get_camera_test_data(dris,"/root/test.mp4");
+    // CameraInputData  d=CameraInputData::get_camera_test_data(dris,"/root/test.mp4");
     //CameraInputData  d=CameraInputData::get_camera_test_data(dris,"D:/build/test.mp4");
     CameraInputData  d=CameraInputData::get_camera_test_data(dris,ui->lineEdit_addcam->text().toStdString());
     request_add_cam(cfg.CameraData.size(),d);
@@ -49,8 +50,13 @@ void MainWindow::on_pushButton_addcam_clicked()
 
 void MainWindow::on_pushButton_delcam_clicked()
 {
-    int del_index=ui->lineEdit_delcam->text().toInt();
-    request_del_cam(del_index);
+    int del_index=ui->comboBox_del_index->itemText(deleting_index).toInt();
+    if(del_index>0&&del_index<=cfg.CameraData.size()){
+        prt(info,"del index %d",del_index);
+        request_del_cam(del_index);
+    }else{
+        prt(info,"del index %d out of range",del_index);
+    }
     //del_from_vector(del_index,players);
 }
 
@@ -69,12 +75,24 @@ void MainWindow::server_msg(QString msg)
     case AppInputData::Operation::GET_CONFIG:
     {
         cfg=DeviceConfigData(event.Data).DeviceConfig;
+        int cam_sz=cfg.CameraData.size();
+        ui->comboBox_play_index->setEditable(true);
+        ui->comboBox_play_index->setEnabled(true);
+        ui->comboBox_play_index->clear();
+        ui->comboBox_play_index->addItem("all");
+        for(int i=0;i<cam_sz;i++){
+            ui->comboBox_play_index->addItem(QString::number(i+1));
+        }
+
+        ui->comboBox_del_index->clear();
+        for(int i=0;i<cam_sz;i++){
+            ui->comboBox_del_index->addItem(QString::number(i+1));
+        }
         prt(info,"%s",cfg.data().str().data());
         break;
     }
     case AppInputData::Operation::INSERT_CAMERA:
     {
-        //request_get_config();
         break;
     }
     default:break;
@@ -84,19 +102,10 @@ void MainWindow::server_msg(QString msg)
 void MainWindow::widget_append_camera(CameraInputData d)
 {
 
-    // ui->ccomboBox_cameras->addItem(d.Url.data());
     PlayerWidget *player=new PlayerWidget(d);
     connect(player,SIGNAL(camera_request(RequestPkt,PlayerWidget *)),this,SLOT(camera_request(RequestPkt,PlayerWidget*)));
     players.push_back(player);
     ui->gridLayout_video->addWidget(player);
-    //    connect(player,SIGNAL(cam_data_change(CameraInputData,QWidget*)),\
-    //            this,SLOT(generate_current_config(CameraInputData,QWidget*)));
-
-    //    connect(player,SIGNAL(signal_camera(PlayerWidget*,int,JsonPacket)),\
-    //            this,SLOT(slot_camera(PlayerWidget*,int,JsonPacket)));
-
-//    connect(player,SIGNAL(click_event(PlayerWidget *,int)),\
-//            this,SLOT(player_event(PlayerWidget*,int)));
 }
 void MainWindow::widget_remove_camera(QWidget *w)
 {
@@ -117,4 +126,38 @@ void MainWindow::on_pushButton_stop_clicked()
 void MainWindow::on_pushButton_clear_buffer_clicked()
 {
     ui->textEdit_netbuffer->clear();
+}
+
+void MainWindow::on_pushButton_connect_clicked()
+{
+    clt.connect_to_server(ui->lineEdit_ip->text());
+}
+
+void MainWindow::on_comboBox_play_index_activated(const QString &arg1)
+{
+    prt(info,"%s selected",arg1.toStdString().data());
+    if(arg1=="all"){
+        play_all_cam();
+    }else{
+        play_one_cam(arg1.toInt());
+    }
+}
+
+void MainWindow::on_comboBox_del_index_activated(int index)
+{
+    deleting_index=index;
+}
+
+void MainWindow::on_checkBox_showoutput_clicked(bool checked)
+{
+    for(PlayerWidget *w:players){
+        w->show_output_data(checked);
+    }
+}
+
+void MainWindow::on_checkBox_showinput_clicked(bool checked)
+{
+    for(PlayerWidget *w:players){
+        w->show_input_data(checked);
+    }
 }

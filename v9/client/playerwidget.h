@@ -24,7 +24,7 @@ public:
     {
         connect(this,SIGNAL(triggered(bool)),this,SLOT(trig(bool)));
 
-       // connect(this,SIGNAL(()),this,SLOT(dest(QObject *)));
+        // connect(this,SIGNAL(()),this,SLOT(dest(QObject *)));
 
         txt=text;
         pkt=pk;
@@ -91,8 +91,8 @@ protected:
         }
         QPainter img_painter(&img);
         current_painter=&img_painter;
-
-// draw input
+        if(show_input){
+        // draw input
         camera_data.draw(bind(&PlayerWidget::draw_line,
                               this,placeholders::_1,
                               placeholders::_2,placeholders::_3,placeholders::_4),
@@ -104,7 +104,9 @@ protected:
                               placeholders::_2,placeholders::_3,placeholders::_4,
                               placeholders::_5)
                          );
-// draw output
+        }
+        if(show_output){
+        // draw output
         if(camera_data.data().str().size()>10)//TODO:better way?
             output_data.draw(
                         camera_data,
@@ -120,6 +122,7 @@ protected:
                              placeholders::_5)
 
                         );
+        }
 
 #if 1
         draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
@@ -221,15 +224,15 @@ public slots:
     }
     void choose_item (MyAction *act )
     {
-       // if(act->checked){
-            prt(info,"%s select",act->text().toStdString().data());
-            emit camera_request(act->pkt,this);
+        // if(act->checked){
+        prt(info,"%s select",act->text().toStdString().data());
+        emit camera_request(act->pkt,this);
         //}
-          //  clear_menu();
+        //  clear_menu();
     }
     void clear_menu()
     {
-          prt(info,"clear menu");
+        prt(info,"clear menu");
         for(QAction *a:actions){
             menu.removeAction(a);
             delete a;
@@ -283,11 +286,28 @@ public slots:
 
     void mouseDoubleClickEvent(QMouseEvent *e)
     {
-        //    if(++double_click_flag%2)
-        //        emit click_event(this,ClickEvent::SHOW_ONE);
-        //    else
-        //        emit click_event(this,ClickEvent::SHOW_ALL);
+        // emit double_click_event(this);//TODO:set full screen?
     }
+
+
+    void show_input_data(bool show)
+    {
+        if(show){
+            show_input=true;
+        }else{
+            show_input=false;
+        }
+    }
+    void show_output_data(bool show)
+    {
+        if(show){
+            show_output=true;
+        }else{
+            show_output=false;
+        }
+    }
+
+
 private:
     inline QPoint map_point(QPoint p)
     {
@@ -326,6 +346,9 @@ private:
     QPainter *current_painter;
     vector< MyAction *> actions;
     QMenu menu;
+    bool show_input;
+    bool show_output;
+
     //    QMenu player_menu;
     //    QAction choose_fvd;
 };

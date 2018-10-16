@@ -134,7 +134,7 @@ void VideoSource::run()
                 //                double ts3=vcap.get(CV_CAP_PROP_POS_MSEC);
                // long  ts=cvGetTickCount();
                 // prt(info,"%ld ", tc);
-                prt(info,"timestamp  %d ", ts);
+               // prt(info,"timestamp  %d ", ts);
                 frame_rate++;
 
                 if(!(frame_rate%30))
