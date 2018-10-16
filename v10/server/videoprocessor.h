@@ -944,6 +944,11 @@ public:
             }
             draw_vers_line(r.NearArea,draw_line);
 
+            for(int i=0;i<r.LaneArea.size();i++){
+                r.LaneArea[i].x+=offx;
+                r.LaneArea[i].y+=offy;
+            }
+            draw_vers_line(r.LaneArea,draw_line);
 
             //            for(int i=0;i<r.LaneArea.size();i++){
             //                r.LaneArea[i].x+=offx;
