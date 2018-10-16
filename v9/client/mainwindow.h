@@ -62,20 +62,8 @@ private slots:
                 thread_lock.unlock();
             }else{
                 prt(info,"server output index %d,out of range(1- %d), make sure you\
-             loaded the server cfg & camera size >0 ",rst.CameraIndex,cfg.CameraData.size());
+                loaded the server cfg & camera size >0 ",rst.CameraIndex,cfg.CameraData.size());
             }
-            //            thread_lock.lock();
-            //            //prt(info,"recving cam %d",cam_index);
-            //            if(players.size()<cam_index)
-            //            {
-            //                prt(info,"recving cam %d, our sz %d ",cam_index,players.size());
-            //                thread_lock.unlock();
-            //                continue;
-            //            }
-            //            PlayerWidget *w= players[cam_index-1];
-            //            w->set_overlay(rst.CameraOutput);
-            //            thread_lock.unlock();
-
         }
     }
     RequestPkt get_request_pkt(int op,int index, JsonPacket pkt)
@@ -95,26 +83,21 @@ private slots:
     void camera_request(RequestPkt req,PlayerWidget *wgt)
     {
         int idx=std::find(players.begin(),players.end(),wgt)-players.begin();
-        prt(info,"req frome camera %d",idx+1);
+        prt(info,"req from camera %d",idx+1);
         clt.send(get_request_pkt(AppInputData::MODIFY_CAMERA,idx+1,req.data()).data().str());
-        //  RequestPkt req1=get_request_pkt(AppInputData::MODIFY_CAMERA,i+1,req);
-
     }
     void request_get_config()
     {
-        //clt.get_config();
         RequestPkt req= AppInputData::get_request(AppInputData::GET_CONFIG,0,JsonPacket());
         clt.send(QByteArray(req.data().str().data()));
     }
     void request_add_cam(int pos, CameraInputData data)
     {
-        //clt.get_config();
         RequestPkt req= AppInputData::get_request(AppInputData::INSERT_CAMERA,pos,data.data());
         clt.send(QByteArray(req.data().str().data()));
     }
     void request_del_cam(int index)
     {
-        //clt.get_config();
         RequestPkt req= AppInputData::get_request(AppInputData::DELETE_CAMERA,index,JsonPacket());
         clt.send(QByteArray(req.data().str().data()));
     }
@@ -134,7 +117,6 @@ private slots:
     void stop_config()
     {
         thread_lock.lock();
-
         for(PlayerWidget *w:players){
             widget_remove_camera(w);
             w->hide();
