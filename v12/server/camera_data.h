@@ -124,6 +124,7 @@ public:
         for(int i=0;i<DetectRegion.size();i++){
             DetectRegionInputData &dt= DetectRegion[i];
             dt.move(pnt);
+            encode();
         }
         return true;
     }

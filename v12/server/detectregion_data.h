@@ -37,19 +37,37 @@ public:
     string SelectedProcessor;
     vector <VdPoint>ExpectedAreaVers;
     JsonPacket ProcessorData;//TODO: dynamic binding
-
-    DetectRegionInputData(JsonPacket pkt):JsonData(pkt)
+    void *p_processor;
+    DetectRegionInputData(JsonPacket pkt):JsonData(pkt),p_processor(NULL)
     {
         decode();
+        alloc_processor();
     }
-    DetectRegionInputData(JsonPacket pkt,PaintableData pd):JsonData(pkt),PaintableData(pd)
+    DetectRegionInputData(JsonPacket pkt,PaintableData pd):JsonData(pkt),PaintableData(pd),p_processor(NULL)
     {
         decode();
+        alloc_processor();
     }
     DetectRegionInputData(JsonPacket pdata,string type,vector<VdPoint> vers)
-        :ProcessorData(pdata),SelectedProcessor(type),ExpectedAreaVers(vers)
+        :ProcessorData(pdata),SelectedProcessor(type),ExpectedAreaVers(vers),p_processor(NULL)
     {
         encode();
+        alloc_processor();
+    }
+    void alloc_processor()
+    {
+        delete_processor();
+        if(SelectedProcessor==LABEL_PROCESSOR_DUMMY){
+            p_processor=new DummyProcessorInputData(ProcessorData);
+        }
+        if(SelectedProcessor==LABEL_PROCESSOR_MVD){
+            p_processor=new MvdProcessorInputData(ProcessorData);
+        }
+    }
+    void delete_processor()
+    {
+        if(p_processor)
+            delete p_processor;
     }
 
     inline VdRect reshape_2_rect(vector <VdPoint> area)
@@ -172,7 +190,6 @@ public:
             event_type=PaintableData::Event::MoveAll;
             return true;
         }
-        PaintableData pd;
         if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
         {
             //            draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
@@ -183,17 +200,13 @@ public:
         }
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
-            MvdProcessorInputData mid(ProcessorData,paintable_data);
+            //MvdProcessorInputData mid(ProcessorData,paintable_data);
 
-            mid.press(pnt);
-            //            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
-            //            VdRect r= reshape_2_rect(ExpectedAreaVers);
-            //            MvdProcessorInputData data(ProcessorData);
-            //            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
-            //       MvdProcessorInputData data=Result;
-            //     dat
-            //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
-            //                       draw_circle, draw_text);
+            //mid.press(pnt);
+            MvdProcessorInputData *mi=(MvdProcessorInputData *)p_processor;
+            bool ret=mi->press(pnt);
+            if(ret)
+                return ret;
         }
         return false;
     }
@@ -274,17 +287,12 @@ public:
 
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
-            MvdProcessorInputData mid(ProcessorData,paintable_data);
-
-            mid.move(pnt);
-            //            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
-            //            VdRect r= reshape_2_rect(ExpectedAreaVers);
-            //            MvdProcessorInputData data(ProcessorData);
-            //            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
-            //       MvdProcessorInputData data=Result;
-            //     dat
-            //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
-            //                       draw_circle, draw_text);
+            MvdProcessorInputData *mi=(MvdProcessorInputData *)p_processor;
+            bool ret=mi->move(pnt);
+            ProcessorData=mi->data();
+            encode();
+            if(ret)
+                return ret;
         }
         return true;
     }
@@ -364,7 +372,7 @@ public:
         }
 
     }
-    PaintableData paintable_data;
+
 };
 class ProcessorDataJsonDataRequest:public JsonData{
 public:

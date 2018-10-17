@@ -719,10 +719,10 @@ public:
     }
     MvdProcessorInputData(JsonPacket pkt,PaintableData pd)
     {
-//        seizing=pd.seizing;
-//        point_index=pd.point_index;
-//        event_type=pd.event_type;
-//        ori_pnt=pd.ori_pnt;
+        //        seizing=pd.seizing;
+        //        point_index=pd.point_index;
+        //        event_type=pd.event_type;
+        //        ori_pnt=pd.ori_pnt;
         config=pkt;
         decode();
     }
@@ -745,7 +745,7 @@ public:
         DECODE_INT_MEM(FarPointDistance);
         DECODE_JSONDATA_ARRAY_MEM(LaneData);
         DECODE_JSONDATA_ARRAY_MEM(DetectLine);
-        //    DECODE_JSONDATA_ARRAY_MEM(Events);
+        DECODE_JSONDATA_ARRAY_MEM(Events);
     }
     void encode()
     {
@@ -755,7 +755,7 @@ public:
         ENCODE_INT_MEM(FarPointDistance);
         ENCODE_JSONDATA_ARRAY_MEM(LaneData);
         ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
-        //   ENCODE_JSONDATA_ARRAY_MEM(Events);
+        ENCODE_JSONDATA_ARRAY_MEM(Events);
     }
 
     static LaneDataJsonData get_test_lane()
@@ -885,24 +885,38 @@ public:
         }
         return 0;
     }
+    inline bool p_on_lane_set(LaneDataJsonData &data,VdPoint p,int index)
+    {
+        if(index<1||index > 12)
+            return false;
+        int pi=0;
+        if(index>0&&index<=4){
+            data.LaneArea[index-1]=p;
+
+        }
+        if(index>4&&index<=8){
+            data.FarArea[(index-1)%4]=p;
+
+        }
+        if(index>8&&index<=12){
+            data.NearArea[(index-1)%4]=p;
+
+        }
+        data.set_point_adjust(p,index);
+        data.encode();
+        return true;
+    }
     bool press(VdPoint pnt)
     {
         for(int i=0;i<LaneData.size();i++){
             if((point_index=p_on_lane(LaneData[i],pnt)+i*12)){
                 seizing=true;
                 event_type=PaintableData::Event::MoveVer;
-                 prt(info,"mvd press index %d",point_index)
+                prt(info,"mvd press index %d",point_index)
                 return true;
             }
         }
-        //        if(p_on_vl(ExpectedAreaVers,pnt)){
-        //            seizing=true;
-        //            ori_pnt=pnt;
-        //            event_type=PaintableData::Event::MoveAll;
-        //            return true;
-        //        }
-
-                return false;
+        return false;
     }
     bool right_press(VdPoint pnt)
     {
@@ -914,7 +928,18 @@ public:
     {
         prt(info,"mvd move");
         if(seizing){
-            prt(info,"pnt %d move to %d,%d",point_index,pnt.x,pnt.y);
+            if(event_type==PaintableData::Event::MoveVer){
+                if(point_index>=1&&LaneData.size()>(point_index-1)/12){
+                    p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,point_index);
+                }
+            }
+//            if(event_type==PaintableData::Event::MoveAll){
+//                if(point_index>=1&&LaneData.size()>(point_index-1)/12){
+//                    p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,point_index);
+//                }
+//            }
+            encode();
+            return true;
         }
         return false;
     }
