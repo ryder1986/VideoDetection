@@ -271,6 +271,21 @@ public:
             return true;
 
         }
+
+        if(SelectedProcessor== LABEL_PROCESSOR_MVD)
+        {
+            MvdProcessorInputData mid(ProcessorData,paintable_data);
+
+            mid.move(pnt);
+            //            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
+            //            VdRect r= reshape_2_rect(ExpectedAreaVers);
+            //            MvdProcessorInputData data(ProcessorData);
+            //            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
+            //       MvdProcessorInputData data=Result;
+            //     dat
+            //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
+            //                       draw_circle, draw_text);
+        }
         return true;
     }
     virtual bool double_click(VdPoint pnt)
@@ -292,6 +307,21 @@ public:
             req=DetectRegionInputData::get_request_pkt(DetectRegionInputData::CHANGE_RECT,0,req1.data());
             release_event();
             return true;
+        }
+
+        if(SelectedProcessor== LABEL_PROCESSOR_MVD)
+        {
+      //      MvdProcessorInputData mid(ProcessorData,paintable_data);
+
+        //    mid.release();
+            //            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
+            //            VdRect r= reshape_2_rect(ExpectedAreaVers);
+            //            MvdProcessorInputData data(ProcessorData);
+            //            data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
+            //       MvdProcessorInputData data=Result;
+            //     dat
+            //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
+            //                       draw_circle, draw_text);
         }
         return false;
     }

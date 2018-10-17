@@ -719,19 +719,14 @@ public:
     }
     MvdProcessorInputData(JsonPacket pkt,PaintableData pd)
     {
-        seizing=pd.seizing;
-        point_index=pd.point_index;
-        event_type=pd.event_type;
-        ori_pnt=pd.ori_pnt;
+//        seizing=pd.seizing;
+//        point_index=pd.point_index;
+//        event_type=pd.event_type;
+//        ori_pnt=pd.ori_pnt;
         config=pkt;
         decode();
     }
-    //    MvdProcessorInputData(  vector <VdPoint> bl,BaseLineJsonData be,int i1, int i2, vector <LaneDataJsonData>  ld, vector <VdPoint>de):
-    //        BasicCoil(bl), BaseLine(be), NearPointDistance(i1), FarPointDistance(i2), LaneData(ld),DetectLine(de)
 
-    //    {
-    //        encode();
-    //    }
     MvdProcessorInputData(  vector <VdPoint> bl,BaseLineJsonData be,int i1, int i2,
                             vector <LaneDataJsonData>  ld, vector <VdPoint>de
                             ,vector <EventRegion> es):
@@ -876,30 +871,51 @@ public:
         return ret;
     }
 
+    inline int p_on_lane(LaneDataJsonData data,VdPoint p,int distance=10)
+    {
+        int pi=0;
+        if((pi=p_on_v(data.LaneArea,p))>0){
+            return pi;
+        }
+        if((pi=p_on_v(data.FarArea,p))>0){
+            return pi+4;
+        }
+        if((pi=p_on_v(data.NearArea,p))>0){
+            return pi+4+4;
+        }
+        return 0;
+    }
     bool press(VdPoint pnt)
     {
-        //        if((point_index=p_on_v(ExpectedAreaVers,pnt))){
-        //            seizing=true;
-        //            event_type=PaintableData::Event::MoveVer;
-        //            return true;
-        //        }
+        for(int i=0;i<LaneData.size();i++){
+            if((point_index=p_on_lane(LaneData[i],pnt)+i*12)){
+                seizing=true;
+                event_type=PaintableData::Event::MoveVer;
+                 prt(info,"mvd press index %d",point_index)
+                return true;
+            }
+        }
         //        if(p_on_vl(ExpectedAreaVers,pnt)){
         //            seizing=true;
         //            ori_pnt=pnt;
         //            event_type=PaintableData::Event::MoveAll;
         //            return true;
         //        }
-        prt(info,"mvd press")
+
                 return false;
     }
     bool right_press(VdPoint pnt)
     {
         //  seizing=true;
-        prt(info,"mvd right press")
+        prt(info,"mvd right press,  point index %d",point_index)
                 return false;
     }
     bool move(VdPoint pnt)
     {
+        prt(info,"mvd move");
+        if(seizing){
+            prt(info,"pnt %d move to %d,%d",point_index,pnt.x,pnt.y);
+        }
         return false;
     }
     bool double_click(VdPoint pnt)
