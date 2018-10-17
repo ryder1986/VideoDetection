@@ -644,12 +644,12 @@ public:
     {
 
     }
-    void    operator =(VdPoint p)
-    {
-        x=p.x;
-        y=p.y;
-        encode();
-    }
+//    void    operator =(VdPoint p)
+//    {
+//        x=p.x;
+//        y=p.y;
+//        encode();
+//    }
     void decode()
     {
         DECODE_INT_MEM(x);

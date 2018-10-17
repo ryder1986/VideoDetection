@@ -223,7 +223,7 @@ public:
             text.push_back("change to mvd");
             text.push_back("change to dummy");
             p=get_request(DetectRegionInputData::CHANGE_PROCESSOR,0,
-            get_region_test_data(MvdProcessorInputData::get_mvd_test_data().data(),LABEL_PROCESSOR_MVD).data());
+                          get_region_test_data(MvdProcessorInputData::get_mvd_test_data().data(),LABEL_PROCESSOR_MVD).data());
             pkts.push_back(p);
             p=get_request(DetectRegionInputData::CHANGE_PROCESSOR,0,
                           get_region_test_data(DummyProcessorInputData::get_dummy_test_data().data(),LABEL_PROCESSOR_DUMMY).data());
@@ -233,6 +233,28 @@ public:
         if(p_on_vl(ExpectedAreaVers,pnt)){
 
             return true;
+        }
+
+        if(SelectedProcessor== LABEL_PROCESSOR_MVD)
+        {
+            MvdProcessorInputData *mi=(MvdProcessorInputData *)p_processor;
+            bool ret=mi->right_press(pnt,pkts,text);
+            if(ret){
+                MvdProcessorInputData d1(mi->data());
+                d1.add_lane();
+                p=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,d1.data());
+                pkts.push_back(p);
+                text.push_back("add lane");
+
+                MvdProcessorInputData d2(mi->data());
+                d2.del_lane((mi->point_index-1)/12+1);
+                prt(info,"deling lane %d",(mi->point_index-1)/12+1);
+                p=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,d2.data());
+                pkts.push_back(p);
+                text.push_back("del lane");
+
+                return ret;
+            }
         }
         return false;
     }
@@ -249,7 +271,6 @@ public:
     bool right_press(VdPoint pnt,A exec_menu)
     {
         if((point_index=p_on_v(ExpectedAreaVers,pnt))){
-            // exec_menu((bind(&DetectRegionInputData::change_processor_2_dummy,this),this);
             return true;
         }
         if(p_on_vl(ExpectedAreaVers,pnt)){
@@ -319,9 +340,16 @@ public:
 
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
-      //      MvdProcessorInputData mid(ProcessorData,paintable_data);
+            MvdProcessorInputData *mi=(MvdProcessorInputData *)p_processor;
+            bool ret=mi->release(req);
+            if(ret){
+                req=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                return true;
+            }
 
-        //    mid.release();
+            //      MvdProcessorInputData mid(ProcessorData,paintable_data);
+
+            //    mid.release();
             //            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
             //            VdRect r= reshape_2_rect(ExpectedAreaVers);
             //            MvdProcessorInputData data(ProcessorData);

@@ -72,9 +72,11 @@ public:
     {
         for(int i=0;i<DetectRegion.size();i++){
             DetectRegionInputData &dt= DetectRegion[i];
-            dt.press(pnt);
+            int ret=dt.press(pnt);
+            if(ret)
+                return ret;
         }
-        return true;
+        return false;
     }
     virtual bool press_right_button(VdPoint pnt)
     {

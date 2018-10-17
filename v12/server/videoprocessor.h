@@ -335,9 +335,9 @@ public:
         if(index<=4)
             LaneArea[index-1]=p;
         if(index>4&&index<=4*2)
-            NearArea[(index-1)%4]=p;
-        if(index>4*2&&index<=4*3)
             FarArea[(index-1)%4]=p;
+        if(index>4*2&&index<=4*3)
+            NearArea[(index-1)%4]=p;
         encode();
     }
     int get_valid_x(int x1,int y1,int x2,int y2,int valid_y)
@@ -470,17 +470,16 @@ public:
     void decode()
     {
         DECODE_INT_MEM(LaneNo);
+        DECODE_JSONDATA_ARRAY_MEM(LaneArea);
         DECODE_JSONDATA_ARRAY_MEM(FarArea);
         DECODE_JSONDATA_ARRAY_MEM(NearArea);
-        DECODE_JSONDATA_ARRAY_MEM(LaneArea);
-
     }
     void encode()
     {
         ENCODE_INT_MEM(LaneNo);
-        ENCODE_JSONDATA_ARRAY_MEM(FarArea);
-        ENCODE_JSONDATA_ARRAY_MEM(NearArea);
         ENCODE_JSONDATA_ARRAY_MEM(LaneArea);
+        ENCODE_JSONDATA_ARRAY_MEM(NearArea);
+        ENCODE_JSONDATA_ARRAY_MEM(FarArea);
     }
 };
 class FvdProcessorInputData:public JsonData{
@@ -757,6 +756,17 @@ public:
         ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
         ENCODE_JSONDATA_ARRAY_MEM(Events);
     }
+    void add_lane()
+    {
+        LaneDataJsonData  la=get_test_lane();
+        LaneData.push_back(la);
+        encode();
+    }
+    void del_lane(int index)
+    {
+        LaneData.erase(LaneData.begin()+index-1);
+        encode();
+    }
 
     static LaneDataJsonData get_test_lane()
     {
@@ -877,10 +887,10 @@ public:
         if((pi=p_on_v(data.LaneArea,p))>0){
             return pi;
         }
-        if((pi=p_on_v(data.FarArea,p))>0){
+        if((pi=p_on_v(data.NearArea,p))>0){
             return pi+4;
         }
-        if((pi=p_on_v(data.NearArea,p))>0){
+        if((pi=p_on_v(data.FarArea,p))>0){
             return pi+4+4;
         }
         return 0;
@@ -895,11 +905,11 @@ public:
 
         }
         if(index>4&&index<=8){
-            data.FarArea[(index-1)%4]=p;
+            data.NearArea[(index-1)%4]=p;
 
         }
         if(index>8&&index<=12){
-            data.NearArea[(index-1)%4]=p;
+            data.FarArea[(index-1)%4]=p;
 
         }
         data.set_point_adjust(p,index);
@@ -909,35 +919,57 @@ public:
     bool press(VdPoint pnt)
     {
         for(int i=0;i<LaneData.size();i++){
-            if((point_index=p_on_lane(LaneData[i],pnt)+i*12)){
+            if((point_index=p_on_lane(LaneData[i],pnt))>0){
+                point_index+=i*12;
                 seizing=true;
                 event_type=PaintableData::Event::MoveVer;
                 prt(info,"mvd press index %d",point_index)
-                return true;
+                        return true;
             }
         }
         return false;
     }
-    bool right_press(VdPoint pnt)
+
+    bool right_press(VdPoint pnt,vector<RequestPkt> &pkts,vector<string> &text)
     {
-        //  seizing=true;
-        prt(info,"mvd right press,  point index %d",point_index)
-                return false;
+        int i=0;
+        for(LaneDataJsonData da:LaneData){
+            if((point_index=p_on_v(da.LaneArea,pnt))){
+                RequestPkt re;
+                point_index+=i*12;
+                return  true;
+            }
+            if((point_index=p_on_v(da.NearArea,pnt))){
+                RequestPkt re;
+                point_index+=i*12+4;
+                return  true;
+            }
+            if((point_index=p_on_v(da.FarArea,pnt))){
+                RequestPkt re;
+                point_index+=i*12+4+4;
+                return  true;
+            }
+            i++;
+        }
+
+        return false;
     }
     bool move(VdPoint pnt)
     {
-        prt(info,"mvd move");
+
         if(seizing){
             if(event_type==PaintableData::Event::MoveVer){
                 if(point_index>=1&&LaneData.size()>(point_index-1)/12){
-                    p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,point_index);
+                    p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,(point_index-1)%12+1);
+                }else{
+                       prt(info,"lane sz %d,but choose %d" ,LaneData.size(),(point_index-1)/12 );
                 }
             }
-//            if(event_type==PaintableData::Event::MoveAll){
-//                if(point_index>=1&&LaneData.size()>(point_index-1)/12){
-//                    p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,point_index);
-//                }
-//            }
+            //            if(event_type==PaintableData::Event::MoveAll){
+            //                if(point_index>=1&&LaneData.size()>(point_index-1)/12){
+            //                    p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,point_index);
+            //                }
+            //            }
             encode();
             return true;
         }
@@ -948,11 +980,22 @@ public:
 
         return false;
     }
-    void release()
+    bool release(RequestPkt &req)
     {
-        seizing=false;
-
+        if(seizing){
+            prt(info,"release");
+            //AreaVersJsonDataRequest req1(ExpectedAreaVers);
+            //req=MvdProcessorInputData::get_request_pkt(,0,req1.data());
+            release_event();
+            return true;
+        }
+        return false;
     }
+    //    void release()
+    //    {
+    //        seizing=false;
+
+    //    }
     template <typename A>
     void draw_vers_line(vector<VdPoint> ps,A draw_line)
     {
@@ -976,18 +1019,26 @@ public:
             for(int i=0;i<r.FarArea.size();i++){
                 r.FarArea[i].x+=offx;
                 r.FarArea[i].y+=offy;
+                draw_circle(r.FarArea[i],4,PaintableData::Colour::Red,2);
+                draw_text("f",r.FarArea[i],1,PaintableData::Colour::Green,2);
             }
             draw_vers_line(r.FarArea,draw_line);
 
             for(int i=0;i<r.NearArea.size();i++){
                 r.NearArea[i].x+=offx;
                 r.NearArea[i].y+=offy;
+                draw_circle(r.NearArea[i],4,PaintableData::Colour::Red,2);
+                draw_text("n",r.NearArea[i],1,PaintableData::Colour::Green,2);
+
             }
             draw_vers_line(r.NearArea,draw_line);
 
             for(int i=0;i<r.LaneArea.size();i++){
                 r.LaneArea[i].x+=offx;
                 r.LaneArea[i].y+=offy;
+                draw_circle(r.LaneArea[i],4,PaintableData::Colour::Red,2);
+                draw_text("l",r.LaneArea[i],1,PaintableData::Colour::Green,2);
+
             }
             draw_vers_line(r.LaneArea,draw_line);
 
