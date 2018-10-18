@@ -80,6 +80,12 @@ public:
         }
         return img;
     }
+    void set_delay(int frames)
+    {
+        delay_frames=frames;
+        src.set_buffer_size(frames);
+    }
+
 protected:
     void paintEvent(QPaintEvent *)
     {
@@ -352,7 +358,7 @@ private:
     QMenu menu;
     bool show_input;
     bool show_output;
-
+    int delay_frames;
     //    QMenu player_menu;
     //    QAction choose_fvd;
 };

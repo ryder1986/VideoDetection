@@ -78,6 +78,20 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_wait_ms">
+         <property name="text">
+          <string>wait ms,input here</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_waitms">
+         <property name="text">
+          <string>ok</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

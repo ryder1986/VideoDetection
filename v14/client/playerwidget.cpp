@@ -6,6 +6,7 @@ PlayerWidget::PlayerWidget(CameraInputData data,QWidget *parent) : QWidget(paren
 {
     show_input=true;
     show_output=true;
+    delay_frames=0;
 
     camera_data=data;
     tick_timer=new QTimer();

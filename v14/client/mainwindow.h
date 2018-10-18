@@ -155,7 +155,7 @@ private slots:
         for(PlayerWidget *w:players){
             widget_remove_camera(w);
             w->hide();
-            //  delete w;//TODO: add deleting method
+            delete w;//TODO: add deleting method
         }
         players.clear();
         thread_lock.unlock();
@@ -187,6 +187,8 @@ private slots:
     void on_checkBox_showoutput_clicked(bool checked);
 
     void on_checkBox_showinput_clicked(bool checked);
+
+    void on_pushButton_waitms_clicked();
 
 private:
     Ui::MainWindow *ui;

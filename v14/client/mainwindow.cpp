@@ -161,3 +161,15 @@ void MainWindow::on_checkBox_showinput_clicked(bool checked)
         w->show_input_data(checked);
     }
 }
+
+void MainWindow::on_pushButton_waitms_clicked()
+{
+     int ms=(ui->lineEdit_wait_ms->text().toInt());
+     if(ms>0){
+         ms=(ms<10000)?ms:10000;
+     }
+     for(PlayerWidget *w:players){
+         w->set_delay(ms/40);
+     }
+
+}

@@ -27,6 +27,11 @@ public:
     VideoSource(string path);
     VideoSource(string path,bool only_key_frame);
      ~VideoSource();
+    void set_buffer_size(int frames)
+    {
+        queue_length=frames;
+    }
+
     inline string get_url()
     {
         return url;
@@ -104,7 +109,7 @@ public:
 
         bool ret=false;
         frame_lock.lock();
-
+#if 0
         if(frame_list.size()>0){
           //  frame_list.front().copyTo(frame);
             frame_list.back().copyTo(frame);
@@ -124,6 +129,28 @@ public:
         }else{
             ret=false;
         }
+#else
+        if(frame_list.size()>0){
+          //  frame_list.front().copyTo(frame);
+          //  frame_list.back().copyTo(frame);
+            frame_list.front().copyTo(frame);//get old
+
+
+            //            int start_time=get_ms();
+            //  prt(info,"%d,%d",frame.cols,frame.rows);
+            //           resize(frame,frame,Size( 640,480),CV_INTER_LINEAR);
+            //           int end_time=get_ms();
+            //           prt(info,"%d",end_time-start_time);
+
+
+            //frame_list.erase(frame_list.begin());
+            timestamp=cur_ms_list.front();
+            //cur_ms_list.erase(cur_ms_list.begin());
+            ret=true;
+        }else{
+            ret=false;
+        }
+#endif
         frame_lock.unlock();
         return ret;
     }
@@ -131,6 +158,7 @@ private:
     void run();
     void check_point()
     {
+        prt(info,"%s runing , queue len %d",url.data(),queue_length);
         if(vcap.isOpened()){
             //double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
         }else{
@@ -163,6 +191,7 @@ private:
     int try_times;
 
     bool only_key_frame;
+    int queue_length;
 };
 #endif
 #endif // VIDEOSOURCE_H

@@ -9,6 +9,7 @@ VideoSource::VideoSource(string path):watch_dog(bind(&VideoSource::check_point,t
     try_times=0;
     url=path;
     watch_dog.start(1000);
+    queue_length=3;
 #if 0
     vcap.open(path);
 #endif
@@ -37,7 +38,7 @@ VideoSource::VideoSource(string path,bool only_keyframe):watch_dog(bind(&VideoSo
     prt(info,"%s",path.data());
     url=path;
     quit_flg=false;
-
+    queue_length=3;
     if(end_with_str(url,"png")){
         imread(url).copyTo(png_frame);
         prt(info,"read png");
@@ -122,8 +123,9 @@ void VideoSource::run()
                 prt(info,"%s get frame error,retrying ... ", url.data());
                 continue;
             }else{
-             int ts=vcap.get(CV_CAP_PROP_POS_MSEC);
-               //    int ts=vcap.get(CV_CAP_PROP_POS_AVI_RATIO);
+                long int ts=vcap.get(CV_CAP_PROP_POS_MSEC);
+                long int fs=vcap.get(CV_CAP_PROP_POS_FRAMES);
+                //    int ts=vcap.get(CV_CAP_PROP_POS_AVI_RATIO);
 
                 //     int ts=vcap.get(CV_CAP_PROP_POS_FRAMES);;
                 //    int ts=vcap.get(CV_CAP_PROP_FRAME_COUNT);
@@ -134,7 +136,8 @@ void VideoSource::run()
                 //                double ts3=vcap.get(CV_CAP_PROP_POS_MSEC);
                // long  ts=cvGetTickCount();
                 // prt(info,"%ld ", tc);
-               // prt(info,"timestamp  %d ", ts);
+              //  prt(info,"timestamp  %lu ", ts);
+                //prt(info,"timestamp  %lu ", fs);
                 frame_rate++;
 
                 if(!(frame_rate%30))
@@ -142,9 +145,13 @@ void VideoSource::run()
                     //prt(info,"running %s",url.data());
                 }
                 frame_lock.lock();
-                if(frame_list.size()<3&&frame.rows>0&&frame.cols>0){
+                if(frame.rows>0&&frame.cols>0){
                     frame_list.push_back(frame);
-                    cur_ms_list.push_back(ts/1000000);
+                    cur_ms_list.push_back(ts/1000+fs*40);
+                    while(frame_list.size()>queue_length&&queue_length){
+                        frame_list.erase(frame_list.begin());
+                        cur_ms_list.erase(cur_ms_list.begin());
+                    }
                 }
                 frame_lock.unlock();
 
