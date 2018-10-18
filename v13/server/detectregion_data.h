@@ -467,18 +467,19 @@ public:
     template <typename A,typename B,typename C>
     void draw(
             A draw_line,
-            B draw_circle,C draw_text,DetectRegionInputData data)
+            B draw_circle,C draw_text,DetectRegionInputData input_data)
     {
-        if(data.SelectedProcessor== LABEL_PROCESSOR_DUMMY)
+        if(input_data.SelectedProcessor== LABEL_PROCESSOR_DUMMY)
         {
             DummyProcessorOutputData data=Result;
             data.draw(DetectionRect.x,DetectionRect.y, draw_line,
                       draw_circle, draw_text);
         }
-        if(data.SelectedProcessor== LABEL_PROCESSOR_MVD)
+        if(input_data.SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
             MvdProcessorOutputData data=Result;
-            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
+            MvdProcessorInputData i_data(input_data.ProcessorData);
+            data.draw(i_data,DetectionRect.x,DetectionRect.y, draw_line,
                       draw_circle, draw_text);
         }
 

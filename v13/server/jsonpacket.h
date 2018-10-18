@@ -363,7 +363,7 @@ private:
         JsonValue v=val;
         rst=v[name].isNull();
         if(rst&&(str=="get"||str=="set")){
-            //throw Exception("no keyword");
+            //throw exception();
             //prt(info," (%s) not exist or no data",name.data());
             //print_backstrace();
             return false;

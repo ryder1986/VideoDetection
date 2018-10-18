@@ -962,7 +962,7 @@ public:
                 if(point_index>=1&&LaneData.size()>(point_index-1)/12){
                     p_on_lane_set(LaneData[(point_index-1)/(12)],pnt,(point_index-1)%12+1);
                 }else{
-                       prt(info,"lane sz %d,but choose %d" ,LaneData.size(),(point_index-1)/12 );
+                    prt(info,"lane sz %d,but choose %d" ,LaneData.size(),(point_index-1)/12 );
                 }
             }
             //            if(event_type==PaintableData::Event::MoveAll){
@@ -1149,9 +1149,26 @@ public:
 
 
     }
+    template <typename A>
+    void draw_vers(vector<VdPoint> pns ,A draw_line )
+    {
+        if(pns.size()==4){
+            VdPoint p1(pns[0].x,pns[0].y);
+            VdPoint p2(pns[1].x,pns[1].y);
+            VdPoint p3(pns[2].x,pns[2].y);
+            VdPoint p4(pns[3].x,pns[3].y);
 
+            draw_line(p1,p2,PaintableData::Colour::Red,2);
+            draw_line(p2,p3,PaintableData::Colour::Red,2);
+            draw_line(p3,p4,PaintableData::Colour::Red,2);
+            draw_line(p1,p4,PaintableData::Colour::Red,2);
+        }else{
+            prt(info,"not 4 line");
+        }
+
+    }
     template <typename A,typename B,typename C>
-    void draw(int offx,int offy,
+    void draw(MvdProcessorInputData data,int offx,int offy,
               A draw_line,
               B draw_circle,C draw_text)
     {
@@ -1165,6 +1182,26 @@ public:
         }
         for(VdRect r:rcts)
             draw_rect(r,draw_line);
+        vector<VdPoint> vers;
+        int i=0;
+        for(LaneDataJsonData l:data.LaneData){
+            LaneOutputJsonData ld=LaneOutputData[i];
+            if(ld.NearCarExist){
+                vers.clear();
+                for(VdPoint p:l.NearArea){
+                    vers.push_back(VdPoint(p.x+offx,p.y+offy));
+                }
+                draw_vers( vers,draw_line);
+            }
+            if(ld.FarCarExist){
+                vers.clear();
+                for(VdPoint p:l.FarArea){
+                    vers.push_back(VdPoint(p.x+offx,p.y+offy));
+                }
+                draw_vers( vers,draw_line);
+            }
+            i++;
+        }
     }
 };
 #endif // VIDEOPROCESSOR_H
