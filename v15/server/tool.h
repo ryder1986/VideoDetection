@@ -28,6 +28,48 @@ using namespace std;
 #include <execinfo.h>
 #include <cxxabi.h>
 #define BT_BUF_SIZE 100
+
+#include <dirent.h>
+
+inline int dir_count(char *dirname)
+{
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(dirname);
+    if (d) {
+        int num=0;
+        while ((dir = readdir(d)) != NULL) {
+            num++;
+
+        }
+        closedir(d);
+        return num;
+    }
+    return -1;
+}
+inline void delete_dir_files(char *dirname,int total,int left)
+{
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(dirname);
+    if (d) {
+        int num=0;
+        while ((dir = readdir(d)) != NULL&&  num++<(total-left)) {
+
+               printf("Deleteing %s,type %d  \n",dir->d_name,dir->d_type);
+               char buf[1000];
+               memset(buf,0,1000);
+               sprintf(buf,"%s/%s",dirname,dir->d_name);
+              // printf("%s\n",buf);
+            if (remove(buf) == 0)
+                printf("Deleted %s successfully\n",dir->d_name);
+            else
+                printf("Unable to  delete  %s \n",dir->d_name);
+        }
+        closedir(d);
+    }
+}
+
 inline string get_last_sub_string(string str,char t)
 {
     unsigned int pos;

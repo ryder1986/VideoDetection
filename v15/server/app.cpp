@@ -1,10 +1,10 @@
 #include "app.h"
 #include "socket.h"
-App::App()
+App::App():watch_dog(bind(&App::check_point,this))
 {
 
 }
-App::App(ConfigManager *p_config_manager):str_stream(""),
+App::App(ConfigManager *p_config_manager):str_stream(""),watch_dog(bind(&App::check_point,this)),
     VdData(DeviceConfigData(p_config_manager->get_config()).DeviceConfig.data()),lservice(),p_cm(p_config_manager),udp_fd(0)
 {
     stream_cmd=NULL;
@@ -18,10 +18,12 @@ App::App(ConfigManager *p_config_manager):str_stream(""),
                                      )
                                 );
     restart_all();
+    watch_dog.start(1000*60);//do check every 1 minute
 }
 
 App::~App()
 {
+    watch_dog.stop();
     if(udp_fd>0)
         close(udp_fd);
 

@@ -108,6 +108,19 @@ private:
         }
         return ret;
     }
+    void check_point()
+    {
+
+//        while(1){
+//            this_thread::sleep_for(chrono::seconds(1));
+//        }
+        int count=dir_count("/ftphome/pic");
+        prt(info,"check files %d---->",count);
+        int left=1000;
+        if(count>left){
+            delete_dir_files("/ftphome/pic",count,left);
+        }
+    }
 private:
     vector <Session*> *stream_cmd;//clients who connected to our server
     string str_stream;//
@@ -117,6 +130,7 @@ private:
     vector <DestClient > dest_clients;
     string client_tmp_ip;
     int udp_fd;
+    Timer1 watch_dog;
 };
 
 
