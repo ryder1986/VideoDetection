@@ -66,7 +66,7 @@ public:
         cv::Mat bgr_frame;
         cv::Mat rgb_frame;
         int ts;
-        bgr_frame =cv::imread("/root/test.png");
+        bgr_frame =cv::imread("res/no_image.png");
         //prt(info,"get ts %d",ts);
         if(!bgr_frame.empty()){
             cv::cvtColor(bgr_frame,rgb_frame,CV_BGR2RGB);
@@ -85,53 +85,57 @@ protected:
     {
 #if 1
         lock.lock();
-        QPainter this_painter(this);
-        if(!get_img()){
-            img=get_test_img();
-        }
-        QPainter img_painter(&img);
-        current_painter=&img_painter;
-        if(show_input){
-        // draw input
-        camera_data.draw(bind(&PlayerWidget::draw_line,
-                              this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4),
-                         bind(&PlayerWidget::draw_circle,
-                              this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4),
-                         bind(&PlayerWidget::draw_text,
-                              this,placeholders::_1,
-                              placeholders::_2,placeholders::_3,placeholders::_4,
-                              placeholders::_5)
-                         );
-        }
-        if(show_output){
-        // draw output
-        if(camera_data.data().str().size()>10)//TODO:better way?
-            output_data.draw(
-                        camera_data,
-                        bind(&PlayerWidget::draw_line,
-                             this,placeholders::_1,
-                             placeholders::_2,placeholders::_3,placeholders::_4),
-                        bind(&PlayerWidget::draw_circle,
-                             this,placeholders::_1,
-                             placeholders::_2,placeholders::_3,placeholders::_4),
-                        bind(&PlayerWidget::draw_text,
-                             this,placeholders::_1,
-                             placeholders::_2,placeholders::_3,placeholders::_4,
-                             placeholders::_5)
+        try{
+            QPainter this_painter(this);
+            if(!get_img()){
+                img=get_test_img();
+            }
+            QPainter img_painter(&img);
+            current_painter=&img_painter;
+            if(show_input){
+                // draw input
+                camera_data.draw(bind(&PlayerWidget::draw_line,
+                                      this,placeholders::_1,
+                                      placeholders::_2,placeholders::_3,placeholders::_4),
+                                 bind(&PlayerWidget::draw_circle,
+                                      this,placeholders::_1,
+                                      placeholders::_2,placeholders::_3,placeholders::_4),
+                                 bind(&PlayerWidget::draw_text,
+                                      this,placeholders::_1,
+                                      placeholders::_2,placeholders::_3,placeholders::_4,
+                                      placeholders::_5)
+                                 );
+            }
+            if(show_output){
+                // draw output
+                if(camera_data.data().str().size()>10)//TODO:better way?
+                    output_data.draw(
+                                camera_data,
+                                bind(&PlayerWidget::draw_line,
+                                     this,placeholders::_1,
+                                     placeholders::_2,placeholders::_3,placeholders::_4),
+                                bind(&PlayerWidget::draw_circle,
+                                     this,placeholders::_1,
+                                     placeholders::_2,placeholders::_3,placeholders::_4),
+                                bind(&PlayerWidget::draw_text,
+                                     this,placeholders::_1,
+                                     placeholders::_2,placeholders::_3,placeholders::_4,
+                                     placeholders::_5)
 
-                        );
-        }
+                                );
+            }
 
 #if 1
-        draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
-        draw_text(QString("data ts late for : ").append(QString::number(timestamp-output_data.Timestamp)).append(" ms").toStdString().data(),VdPoint(200,350),100,PaintableData::Red,30);
+            draw_text(QString("img ts: ").append(QString::number(timestamp)).toStdString().data(),VdPoint(200,320),100,PaintableData::Red,30);
+            draw_text(QString("data ts late for : ").append(QString::number(timestamp-output_data.Timestamp)).append(" ms").toStdString().data(),VdPoint(200,350),100,PaintableData::Red,30);
 #endif
-        if(!img.isNull()){
-            this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
+            if(!img.isNull()){
+                this_painter.drawImage(QRect(0,0,this->width(),this->height()),img);
+            }
         }
-
+        catch(exception e){
+            prt(info,"exception in image");
+        }
 
         lock.unlock();
 #endif

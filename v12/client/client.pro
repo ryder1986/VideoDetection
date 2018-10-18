@@ -47,7 +47,9 @@ HEADERS+=$$SERVER_PATH/jsonpacket.h
 INCLUDEPATH+=$$SERVER_PATH/cppjson/include
 SOURCES += $$SERVER_PATH/cppjson/json_reader.cpp \
 $$SERVER_PATH/cppjson/json_writer.cpp \
- $$SERVER_PATH/cppjson/json_value.cpp
+$$SERVER_PATH/cppjson/json_value.cpp
+
+
 win32{
     DEFINES+=IS_WIN
 }
@@ -66,16 +68,19 @@ CONFIG+=c++11
     LIBS+=-lopencv_imgproc
     LIBS+=-lswresample
 }else{
-message(build win32)
-INCLUDEPATH+=C:\opencv3.2\opencv\build\include
-debug{
-LIBS+=-LC:\opencv3.2\opencv\build\x64\vc14\lib -lopencv_world320d
-}
-release{
-LIBS+=-LC:\opencv3.2\opencv\build\x64\vc14\lib -lopencv_world320
-}
+    message(build win32)
+    INCLUDEPATH+=C:\opencv3.2\opencv\build\include
+    debug{
+    LIBS+=-LC:\opencv3.2\opencv\build\x64\vc14\lib -lopencv_world320d
+    }
+    release{
+    LIBS+=-LC:\opencv3.2\opencv\build\x64\vc14\lib -lopencv_world320
+    }
 
 }
 
 
 
+install_files.files+=res/
+install_files.path=$$OUT_PWD/
+INSTALLS+=install_files
