@@ -112,6 +112,7 @@ protected:
                                       placeholders::_5)
                                  );
             }
+           // if(0){
             if(show_output){
                 // draw output
                 if(camera_data.data().str().size()>10)//TODO:better way?

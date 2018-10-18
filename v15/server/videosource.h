@@ -158,7 +158,7 @@ private:
     void run();
     void check_point()
     {
-        prt(info,"%s runing , queue len %d",url.data(),queue_length);
+       // prt(info,"%s runing , queue len %d",url.data(),queue_length);
         if(vcap.isOpened()){
             //double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
         }else{
@@ -192,6 +192,9 @@ private:
 
     bool only_key_frame;
     int queue_length;
+    int old_frame_num;
+    int old_ntp;
+
 };
 #endif
 #endif // VIDEOSOURCE_H

@@ -125,6 +125,14 @@ void VideoSource::run()
             }else{
                 long int ts=vcap.get(CV_CAP_PROP_POS_MSEC);
                 long int fs=vcap.get(CV_CAP_PROP_POS_FRAMES);
+                int dis=fs-old_frame_num;
+                int ms=ts/100;
+                if(dis>0&&dis<1000){
+                      ms+=40*dis;
+                }
+                   if(old_ntp!=ts)
+                     old_frame_num=fs;
+                old_ntp=ts;
                 //    int ts=vcap.get(CV_CAP_PROP_POS_AVI_RATIO);
 
                 //     int ts=vcap.get(CV_CAP_PROP_POS_FRAMES);;
@@ -147,7 +155,8 @@ void VideoSource::run()
                 frame_lock.lock();
                 if(frame.rows>0&&frame.cols>0){
                     frame_list.push_back(frame);
-                    cur_ms_list.push_back(ts/1000+fs*40);
+                    cur_ms_list.push_back(ms);
+                    //cur_ms_list.push_back(ts/1000+fs*40);
                     while(frame_list.size()>queue_length&&queue_length){
                         frame_list.erase(frame_list.begin());
                         cur_ms_list.erase(cur_ms_list.begin());
