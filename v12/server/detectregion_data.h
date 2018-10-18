@@ -177,19 +177,25 @@ public:
         return RequestPkt(op, index , arg);
     }
 
-    virtual bool press(VdPoint pnt)
+    virtual bool press(VdPoint pnt_ori)
     {
-        if((point_index=p_on_v(ExpectedAreaVers,pnt))){
+
+        if((point_index=p_on_v(ExpectedAreaVers,pnt_ori))){
             seizing=true;
             event_type=PaintableData::Event::MoveVer;
             return true;
         }
-        if(p_on_vl(ExpectedAreaVers,pnt)){
+        if(p_on_vl(ExpectedAreaVers,pnt_ori)){
             seizing=true;
-            ori_pnt=pnt;
+            ori_pnt=pnt_ori;
             event_type=PaintableData::Event::MoveAll;
             return true;
         }
+
+        VdRect r=reshape_2_rect(ExpectedAreaVers);
+        prt(info,"offset %d %d",r.x,r.y);
+        VdPoint pnt(pnt_ori.x-r.x,pnt_ori.y-r.y);
+        //  VdPoint pnt(pnt_ori.x,pnt_ori.y);
         if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
         {
             //            draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
@@ -279,18 +285,18 @@ public:
         }
         return true;
     }
-    virtual bool move(VdPoint pnt)
+    virtual bool move(VdPoint pnt_ori)
     {
         if(seizing){
             switch (event_type) {
             case Event::MoveVer:
-                ExpectedAreaVers[point_index-1]=pnt;
+                ExpectedAreaVers[point_index-1]=pnt_ori;
                 break;
             case Event::MoveAll:
             {
-                int offx=pnt.x-ori_pnt.x;
-                int offy=pnt.y-ori_pnt.y;
-                ori_pnt=pnt;
+                int offx=pnt_ori.x-ori_pnt.x;
+                int offy=pnt_ori.y-ori_pnt.y;
+                ori_pnt=pnt_ori;
                 int i=0;
                 int sz=ExpectedAreaVers.size();
                 for(i=0;i<sz;i++){
@@ -308,6 +314,9 @@ public:
 
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
+            VdRect r=reshape_2_rect(ExpectedAreaVers);
+            prt(info,"offset %d %d",r.x,r.y);
+            VdPoint pnt(pnt_ori.x-r.x,pnt_ori.y-r.y);
             MvdProcessorInputData *mi=(MvdProcessorInputData *)p_processor;
             bool ret=mi->move(pnt);
             ProcessorData=mi->data();
