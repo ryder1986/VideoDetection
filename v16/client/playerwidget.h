@@ -353,15 +353,12 @@ private:
     QTimer *tick_timer;
     CameraInputData camera_data;
     CameraOutputData output_data;
-
     QPainter *current_painter;
     vector< MyAction *> actions;
     QMenu menu;
     bool show_input;
     bool show_output;
     int delay_frames;
-    //    QMenu player_menu;
-    //    QAction choose_fvd;
 };
 
 #endif // PLAYERWIDGET_H
