@@ -456,7 +456,7 @@ public:
     virtual ~VdData()
     {
     }
-    TP data()
+    TP get_data()
     {
         return private_data;
     }

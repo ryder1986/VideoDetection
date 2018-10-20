@@ -71,7 +71,7 @@ bool Camera::modify(RequestPkt req)
         DetectRegion *rg= drs[index-1];
         // rg->modify(req.Argument.get("ModifyRegion"));
         rg->modify(req.Argument);
-        private_data.set_region(rg->data().data(),index);
+        private_data.set_region(rg->get_data().data(),index);
         break;
     }
         break;

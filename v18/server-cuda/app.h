@@ -237,7 +237,7 @@ private:
             vector<Camera*>::iterator it=cms.begin();
             Camera *c=cms[index-1];
             if(c->modify(pkt)){
-                private_data.modify_camera(c->data(),index);
+                private_data.modify_camera(c->get_data(),index);
                 ret=true;
             }
         }
@@ -411,7 +411,8 @@ private:
     }
     void insert_database(CameraOutputData data,int index,Mat frame)
     {
-#ifdef WITH_CUDA
+#if 1
+
 
         if(index<1)
         {
@@ -502,7 +503,7 @@ private:
             DetectRegionInputData  id= input.DetectRegion[i];
             JsonPacket rst=d.Result;
             //   prt(info," %s ",id.SelectedProcessor.data());
-            if(id.SelectedProcessor==LABLE_PROCESSOR_MVD){
+            if(id.SelectedProcessor==LABEL_PROCESSOR_MVD){
                 MvdProcessorOutputData mvddata(rst);
                 for(EventRegionObjectOutput eo:mvddata.EventObjects){
                     if(!exist_in_last(eo)){
