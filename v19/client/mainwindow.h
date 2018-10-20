@@ -51,20 +51,75 @@ public:
         play_mode=ALL_CAM;
         start_config();
     }
+    void handle_output()
+    {
+         output_lock.lock();
+         if(output_list.size()){
+
+             QByteArray datagram=output_list.first();
+             QString str(datagram.data());
+             JsonPacket pkt(str.toStdString());
+             AppOutputData rst( pkt  );
+             //prt(info,"rst-> %s",rst.data().str().data());
+             if(cfg.CameraData.size()>=rst.CameraIndex){
+                 if(play_mode==ALL_CAM){
+                     int cam_index=rst.CameraIndex;
+                     CameraInputData camera_cfg=cfg.CameraData[cam_index-1];
+                     thread_lock.lock();
+                     //prt(info,"recving cam %d",cam_index);
+                     if(players.size()<cam_index)
+                     {
+                         //prt(info,"recving cam %d, our sz %d ",cam_index,players.size());
+                        // thread_lock.unlock();
+                         //continue;
+                     }else{
+                        PlayerWidget *w= players[cam_index-1];
+                        w->set_output_data(rst.CameraOutput);
+                     }
+                     thread_lock.unlock();
+                 }else{
+                     if(play_index==rst.CameraIndex)
+                     {
+                         PlayerWidget *w= players[0];
+                         w->set_output_data(rst.CameraOutput);
+                     }
+
+                 }
+             }else{
+                 prt(info,"server output index %d,out of range(1- %d), make sure you\
+                     loaded the server cfg & camera size >0 ",rst.CameraIndex,cfg.CameraData.size());
+             }
+             output_list.removeAt(0);
+         }
+         output_lock.unlock();
+    }
 
 private slots:
     void search_server_result(QString ip);
     void dataReceived()
     {
+
         while(udpSocket->hasPendingDatagrams()) {
             QByteArray datagram;
             datagram.resize(udpSocket->pendingDatagramSize());
 
             int sz= udpSocket->readDatagram(datagram.data(), datagram.size());
-            // prt(info,"get data %d",sz);
+
+            output_lock.lock();
+            if(sz&&output_list.size()<1000){//Max msgs
+                output_list.append(datagram);
+                prt(info,"list sz %d",output_list.size());
+            }
+            output_lock.unlock();
+
+            continue;
+            return;
+            prt(info,"get data %d",sz);
+            prt(info,"data-> %s",datagram.data());
             QString str(datagram.data());
             JsonPacket pkt(str.toStdString());
             AppOutputData rst( pkt  );
+            prt(info,"rst-> %s",rst.data().str().data());
             if(cfg.CameraData.size()>=rst.CameraIndex){
                 if(play_mode==ALL_CAM){
                     int cam_index=rst.CameraIndex;
@@ -202,9 +257,12 @@ private:
     vector<PlayerWidget*> players;
     AppInputData cfg;
     QMutex thread_lock;
+    QMutex output_lock;
+    QList<QByteArray> output_list;
     int play_mode;
     int play_index;
     int deleting_index;
+    Timer1 tmr1;
 };
 
 #endif // MAINWINDOW_H

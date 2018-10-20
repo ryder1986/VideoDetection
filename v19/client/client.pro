@@ -58,6 +58,8 @@ CONFIG+=c++11
     INCLUDEPATH+=/root/source/opencv-3.2.0/build/__install/include
     LIBS+=-L/root/source/opencv-3.2.0/build/__install/lib
     LIBS+=-L/root/source/ffmpeg-3.4.4/__install/lib
+    QMAKE_LFLAGS+=-Wl,--rpath=/root/source/opencv-3.2.0/build/__install/lib
+    QMAKE_LFLAGS+=-Wl,--rpath=/root/source/ffmpeg-3.4.4/__install/lib
     DEFINES+=IS_UNIX
     LIBS+=-lopencv_core
     LIBS+=-lopencv_video

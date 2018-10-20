@@ -428,6 +428,7 @@ public:
 #include <functional>
 /*
     This is a versy timer
+    std::thread([](){}).detach();
 */
 class Timer1{
     typedef function<void()> timed_func_t;

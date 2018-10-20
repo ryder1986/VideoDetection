@@ -130,12 +130,18 @@
           <item row="0" column="0">
            <widget class="QLineEdit" name="lineEdit_addcam">
             <property name="text">
-             <string>rtsp://192.168.1.95:554/av0_1</string>
+             <string>rtsp://192.168.2.215:8554/live/test1</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QComboBox" name="comboBox_del_index"/>
+           <widget class="QComboBox" name="comboBox_del_index">
+            <item>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </item>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -284,7 +290,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

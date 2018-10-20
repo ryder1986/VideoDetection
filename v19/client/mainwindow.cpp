@@ -3,7 +3,7 @@
 #include "videoprocessor.h".h"
 #include "detectregion_data.h"
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
+    QMainWindow(parent),tmr1(std::bind(&MainWindow::handle_output,this)),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -11,10 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&clt,SIGNAL(server_msg(QString)),this,SLOT(server_msg(QString)));
     start_udp();
     play_mode=ALL_CAM;
+    tmr1.start(10);// check output every 10 ms;
 }
 
 MainWindow::~MainWindow()
 {
+    tmr1.stop();
     delete ui;
 }
 

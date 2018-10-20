@@ -1298,26 +1298,23 @@ public:
     MvdProcessorOutputData()
     {
     }
-    MvdProcessorOutputData(vector <ObjectRect> fs, int cr, int vy, int ve,
-                           vector <LaneOutputJsonData> la,  vector <DegreeJsonData> da,int p1,int p2,int ct,
-                           vector<VdRect> is_rct,
-                           vector<VdRect> rd_rct,vector<VdRect> da_rct,
-                           vector<VdRect> np_rct, vector<LinePoint> cpt, vector<VdRect> ao_rct,
-                           vector <EventRegionObjectOutput> eo ):
-        MvdDetectedObjects(fs),
-        CurrentVehicleNumber(cr),
-        Visibility(vy),
-        VideoState(ve),
-        LaneOutputData(la),
-        DegreeData(da),
-        PersonFlow1(p1),
-        PersonFlow2(p2),  EventObjects(eo)
+//    MvdProcessorOutputData(vector <ObjectRect> fs, int cr, int vy, int ve,
+//                           vector <LaneOutputJsonData> la,  vector <DegreeJsonData> da,int p1,int p2,
+//                           vector <EventRegionObjectOutput> eo ):
+//        MvdDetectedObjects(fs),
+//        CurrentVehicleNumber(cr),
+//        Visibility(vy),
+//        VideoState(ve),
+//        LaneOutputData(la),
+//        DegreeData(da),
+//        PersonFlow1(p1),
+//        PersonFlow2(p2),  EventObjects(eo)
 
-    {
-        encode();
-    }
+//    {
+//        encode();
+//    }
     MvdProcessorOutputData(vector <ObjectRect> fs, int cr, int vy, int ve,
-                           vector <LaneOutputJsonData> la,  vector <DegreeJsonData> da,int p1,int p2,
+                           vector <LaneOutputJsonData> la,  vector <DegreeJsonData> da,int p1,int p2,int pc,
                            vector <EventRegionObjectOutput> eo ):
         MvdDetectedObjects(fs),
         CurrentVehicleNumber(cr),
@@ -1326,7 +1323,7 @@ public:
         LaneOutputData(la),
         DegreeData(da),
         PersonFlow1(p1),
-        PersonFlow2(p2),  EventObjects(eo)
+        PersonFlow2(p2),CurrentPersionCount(pc),EventObjects(eo)
 
     {
         encode();
