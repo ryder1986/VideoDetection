@@ -20,7 +20,7 @@ App::App(ConfigManager *p_config_manager):str_stream(""),watch_dog(bind(&App::ch
                                      )
                                 );
     quit_count=false;
-    watch_dog.start(1000*60);//do check every 1 minute
+    watch_dog.start(1000);//do check every 1 minute
 }
 
 App::~App()
