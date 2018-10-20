@@ -17,11 +17,20 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
+
     }
 };
 
@@ -125,15 +134,23 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
-        DECODE_PKT_MEM(ProcessorData);
-        DECODE_STRING_MEM(SelectedProcessor);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
+            DECODE_PKT_MEM(ProcessorData);
+            DECODE_STRING_MEM(SelectedProcessor);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
-        ENCODE_STRING_MEM(SelectedProcessor);
-        ENCODE_PKT_MEM(ProcessorData);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
+            ENCODE_STRING_MEM(SelectedProcessor);
+            ENCODE_PKT_MEM(ProcessorData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     static DetectRegionInputData get_region_test_data(JsonPacket pkt,string SelectedProcessor)
     {
@@ -193,7 +210,7 @@ public:
         }
 
         VdRect r=reshape_2_rect(ExpectedAreaVers);
-     //   prt(info,"offset %d %d",r.x,r.y);
+        //   prt(info,"offset %d %d",r.x,r.y);
         VdPoint pnt(pnt_ori.x-r.x,pnt_ori.y-r.y);
         //  VdPoint pnt(pnt_ori.x,pnt_ori.y);
         if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
@@ -244,7 +261,7 @@ public:
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
             VdRect r=reshape_2_rect(ExpectedAreaVers);
-           // prt(info,"offset %d %d",r.x,r.y);
+            // prt(info,"offset %d %d",r.x,r.y);
             VdPoint pnt_new(pnt.x-r.x,pnt.y-r.y);
 
 
@@ -449,13 +466,21 @@ public:
     }
     void decode()
     {
-        DECODE_STRING_MEM(SelectedProcessor);
-        DECODE_PKT_MEM(ProcessorData);
+        try{
+            DECODE_STRING_MEM(SelectedProcessor);
+            DECODE_PKT_MEM(ProcessorData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_STRING_MEM(SelectedProcessor);
-        ENCODE_PKT_MEM(ProcessorData);
+        try{
+            ENCODE_STRING_MEM(SelectedProcessor);
+            ENCODE_PKT_MEM(ProcessorData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class DetectRegionOutputData:public JsonData
@@ -477,14 +502,22 @@ public:
 
     void decode()
     {
-        DECODE_PKT_MEM(DetectionRect);
-        DECODE_PKT_MEM(Result);
+        try{
+            DECODE_PKT_MEM(DetectionRect);
+            DECODE_PKT_MEM(Result);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 
     void encode()
     {
-        ENCODE_JSONDATA_MEM(DetectionRect);
-        ENCODE_PKT_MEM(Result);
+        try{
+            ENCODE_JSONDATA_MEM(DetectionRect);
+            ENCODE_PKT_MEM(Result);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     template <typename A,typename B,typename C>
     void draw(

@@ -95,13 +95,21 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(Points);
-        DECODE_INT_MEM(Radii);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(Points);
+            DECODE_INT_MEM(Radii);
+        }catch(exception e){
+            PRT_DECODE_EXCEPTION
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(Points);
-        ENCODE_INT_MEM(Radii);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(Points);
+            ENCODE_INT_MEM(Radii);
+        }catch(exception e){
+            PRT_ENCODE_EXCEPTION
+        }
     }
     template <typename A,typename B,typename C>
     void draw(int offx,int offy,
@@ -134,15 +142,23 @@ public:
     }
     void decode()
     {
-        DECODE_BOOL_MEM(Horizon);
-        DECODE_BOOL_MEM(Vertical);
-        DECODE_INT_MEM(Radii);
+        try{
+            DECODE_BOOL_MEM(Horizon);
+            DECODE_BOOL_MEM(Vertical);
+            DECODE_INT_MEM(Radii);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_BOOL_MEM(Horizon);
-        ENCODE_BOOL_MEM(Vertical);
-        ENCODE_INT_MEM(Radii);
+        try{
+            ENCODE_BOOL_MEM(Horizon);
+            ENCODE_BOOL_MEM(Vertical);
+            ENCODE_INT_MEM(Radii);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     static DummyProcessorInputData get_dummy_test_data()
     {
@@ -169,11 +185,19 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(Rects);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(Rects);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(Rects);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(Rects);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class C4ProcessorInputData:public JsonData{
@@ -194,13 +218,21 @@ public:
     }
     void decode()
     {
-        DECODE_INT_MEM(scan_step);
-        DECODE_DOUBLE_MEM(ratio);
+        try{
+            DECODE_INT_MEM(scan_step);
+            DECODE_DOUBLE_MEM(ratio);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(scan_step);
-        ENCODE_DOUBLE_MEM(ratio);
+        try{
+            ENCODE_INT_MEM(scan_step);
+            ENCODE_DOUBLE_MEM(ratio);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -233,11 +265,19 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(DetectLine);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(DetectLine);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -264,17 +304,25 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(PvdDetectedObjects);
-        DECODE_INT_MEM(PersonFlow1);
-        DECODE_INT_MEM(PersonFlow2);
-        DECODE_INT_MEM(CurrentPersionCount);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(PvdDetectedObjects);
+            DECODE_INT_MEM(PersonFlow1);
+            DECODE_INT_MEM(PersonFlow2);
+            DECODE_INT_MEM(CurrentPersionCount);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(PvdDetectedObjects);
-        ENCODE_INT_MEM(PersonFlow1);
-        ENCODE_INT_MEM(PersonFlow2);
-        ENCODE_INT_MEM(CurrentPersionCount);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(PvdDetectedObjects);
+            ENCODE_INT_MEM(PersonFlow1);
+            ENCODE_INT_MEM(PersonFlow2);
+            ENCODE_INT_MEM(CurrentPersionCount);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -298,15 +346,23 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_MEM(BeginPoint);
-        DECODE_JSONDATA_MEM(EndPoint);
-        DECODE_INT_MEM(Length);
+        try{
+            DECODE_JSONDATA_MEM(BeginPoint);
+            DECODE_JSONDATA_MEM(EndPoint);
+            DECODE_INT_MEM(Length);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_MEM(BeginPoint);
-        ENCODE_JSONDATA_MEM(EndPoint);
-        ENCODE_INT_MEM(Length);
+        try{
+            ENCODE_JSONDATA_MEM(BeginPoint);
+            ENCODE_JSONDATA_MEM(EndPoint);
+            ENCODE_INT_MEM(Length);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class LaneDataJsonData:public JsonData{
@@ -469,17 +525,25 @@ public:
     }
     void decode()
     {
-        DECODE_INT_MEM(LaneNo);
-        DECODE_JSONDATA_ARRAY_MEM(LaneArea);
-        DECODE_JSONDATA_ARRAY_MEM(FarArea);
-        DECODE_JSONDATA_ARRAY_MEM(NearArea);
+        try{
+            DECODE_INT_MEM(LaneNo);
+            DECODE_JSONDATA_ARRAY_MEM(LaneArea);
+            DECODE_JSONDATA_ARRAY_MEM(FarArea);
+            DECODE_JSONDATA_ARRAY_MEM(NearArea);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(LaneNo);
-        ENCODE_JSONDATA_ARRAY_MEM(LaneArea);
-        ENCODE_JSONDATA_ARRAY_MEM(NearArea);
-        ENCODE_JSONDATA_ARRAY_MEM(FarArea);
+        try{
+            ENCODE_INT_MEM(LaneNo);
+            ENCODE_JSONDATA_ARRAY_MEM(LaneArea);
+            ENCODE_JSONDATA_ARRAY_MEM(NearArea);
+            ENCODE_JSONDATA_ARRAY_MEM(FarArea);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class FvdProcessorInputData:public JsonData{
@@ -502,19 +566,27 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(BasicCoil);
-        DECODE_JSONDATA_MEM(BaseLine);
-        DECODE_INT_MEM(NearPointDistance);
-        DECODE_INT_MEM(FarPointDistance);
-        DECODE_JSONDATA_ARRAY_MEM(LaneData);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(BasicCoil);
+            DECODE_JSONDATA_MEM(BaseLine);
+            DECODE_INT_MEM(NearPointDistance);
+            DECODE_INT_MEM(FarPointDistance);
+            DECODE_JSONDATA_ARRAY_MEM(LaneData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(BasicCoil);
-        ENCODE_JSONDATA_MEM(BaseLine);
-        ENCODE_INT_MEM(NearPointDistance);
-        ENCODE_INT_MEM(FarPointDistance);
-        ENCODE_JSONDATA_ARRAY_MEM(LaneData);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(BasicCoil);
+            ENCODE_JSONDATA_MEM(BaseLine);
+            ENCODE_INT_MEM(NearPointDistance);
+            ENCODE_INT_MEM(FarPointDistance);
+            ENCODE_JSONDATA_ARRAY_MEM(LaneData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class LaneOutputJsonData:public JsonData{
@@ -549,31 +621,39 @@ public:
     }
     void decode()
     {
-        DECODE_INT_MEM(LaneNo);
-        DECODE_INT_MEM(QueueLength);
-        DECODE_JSONDATA_MEM(StartQueuePoint);
-        DECODE_JSONDATA_MEM(EndQueuePoint);
-        DECODE_INT_MEM(LaneVehicleNumber);
-        DECODE_INT_MEM(VehicleFlow);
-        DECODE_INT_MEM(VehicleSpeed);
-        DECODE_INT_MEM(NearActualLength);
-        DECODE_INT_MEM(FarActualLength);
-        DECODE_BOOL_MEM(FarCarExist);
-        DECODE_BOOL_MEM(NearCarExist);
+        try{
+            DECODE_INT_MEM(LaneNo);
+            DECODE_INT_MEM(QueueLength);
+            DECODE_JSONDATA_MEM(StartQueuePoint);
+            DECODE_JSONDATA_MEM(EndQueuePoint);
+            DECODE_INT_MEM(LaneVehicleNumber);
+            DECODE_INT_MEM(VehicleFlow);
+            DECODE_INT_MEM(VehicleSpeed);
+            DECODE_INT_MEM(NearActualLength);
+            DECODE_INT_MEM(FarActualLength);
+            DECODE_BOOL_MEM(FarCarExist);
+            DECODE_BOOL_MEM(NearCarExist);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(LaneNo);
-        ENCODE_INT_MEM(QueueLength);
-        ENCODE_JSONDATA_MEM(StartQueuePoint);
-        ENCODE_JSONDATA_MEM(EndQueuePoint);
-        ENCODE_INT_MEM(LaneVehicleNumber);
-        ENCODE_INT_MEM(VehicleFlow);
-        ENCODE_INT_MEM(VehicleSpeed);
-        ENCODE_INT_MEM(NearActualLength);
-        ENCODE_INT_MEM(FarActualLength);
-        ENCODE_BOOL_MEM(FarCarExist);
-        ENCODE_BOOL_MEM(NearCarExist);
+        try{
+            ENCODE_INT_MEM(LaneNo);
+            ENCODE_INT_MEM(QueueLength);
+            ENCODE_JSONDATA_MEM(StartQueuePoint);
+            ENCODE_JSONDATA_MEM(EndQueuePoint);
+            ENCODE_INT_MEM(LaneVehicleNumber);
+            ENCODE_INT_MEM(VehicleFlow);
+            ENCODE_INT_MEM(VehicleSpeed);
+            ENCODE_INT_MEM(NearActualLength);
+            ENCODE_INT_MEM(FarActualLength);
+            ENCODE_BOOL_MEM(FarCarExist);
+            ENCODE_BOOL_MEM(NearCarExist);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -591,13 +671,21 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_MEM(StartPoint);
-        DECODE_JSONDATA_MEM(EndPoint);
+        try{
+            DECODE_JSONDATA_MEM(StartPoint);
+            DECODE_JSONDATA_MEM(EndPoint);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_MEM(StartPoint);
-        ENCODE_JSONDATA_MEM(EndPoint);
+        try{
+            ENCODE_JSONDATA_MEM(StartPoint);
+            ENCODE_JSONDATA_MEM(EndPoint);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class DegreeJsonData:public JsonData{
@@ -614,13 +702,21 @@ public:
     }
     void decode()
     {
-        DECODE_INT_MEM(DegreePointsY);
-        DECODE_INT_MEM(DegreeValue);
+        try{
+            DECODE_INT_MEM(DegreePointsY);
+            DECODE_INT_MEM(DegreeValue);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(DegreePointsY);
-        ENCODE_INT_MEM(DegreeValue);
+        try{
+            ENCODE_INT_MEM(DegreePointsY);
+            ENCODE_INT_MEM(DegreeValue);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -650,21 +746,29 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(FvdDetectedObjects);
-        DECODE_INT_MEM(CurrentVehicleNumber);
-        DECODE_INT_MEM(Visibility);
-        DECODE_INT_MEM(VideoState);
-        DECODE_JSONDATA_ARRAY_MEM(LaneOutputData);
-        DECODE_JSONDATA_ARRAY_MEM(DegreeData);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(FvdDetectedObjects);
+            DECODE_INT_MEM(CurrentVehicleNumber);
+            DECODE_INT_MEM(Visibility);
+            DECODE_INT_MEM(VideoState);
+            DECODE_JSONDATA_ARRAY_MEM(LaneOutputData);
+            DECODE_JSONDATA_ARRAY_MEM(DegreeData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(FvdDetectedObjects);
-        ENCODE_INT_MEM(CurrentVehicleNumber);
-        ENCODE_INT_MEM(Visibility);
-        ENCODE_INT_MEM(VideoState);
-        ENCODE_JSONDATA_ARRAY_MEM(LaneOutputData);
-        ENCODE_JSONDATA_ARRAY_MEM(DegreeData);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(FvdDetectedObjects);
+            ENCODE_INT_MEM(CurrentVehicleNumber);
+            ENCODE_INT_MEM(Visibility);
+            ENCODE_INT_MEM(VideoState);
+            ENCODE_JSONDATA_ARRAY_MEM(LaneOutputData);
+            ENCODE_JSONDATA_ARRAY_MEM(DegreeData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -686,21 +790,29 @@ public:
     {
         decode();
     }
-    EventRegion(vector <VdPoint> vs, int t):Vers(vs),Type(t)
+    EventRegion(vector <VdPoint> vs, int t,int d):Vers(vs),Type(t),Direction(d)
     {
         encode();
     }
     void decode()
     {
-        DECODE_INT_MEM(Type);
-        DECODE_JSONDATA_ARRAY_MEM(Vers);
-        DECODE_INT_MEM(Direction);
+        try{
+            DECODE_INT_MEM(Type);
+            DECODE_JSONDATA_ARRAY_MEM(Vers);
+            DECODE_INT_MEM(Direction);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(Type);
-        ENCODE_JSONDATA_ARRAY_MEM(Vers);
-        DECODE_INT_MEM(Direction);
+        try{
+            ENCODE_INT_MEM(Type);
+            ENCODE_JSONDATA_ARRAY_MEM(Vers);
+            DECODE_INT_MEM(Direction);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class MvdProcessorInputData:public JsonData,public PaintableData{
@@ -740,23 +852,31 @@ public:
 
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(BasicCoil);
-        DECODE_JSONDATA_MEM(BaseLine);
-        DECODE_INT_MEM(NearPointDistance);
-        DECODE_INT_MEM(FarPointDistance);
-        DECODE_JSONDATA_ARRAY_MEM(LaneData);
-        DECODE_JSONDATA_ARRAY_MEM(DetectLine);
-        DECODE_JSONDATA_ARRAY_MEM(Events);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(BasicCoil);
+            DECODE_JSONDATA_MEM(BaseLine);
+            DECODE_INT_MEM(NearPointDistance);
+            DECODE_INT_MEM(FarPointDistance);
+            DECODE_JSONDATA_ARRAY_MEM(LaneData);
+            DECODE_JSONDATA_ARRAY_MEM(DetectLine);
+            DECODE_JSONDATA_ARRAY_MEM(Events);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(BasicCoil);
-        ENCODE_JSONDATA_MEM(BaseLine);
-        ENCODE_INT_MEM(NearPointDistance);
-        ENCODE_INT_MEM(FarPointDistance);
-        ENCODE_JSONDATA_ARRAY_MEM(LaneData);
-        ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
-        ENCODE_JSONDATA_ARRAY_MEM(Events);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(BasicCoil);
+            ENCODE_JSONDATA_MEM(BaseLine);
+            ENCODE_INT_MEM(NearPointDistance);
+            ENCODE_INT_MEM(FarPointDistance);
+            ENCODE_JSONDATA_ARRAY_MEM(LaneData);
+            ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
+            ENCODE_JSONDATA_ARRAY_MEM(Events);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void add_lane()
     {
@@ -813,7 +933,7 @@ public:
         event_rect.push_back(VdPoint(100,100));
         event_rect.push_back(VdPoint(100,150));
         event_rect.push_back(VdPoint(0,150));
-        EventRegion er(event_rect,0x11);
+        EventRegion er(event_rect,0x11,1);
 
 
         return er;
@@ -853,7 +973,7 @@ public:
         ps.push_back(pp2);
         ps.push_back(pp3);
         ps.push_back(pp4);
-        regs.push_back(EventRegion(ps,EventRegion::OVER_SPEED));
+        regs.push_back(EventRegion(ps,EventRegion::OVER_SPEED,1));
         MvdProcessorInputData dt(BasicCoil,BaseLine,NearPointDistance,FarPointDistance,LineData,detect_line,regs);
 
         return dt;
@@ -962,7 +1082,7 @@ public:
                 event_type=PaintableData::Event::MoveVer;
                 point_index+=LaneData.size()*12;
                 prt(info,"mvd press index %d",point_index)
-                return true;
+                        return true;
             }
 #if 0
             if((p_on_ls(Events[i].Vers,pnt))){
@@ -971,7 +1091,7 @@ public:
                 event_type=PaintableData::Event::MoveAll;
 
                 prt(info,"mvd press line ")
-                return true;
+                        return true;
             }
 #endif
         }
@@ -1123,20 +1243,20 @@ public:
             draw_vers_line(ps,draw_line);
             //if(r.Type)
             if(r.Type&0x1)
-            draw_text("type1",VdPoint(ps[0].x+70*0,ps[0].y),1,PaintableData::Colour::Green,4);
-             if(r.Type>>1&0x1)
-            draw_text("type2",VdPoint(ps[0].x+70*1,ps[0].y),1,PaintableData::Colour::Green,4);
-              if(r.Type>>2&1)
-            draw_text("type3",VdPoint(ps[0].x+70*2,ps[0].y),1,PaintableData::Colour::Green,4);
-               if(r.Type>>3&1)
-            draw_text("type4",VdPoint(ps[0].x+70*3,ps[0].y),1,PaintableData::Colour::Green,4);
-                if(r.Type>>4&1)
-            draw_text("type5",VdPoint(ps[0].x+70*4,ps[0].y),1,PaintableData::Colour::Green,4);
-                 if(r.Type>>5&0x1)
-            draw_text("type6",VdPoint(ps[0].x+70*5,ps[0].y),1,PaintableData::Colour::Green,4);
-                  if(r.Type>>6&0x1)
-            draw_text("type7",VdPoint(ps[0].x+70*6,ps[0].y),1,PaintableData::Colour::Green,4);
-                    }
+                draw_text("type1",VdPoint(ps[0].x+70*0,ps[0].y),1,PaintableData::Colour::Green,4);
+            if(r.Type>>1&0x1)
+                draw_text("type2",VdPoint(ps[0].x+70*1,ps[0].y),1,PaintableData::Colour::Green,4);
+            if(r.Type>>2&1)
+                draw_text("type3",VdPoint(ps[0].x+70*2,ps[0].y),1,PaintableData::Colour::Green,4);
+            if(r.Type>>3&1)
+                draw_text("type4",VdPoint(ps[0].x+70*3,ps[0].y),1,PaintableData::Colour::Green,4);
+            if(r.Type>>4&1)
+                draw_text("type5",VdPoint(ps[0].x+70*4,ps[0].y),1,PaintableData::Colour::Green,4);
+            if(r.Type>>5&0x1)
+                draw_text("type6",VdPoint(ps[0].x+70*5,ps[0].y),1,PaintableData::Colour::Green,4);
+            if(r.Type>>6&0x1)
+                draw_text("type7",VdPoint(ps[0].x+70*6,ps[0].y),1,PaintableData::Colour::Green,4);
+        }
 
     }
 };
@@ -1155,15 +1275,23 @@ public:
     }
     void decode()
     {
-        DECODE_INT_MEM(Type);
-        DECODE_INT_MEM(EventID);
-        DECODE_JSONDATA_ARRAY_MEM(Vers);
+        try{
+            DECODE_INT_MEM(Type);
+            DECODE_INT_MEM(EventID);
+            DECODE_JSONDATA_ARRAY_MEM(Vers);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(Type);
-        ENCODE_INT_MEM(EventID);
-        ENCODE_JSONDATA_ARRAY_MEM(Vers);
+        try{
+            ENCODE_INT_MEM(Type);
+            ENCODE_INT_MEM(EventID);
+            ENCODE_JSONDATA_ARRAY_MEM(Vers);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 class MvdProcessorOutputData:public JsonData{
@@ -1177,13 +1305,13 @@ public:
     int PersonFlow1;
     int PersonFlow2;
     int CurrentPersionCount;
-     vector <EventRegionObjectOutput> EventObjects;
-//    vector<VdRect> InvalidStopData;
-//    vector<VdRect> ReverseDriveData;
-//    vector<VdRect> DriveAwayData;
-//    vector<VdRect> NoPedestrainData;
-//    vector<LinePoint> CongestionData;
-//    vector<VdRect>	AbandonedObjectData;
+    vector <EventRegionObjectOutput> EventObjects;
+    //    vector<VdRect> InvalidStopData;
+    //    vector<VdRect> ReverseDriveData;
+    //    vector<VdRect> DriveAwayData;
+    //    vector<VdRect> NoPedestrainData;
+    //    vector<LinePoint> CongestionData;
+    //    vector<VdRect>	AbandonedObjectData;
     MvdProcessorOutputData(JsonPacket p):JsonData(p)
     {
         decode();
@@ -1196,7 +1324,7 @@ public:
                            vector<VdRect> is_rct,
                            vector<VdRect> rd_rct,vector<VdRect> da_rct,
                            vector<VdRect> np_rct, vector<LinePoint> cpt, vector<VdRect> ao_rct,
-                            vector <EventRegionObjectOutput> eo ):
+                           vector <EventRegionObjectOutput> eo ):
         MvdDetectedObjects(fs),
         CurrentVehicleNumber(cr),
         Visibility(vy),
@@ -1211,7 +1339,7 @@ public:
     }
     MvdProcessorOutputData(vector <ObjectRect> fs, int cr, int vy, int ve,
                            vector <LaneOutputJsonData> la,  vector <DegreeJsonData> da,int p1,int p2,
-                            vector <EventRegionObjectOutput> eo ):
+                           vector <EventRegionObjectOutput> eo ):
         MvdDetectedObjects(fs),
         CurrentVehicleNumber(cr),
         Visibility(vy),
@@ -1226,44 +1354,52 @@ public:
     }
     void decode()
     {
-        DECODE_JSONDATA_ARRAY_MEM(MvdDetectedObjects);
-        DECODE_INT_MEM(CurrentVehicleNumber);
-        DECODE_INT_MEM(Visibility);
-        DECODE_INT_MEM(VideoState);
-        DECODE_JSONDATA_ARRAY_MEM(LaneOutputData);
-        DECODE_JSONDATA_ARRAY_MEM(DegreeData);
-        DECODE_JSONDATA_ARRAY_MEM(EventObjects);
+        try{
+            DECODE_JSONDATA_ARRAY_MEM(MvdDetectedObjects);
+            DECODE_INT_MEM(CurrentVehicleNumber);
+            DECODE_INT_MEM(Visibility);
+            DECODE_INT_MEM(VideoState);
+            DECODE_JSONDATA_ARRAY_MEM(LaneOutputData);
+            DECODE_JSONDATA_ARRAY_MEM(DegreeData);
+            DECODE_JSONDATA_ARRAY_MEM(EventObjects);
 
-        DECODE_INT_MEM(PersonFlow1);
-        DECODE_INT_MEM(PersonFlow2);
-        DECODE_INT_MEM(CurrentPersionCount);
-//        DECODE_JSONDATA_ARRAY_MEM(InvalidStopData);
-//        DECODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
-//        DECODE_JSONDATA_ARRAY_MEM(DriveAwayData);
-//        DECODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
-//        DECODE_JSONDATA_ARRAY_MEM(CongestionData);
-//        DECODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
+            DECODE_INT_MEM(PersonFlow1);
+            DECODE_INT_MEM(PersonFlow2);
+            DECODE_INT_MEM(CurrentPersionCount);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
+        //        DECODE_JSONDATA_ARRAY_MEM(InvalidStopData);
+        //        DECODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
+        //        DECODE_JSONDATA_ARRAY_MEM(DriveAwayData);
+        //        DECODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
+        //        DECODE_JSONDATA_ARRAY_MEM(CongestionData);
+        //        DECODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
 
     }
     void encode()
     {
-        ENCODE_JSONDATA_ARRAY_MEM(MvdDetectedObjects);
-        ENCODE_INT_MEM(CurrentVehicleNumber);
-        ENCODE_INT_MEM(Visibility);
-        ENCODE_INT_MEM(VideoState);
-        ENCODE_JSONDATA_ARRAY_MEM(LaneOutputData);
-        ENCODE_JSONDATA_ARRAY_MEM(DegreeData);
-        ENCODE_JSONDATA_ARRAY_MEM(EventObjects);
+        try{
+            ENCODE_JSONDATA_ARRAY_MEM(MvdDetectedObjects);
+            ENCODE_INT_MEM(CurrentVehicleNumber);
+            ENCODE_INT_MEM(Visibility);
+            ENCODE_INT_MEM(VideoState);
+            ENCODE_JSONDATA_ARRAY_MEM(LaneOutputData);
+            ENCODE_JSONDATA_ARRAY_MEM(DegreeData);
+            ENCODE_JSONDATA_ARRAY_MEM(EventObjects);
 
-        ENCODE_INT_MEM(PersonFlow1);
-        ENCODE_INT_MEM(PersonFlow2);
-        ENCODE_INT_MEM(CurrentPersionCount);
-//        ENCODE_JSONDATA_ARRAY_MEM(InvalidStopData);
-//        ENCODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
-//        ENCODE_JSONDATA_ARRAY_MEM(DriveAwayData);
-//        ENCODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
-//        ENCODE_JSONDATA_ARRAY_MEM(CongestionData);
-//        ENCODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
+            ENCODE_INT_MEM(PersonFlow1);
+            ENCODE_INT_MEM(PersonFlow2);
+            ENCODE_INT_MEM(CurrentPersionCount);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
+        //        ENCODE_JSONDATA_ARRAY_MEM(InvalidStopData);
+        //        ENCODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
+        //        ENCODE_JSONDATA_ARRAY_MEM(DriveAwayData);
+        //        ENCODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
+        //        ENCODE_JSONDATA_ARRAY_MEM(CongestionData);
+        //        ENCODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
     }
     template <typename A>
     void draw_rect(VdRect rect ,A draw_line )
@@ -1307,18 +1443,18 @@ public:
         //            draw_circle(VdPoint(p.x+offx,p.y+offy),Radii,PaintableData::Colour::Red,2);
         //        }
         if(EventObjects.size()){
-          //  prt(info,"event  sz%d",EventObjects.size());
+            //  prt(info,"event  sz%d",EventObjects.size());
             for(EventRegionObjectOutput o:EventObjects){
                 vector<VdPoint> ps;
                 ps.clear();
                 for(VdPoint p:o.Vers)
                     ps.push_back(VdPoint(p.x+offx,p.y+offy));
-              #if 1
+#if 1
                 draw_vers(ps,draw_line,PaintableData::Colour::Green);
                 char buf[100];memset(buf,0,100);sprintf(buf,"id:%d,type%d",o.EventID,o.Type);
                 draw_text(buf,ps[0],1,PaintableData::Colour::Green,4);
-            #endif
-            //    draw_text(o.Type,VdPoint(ps[0].x+100,ps[0].y),1,PaintableData::Colour::Green,4);
+#endif
+                //    draw_text(o.Type,VdPoint(ps[0].x+100,ps[0].y),1,PaintableData::Colour::Green,4);
 
             }
         }
@@ -1330,23 +1466,25 @@ public:
             draw_rect(r,draw_line);
         vector<VdPoint> vers;
         int i=0;
-        for(LaneDataJsonData l:data.LaneData){
-            LaneOutputJsonData ld=LaneOutputData[i];
-            if(ld.NearCarExist){
-                vers.clear();
-                for(VdPoint p:l.NearArea){
-                    vers.push_back(VdPoint(p.x+offx,p.y+offy));
+        if(LaneOutputData.size()){
+            for(LaneDataJsonData l:data.LaneData){
+                LaneOutputJsonData ld=LaneOutputData[i];
+                if(ld.NearCarExist){
+                    vers.clear();
+                    for(VdPoint p:l.NearArea){
+                        vers.push_back(VdPoint(p.x+offx,p.y+offy));
+                    }
+                    draw_vers( vers,draw_line);
                 }
-                draw_vers( vers,draw_line);
-            }
-            if(ld.FarCarExist){
-                vers.clear();
-                for(VdPoint p:l.FarArea){
-                    vers.push_back(VdPoint(p.x+offx,p.y+offy));
+                if(ld.FarCarExist){
+                    vers.clear();
+                    for(VdPoint p:l.FarArea){
+                        vers.push_back(VdPoint(p.x+offx,p.y+offy));
+                    }
+                    draw_vers( vers,draw_line);
                 }
-                draw_vers( vers,draw_line);
+                i++;
             }
-            i++;
         }
     }
 };

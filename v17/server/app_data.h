@@ -23,9 +23,11 @@ public:
     //AppInputData(JsonPacket pkt1):JsonDataWithTitle(pkt1,"DeviceConfig")
     AppInputData(JsonPacket pkt1):JsonData(pkt1)
     {
-//        string tmp1=  pkt1.str();
-//        string tmp2=  config.str();
-        decode();
+        try{
+            decode();
+        }catch(exception e){
+            prt(info,"error in decoding AppInputData");
+        }
     }
     AppInputData()
     {
@@ -102,13 +104,21 @@ public:
     }
     void decode()
     {
-        DECODE_STRING_MEM(DeviceName);
-        DECODE_JSONDATA_ARRAY_MEM(CameraData);
+        try{
+            DECODE_STRING_MEM(DeviceName);
+            DECODE_JSONDATA_ARRAY_MEM(CameraData);
+        }catch(exception e){
+            prt(info,"error in decoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_STRING_MEM(DeviceName);
-        ENCODE_JSONDATA_ARRAY_MEM(CameraData);
+        try{
+            ENCODE_STRING_MEM(DeviceName);
+            ENCODE_JSONDATA_ARRAY_MEM(CameraData);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 
@@ -117,15 +127,15 @@ public:
     AppInputData DeviceConfig;
     DeviceConfigData(JsonPacket pkt):JsonData(pkt)
     {
-         decode();
+        decode();
     }
     DeviceConfigData(AppInputData appdata):DeviceConfig(appdata)
     {
-         encode();
+        encode();
     }
     DeviceConfigData()
     {
-         //decode();
+        //decode();
     }
     void decode()
     {

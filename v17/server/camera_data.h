@@ -60,13 +60,21 @@ public:
     }
     void decode()
     {
-        DECODE_STRING_MEM(Url);
-        DECODE_JSONDATA_ARRAY_MEM(DetectRegion);
+        try{
+            DECODE_STRING_MEM(Url);
+            DECODE_JSONDATA_ARRAY_MEM(DetectRegion);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_STRING_MEM(Url);
-        ENCODE_JSONDATA_ARRAY_MEM(DetectRegion);
+        try{
+            ENCODE_STRING_MEM(Url);
+            ENCODE_JSONDATA_ARRAY_MEM(DetectRegion);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     virtual bool press(VdPoint pnt)
     {
@@ -104,7 +112,7 @@ public:
                                                    p.data()));
                 }
                 RequestPkt  req_del_region=get_request_pkt(CameraInputData::DELETE_REGION,i+1,\
-                                                             JsonPacket());
+                                                           JsonPacket());
                 pkts.push_back(req_del_region);
                 text.push_back("del this region");
                 return true;
@@ -165,8 +173,8 @@ public:
 
     template <typename A,typename B,typename C>
     void draw(
-         A draw_line,
-         B draw_circle,C draw_text)
+            A draw_line,
+            B draw_circle,C draw_text)
     {
         int sz=DetectRegion.size();
         for(int i=0;i<sz;i++){
@@ -199,13 +207,21 @@ public:
     }
     void decode()
     {
-        DECODE_INT_MEM(Timestamp);
-        DECODE_JSONDATA_ARRAY_MEM(DetectionResult);
+        try{
+            DECODE_INT_MEM(Timestamp);
+            DECODE_JSONDATA_ARRAY_MEM(DetectionResult);
+        }catch(exception e){
+            prt(info,"error in decoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(Timestamp);
-        ENCODE_JSONDATA_ARRAY_MEM(DetectionResult);
+        try{
+            ENCODE_INT_MEM(Timestamp);
+            ENCODE_JSONDATA_ARRAY_MEM(DetectionResult);
+             }catch(exception e){
+            prt(info,"error in decoding AppInputData :{%s}",config.str().data());
+        }
     }
 
     template <typename A,typename B,typename C>
@@ -246,11 +262,19 @@ public:
     }
     void decode()
     {
-        DECODE_STRING_MEM(Url);
+        try{
+            DECODE_STRING_MEM(Url);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
     void encode()
     {
-        ENCODE_STRING_MEM(Url);
+        try{
+            ENCODE_STRING_MEM(Url);
+        }catch(exception e){
+            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+        }
     }
 };
 

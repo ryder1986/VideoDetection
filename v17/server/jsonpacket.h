@@ -215,6 +215,8 @@ public:
             //int t=1/0;//sig fault deal to error.
 
             //  prt(info,"to int error :no content,%d",t);
+        //     Exception e("json to int fail");
+            throw exception();
             print_backstrace();
             return 0;
         }
@@ -227,6 +229,7 @@ public:
     vector <int> to_int_array()
     {
         if(val.empty()){
+            throw exception();
             prt(info,"to int error :no content");
             print_backstrace();
             return  vector <int>();
@@ -241,6 +244,7 @@ public:
     double to_double()
     {
         if(val.empty()){
+            throw exception();
             prt(info,"to  double :no content");
             return 0;
         }
@@ -253,6 +257,7 @@ public:
     vector <double>to_double_array()
     {
         if(val.empty()){
+            throw exception();
             prt(info,"to  double :no content");
             return  vector <double>();
         }
@@ -266,6 +271,7 @@ public:
     bool to_bool()
     {
         if(val.empty()){
+            throw exception();
             prt(info,"to  bool :no content");
             return false;
         }
@@ -278,6 +284,7 @@ public:
     vector<bool>to_bool_array()
     {
         if(val.empty()){
+            throw exception();
             prt(info,"to  bool :no content");
             return  vector<  bool >();
         }
@@ -291,10 +298,12 @@ public:
     string to_string()
     {
         if(val.empty()){
+            throw exception();
             assert(!val.empty());
             //throw Exception();
         }
         if(val.empty()){
+            throw exception();
             prt(info,"to  string :no content, return a null string");
             return string();
         }
@@ -307,6 +316,7 @@ public:
     vector<string> to_string_array()
     {
         if(val.empty()){
+            throw exception();
             prt(info,"to  string :no content");
             return  vector<  string> ();
         }
@@ -321,6 +331,7 @@ public:
     {
         vector<JsonPacket>  ar;
         if(val.empty()){
+            throw exception();
             assert(!val.empty());
             //throw Exception("empty val");
         }

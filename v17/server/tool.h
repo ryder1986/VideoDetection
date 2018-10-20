@@ -658,4 +658,7 @@ inline char * get_time_string()
 //    return tv.tv_sec*1000+tv.tv_usec/1000;
 }
 #endif
+
+#define PRT_DECODE_EXCEPTION prt(info,"error in decoding %s data:=>%s<=",typeid(this).name(),config.str().data());
+#define PRT_ENCODE_EXCEPTION prt(info,"error in encoding %s data:=>%s<=",typeid(this).name(),config.str().data());
 #endif // TOOL1_H
