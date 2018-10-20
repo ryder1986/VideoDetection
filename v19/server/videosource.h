@@ -26,7 +26,37 @@ class VideoSource
 public:
     VideoSource(string path);
     VideoSource(string path,bool only_key_frame);
-     ~VideoSource();
+    ~VideoSource()
+    {
+        lock.lock();
+        Timer2 t2;
+        t2.AsyncWait(0,bind(&VideoSource::quit_src,this));
+        lock.unlock();
+    }
+    void quit_src()
+    {
+#if 0
+        prt(info,"quiting video %s", url.data());
+        quit_flg=true;
+        if(src_trd){
+            if(src_trd->joinable())
+                src_trd->join();
+            delete src_trd;
+            prt(info,"quiting video thread %s", url.data());
+        }
+        watch_dog.stop();
+        prt(info,"quit video: %s done", url.data());
+#else
+        if(vcap.isOpened())
+            vcap.release();
+        watch_dog.stop();
+        quit_flg=true;
+        src_trd->detach();
+        //new thread(bind(&VideoSource::close_src,this));
+
+#endif
+    }
+
     void set_buffer_size(int frames)
     {
         queue_length=frames;

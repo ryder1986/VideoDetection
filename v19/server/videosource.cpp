@@ -46,30 +46,7 @@ VideoSource::VideoSource(string path,bool only_keyframe):watch_dog(bind(&VideoSo
     }else
         src_trd=new thread(bind(&VideoSource::run,this));
 }
-VideoSource::~VideoSource()
-{
-    lock.lock();
-#if 0
-    prt(info,"quiting video %s", url.data());
-    quit_flg=true;
-    if(src_trd){
-        if(src_trd->joinable())
-            src_trd->join();
-        delete src_trd;
-        prt(info,"quiting video thread %s", url.data());
-    }
-    watch_dog.stop();
-    prt(info,"quit video: %s done", url.data());
-#else
-    vcap.release();
-    watch_dog.stop();
-    quit_flg=true;
-    src_trd->detach();
-    //new thread(bind(&VideoSource::close_src,this));
 
-#endif
-    lock.unlock();
-}
 void VideoSource::run()
 {
     //     vcap.open(path);
@@ -99,6 +76,7 @@ void VideoSource::run()
 
         lock.lock();
         if(quit_flg){
+            lock.unlock();
             break;
         }
 

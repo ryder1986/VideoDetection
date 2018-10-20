@@ -5,6 +5,7 @@
 #include "videosource.h"
 #include <qmutex.h>
 #include <QPainter>
+#include <QTimer>
 #include <QMouseEvent>
 #include "opencv2/opencv.hpp"
 #include "camera_data.h"
@@ -55,6 +56,12 @@ class PlayerWidget : public QWidget
     Q_OBJECT
 public:
     explicit PlayerWidget(CameraInputData data,QWidget *parent = nullptr);
+    ~PlayerWidget()
+    {
+        tick_timer->stop();
+        delete tick_timer;
+    }
+
     void set_output_data(CameraOutputData data)
     {
         lock.lock();

@@ -108,7 +108,7 @@ private slots:
             output_lock.lock();
             if(sz&&output_list.size()<1000){//Max msgs
                 output_list.append(datagram);
-                prt(info,"list sz %d",output_list.size());
+                //prt(info,"list sz %d",output_list.size());
             }
             output_lock.unlock();
 
@@ -210,10 +210,10 @@ private slots:
         for(PlayerWidget *w:players){
             widget_remove_camera(w);
             w->hide();
-#if 0
+#if 1
             delete w;//TODO: add deleting method
 #else
-            std::thread([w](){ delete w;}).detach();
+            std::thread([this,w](){ delete w;}).detach();
 #endif
         }
         players.clear();
