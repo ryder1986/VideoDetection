@@ -108,7 +108,7 @@ public:
             DECODE_STRING_MEM(DeviceName);
             DECODE_JSONDATA_ARRAY_MEM(CameraData);
         }catch(exception e){
-            prt(info,"error in decoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -117,7 +117,7 @@ public:
             ENCODE_STRING_MEM(DeviceName);
             ENCODE_JSONDATA_ARRAY_MEM(CameraData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -139,12 +139,19 @@ public:
     }
     void decode()
     {
-
-        DECODE_JSONDATA_MEM(DeviceConfig);
+        try{
+            DECODE_JSONDATA_MEM(DeviceConfig);
+        }catch(exception e){
+            PRT_DECODE_EXCEPTION
+        }
     }
     void encode()
     {
-        ENCODE_JSONDATA_MEM(DeviceConfig);
+        try{
+            ENCODE_JSONDATA_MEM(DeviceConfig);
+        }catch(exception e){
+            PRT_DECODE_EXCEPTION
+        }
     }
 };
 
@@ -164,13 +171,21 @@ public:
 
     void decode()
     {
-        DECODE_INT_MEM(CameraIndex);
-        DECODE_JSONDATA_MEM(CameraOutput);
+        try{
+            DECODE_INT_MEM(CameraIndex);
+            DECODE_JSONDATA_MEM(CameraOutput);
+        }catch(exception e){
+            PRT_DECODE_EXCEPTION
+        }
     }
     void encode()
     {
-        ENCODE_INT_MEM(CameraIndex);
-        ENCODE_JSONDATA_MEM(CameraOutput);
+        try{
+            ENCODE_INT_MEM(CameraIndex);
+            ENCODE_JSONDATA_MEM(CameraOutput);
+        }catch(exception e){
+            PRT_DECODE_EXCEPTION
+        }
     }
 };
 

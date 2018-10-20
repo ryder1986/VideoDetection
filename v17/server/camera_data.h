@@ -64,7 +64,7 @@ public:
             DECODE_STRING_MEM(Url);
             DECODE_JSONDATA_ARRAY_MEM(DetectRegion);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -73,7 +73,7 @@ public:
             ENCODE_STRING_MEM(Url);
             ENCODE_JSONDATA_ARRAY_MEM(DetectRegion);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     virtual bool press(VdPoint pnt)
@@ -211,7 +211,7 @@ public:
             DECODE_INT_MEM(Timestamp);
             DECODE_JSONDATA_ARRAY_MEM(DetectionResult);
         }catch(exception e){
-            prt(info,"error in decoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -219,8 +219,9 @@ public:
         try{
             ENCODE_INT_MEM(Timestamp);
             ENCODE_JSONDATA_ARRAY_MEM(DetectionResult);
-             }catch(exception e){
-            prt(info,"error in decoding AppInputData :{%s}",config.str().data());
+             }
+        catch(exception e){
+            PRT_DECODE_EXCEPTION
         }
     }
 
@@ -265,7 +266,7 @@ public:
         try{
             DECODE_STRING_MEM(Url);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -273,7 +274,7 @@ public:
         try{
             ENCODE_STRING_MEM(Url);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };

@@ -20,7 +20,7 @@ public:
         try{
             DECODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -28,7 +28,7 @@ public:
         try{
             ENCODE_JSONDATA_ARRAY_MEM(ExpectedAreaVers);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
 
     }
@@ -139,7 +139,7 @@ public:
             DECODE_PKT_MEM(ProcessorData);
             DECODE_STRING_MEM(SelectedProcessor);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -149,7 +149,7 @@ public:
             ENCODE_STRING_MEM(SelectedProcessor);
             ENCODE_PKT_MEM(ProcessorData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     static DetectRegionInputData get_region_test_data(JsonPacket pkt,string SelectedProcessor)
@@ -470,7 +470,7 @@ public:
             DECODE_STRING_MEM(SelectedProcessor);
             DECODE_PKT_MEM(ProcessorData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -479,7 +479,7 @@ public:
             ENCODE_STRING_MEM(SelectedProcessor);
             ENCODE_PKT_MEM(ProcessorData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -506,7 +506,7 @@ public:
             DECODE_PKT_MEM(DetectionRect);
             DECODE_PKT_MEM(Result);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 
@@ -516,7 +516,7 @@ public:
             ENCODE_JSONDATA_MEM(DetectionRect);
             ENCODE_PKT_MEM(Result);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     template <typename A,typename B,typename C>

@@ -17,6 +17,7 @@ typedef struct args{
 
 }arg_t;
 }
+
 using namespace VideoProcessorNS;
 class VideoProcessor
 {
@@ -72,9 +73,6 @@ protected:
 private:
 
 };
-
-
-
 
 class DummyProcessorOutputData:public JsonData{
 
@@ -147,7 +145,7 @@ public:
             DECODE_BOOL_MEM(Vertical);
             DECODE_INT_MEM(Radii);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -157,7 +155,7 @@ public:
             ENCODE_BOOL_MEM(Vertical);
             ENCODE_INT_MEM(Radii);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     static DummyProcessorInputData get_dummy_test_data()
@@ -188,7 +186,7 @@ public:
         try{
             DECODE_JSONDATA_ARRAY_MEM(Rects);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -196,7 +194,7 @@ public:
         try{
             ENCODE_JSONDATA_ARRAY_MEM(Rects);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -222,7 +220,7 @@ public:
             DECODE_INT_MEM(scan_step);
             DECODE_DOUBLE_MEM(ratio);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -231,7 +229,7 @@ public:
             ENCODE_INT_MEM(scan_step);
             ENCODE_DOUBLE_MEM(ratio);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -268,7 +266,7 @@ public:
         try{
             DECODE_JSONDATA_ARRAY_MEM(DetectLine);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -276,7 +274,7 @@ public:
         try{
             ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -310,7 +308,7 @@ public:
             DECODE_INT_MEM(PersonFlow2);
             DECODE_INT_MEM(CurrentPersionCount);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -321,7 +319,7 @@ public:
             ENCODE_INT_MEM(PersonFlow2);
             ENCODE_INT_MEM(CurrentPersionCount);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -351,7 +349,7 @@ public:
             DECODE_JSONDATA_MEM(EndPoint);
             DECODE_INT_MEM(Length);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -361,7 +359,7 @@ public:
             ENCODE_JSONDATA_MEM(EndPoint);
             ENCODE_INT_MEM(Length);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -531,7 +529,7 @@ public:
             DECODE_JSONDATA_ARRAY_MEM(FarArea);
             DECODE_JSONDATA_ARRAY_MEM(NearArea);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -542,7 +540,7 @@ public:
             ENCODE_JSONDATA_ARRAY_MEM(NearArea);
             ENCODE_JSONDATA_ARRAY_MEM(FarArea);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -573,7 +571,7 @@ public:
             DECODE_INT_MEM(FarPointDistance);
             DECODE_JSONDATA_ARRAY_MEM(LaneData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -585,7 +583,7 @@ public:
             ENCODE_INT_MEM(FarPointDistance);
             ENCODE_JSONDATA_ARRAY_MEM(LaneData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -634,7 +632,7 @@ public:
             DECODE_BOOL_MEM(FarCarExist);
             DECODE_BOOL_MEM(NearCarExist);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -652,7 +650,7 @@ public:
             ENCODE_BOOL_MEM(FarCarExist);
             ENCODE_BOOL_MEM(NearCarExist);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -675,7 +673,7 @@ public:
             DECODE_JSONDATA_MEM(StartPoint);
             DECODE_JSONDATA_MEM(EndPoint);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -684,7 +682,7 @@ public:
             ENCODE_JSONDATA_MEM(StartPoint);
             ENCODE_JSONDATA_MEM(EndPoint);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -706,7 +704,7 @@ public:
             DECODE_INT_MEM(DegreePointsY);
             DECODE_INT_MEM(DegreeValue);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -715,7 +713,7 @@ public:
             ENCODE_INT_MEM(DegreePointsY);
             ENCODE_INT_MEM(DegreeValue);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -754,7 +752,7 @@ public:
             DECODE_JSONDATA_ARRAY_MEM(LaneOutputData);
             DECODE_JSONDATA_ARRAY_MEM(DegreeData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -767,7 +765,7 @@ public:
             ENCODE_JSONDATA_ARRAY_MEM(LaneOutputData);
             ENCODE_JSONDATA_ARRAY_MEM(DegreeData);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -801,7 +799,7 @@ public:
             DECODE_JSONDATA_ARRAY_MEM(Vers);
             DECODE_INT_MEM(Direction);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -809,9 +807,9 @@ public:
         try{
             ENCODE_INT_MEM(Type);
             ENCODE_JSONDATA_ARRAY_MEM(Vers);
-            DECODE_INT_MEM(Direction);
+            ENCODE_INT_MEM(Direction);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -832,10 +830,6 @@ public:
     }
     MvdProcessorInputData(JsonPacket pkt,PaintableData pd)
     {
-        //        seizing=pd.seizing;
-        //        point_index=pd.point_index;
-        //        event_type=pd.event_type;
-        //        ori_pnt=pd.ori_pnt;
         config=pkt;
         decode();
     }
@@ -861,7 +855,7 @@ public:
             DECODE_JSONDATA_ARRAY_MEM(DetectLine);
             DECODE_JSONDATA_ARRAY_MEM(Events);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -875,7 +869,7 @@ public:
             ENCODE_JSONDATA_ARRAY_MEM(DetectLine);
             ENCODE_JSONDATA_ARRAY_MEM(Events);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void add_lane()
@@ -990,16 +984,7 @@ public:
         LaneData.erase(LaneData.end()-1);
         encode();
     }
-    //    void append_event(EventRegion e)
-    //    {
-    //        Events.push_back(e);
-    //        encode();
-    //    }
-    //    void del_event()
-    //    {
-    //        Events.erase(Events.begin()+Events.size());
-    //        decode();
-    //    }
+
     bool set_point(VdPoint new_p,int index)
     {
         bool ret=false;
@@ -1280,7 +1265,7 @@ public:
             DECODE_INT_MEM(EventID);
             DECODE_JSONDATA_ARRAY_MEM(Vers);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
     void encode()
@@ -1290,7 +1275,7 @@ public:
             ENCODE_INT_MEM(EventID);
             ENCODE_JSONDATA_ARRAY_MEM(Vers);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
     }
 };
@@ -1306,12 +1291,6 @@ public:
     int PersonFlow2;
     int CurrentPersionCount;
     vector <EventRegionObjectOutput> EventObjects;
-    //    vector<VdRect> InvalidStopData;
-    //    vector<VdRect> ReverseDriveData;
-    //    vector<VdRect> DriveAwayData;
-    //    vector<VdRect> NoPedestrainData;
-    //    vector<LinePoint> CongestionData;
-    //    vector<VdRect>	AbandonedObjectData;
     MvdProcessorOutputData(JsonPacket p):JsonData(p)
     {
         decode();
@@ -1361,21 +1340,15 @@ public:
             DECODE_INT_MEM(VideoState);
             DECODE_JSONDATA_ARRAY_MEM(LaneOutputData);
             DECODE_JSONDATA_ARRAY_MEM(DegreeData);
-            DECODE_JSONDATA_ARRAY_MEM(EventObjects);
-
+            try{
+                DECODE_JSONDATA_ARRAY_MEM(EventObjects);
+            }catch(exception e){}
             DECODE_INT_MEM(PersonFlow1);
             DECODE_INT_MEM(PersonFlow2);
             DECODE_INT_MEM(CurrentPersionCount);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
-        //        DECODE_JSONDATA_ARRAY_MEM(InvalidStopData);
-        //        DECODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
-        //        DECODE_JSONDATA_ARRAY_MEM(DriveAwayData);
-        //        DECODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
-        //        DECODE_JSONDATA_ARRAY_MEM(CongestionData);
-        //        DECODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
-
     }
     void encode()
     {
@@ -1386,20 +1359,15 @@ public:
             ENCODE_INT_MEM(VideoState);
             ENCODE_JSONDATA_ARRAY_MEM(LaneOutputData);
             ENCODE_JSONDATA_ARRAY_MEM(DegreeData);
-            ENCODE_JSONDATA_ARRAY_MEM(EventObjects);
-
+            try{
+                ENCODE_JSONDATA_ARRAY_MEM(EventObjects);
+            }catch(exception e){}
             ENCODE_INT_MEM(PersonFlow1);
             ENCODE_INT_MEM(PersonFlow2);
             ENCODE_INT_MEM(CurrentPersionCount);
         }catch(exception e){
-            prt(info,"error in encoding AppInputData :{%s}",config.str().data());
+            PRT_DECODE_EXCEPTION
         }
-        //        ENCODE_JSONDATA_ARRAY_MEM(InvalidStopData);
-        //        ENCODE_JSONDATA_ARRAY_MEM(ReverseDriveData);
-        //        ENCODE_JSONDATA_ARRAY_MEM(DriveAwayData);
-        //        ENCODE_JSONDATA_ARRAY_MEM(NoPedestrainData);
-        //        ENCODE_JSONDATA_ARRAY_MEM(CongestionData);
-        //        ENCODE_JSONDATA_ARRAY_MEM(AbandonedObjectData);
     }
     template <typename A>
     void draw_rect(VdRect rect ,A draw_line )
