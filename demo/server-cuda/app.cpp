@@ -1,16 +1,30 @@
 #include "app.h"
-#include "socket.h"
-App::App():watch_dog(bind(&App::check_point,this))
+#include "configmanager.h"
+#include "datapacket.h"
+App::App(ConfigManager *p_config_manager):str_stream(""),
+    VdData(p_config_manager->get_config()),lservice(),p_cm(p_config_manager),udp_fd(0)
 {
 
-}
-App::App(ConfigManager *p_config_manager):str_stream(""),watch_dog(bind(&App::check_point,this)),
-    VdData(DeviceConfigData(p_config_manager->get_config()).DeviceConfig.data()),lservice(),p_cm(p_config_manager),udp_fd(0)
-{
+    //DatabaseInstance &ins=    DatabaseInstance::get_instance();
+
+    //string user="root";
+    //string passwd="root";
+    //string db="AIPD";
+    //string host="localhost";
+
+    //prt(info,"qury 1 : %x",&ins);
+    //    ins.connect(host,user,passwd,db);
+    //for(int i=0;i<10;i++){
+
+    //    ins.query("INSERT INTO TIS \
+    //              ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `RegionID`, `TEType`, `TEPAddr`, `TEVAddr`)\
+    //              VALUES\
+    //              ( '3', '2018-03-07 17:46:24', '60', '32', '大学城', '12', '12', '21', 'picpath', 'videopath');");
+
+    //}
     stream_cmd=NULL;
-    restart_all();
     sql_need_connect=true;
-    p_count_thread=new thread(bind(&App::count_fun1,this));
+    restart_all();
     static Tcpserver server_cmd(stream_cmd,
                                 12345,
                                 bind(&App::process_client_cmd,
@@ -20,14 +34,16 @@ App::App(ConfigManager *p_config_manager):str_stream(""),watch_dog(bind(&App::ch
                                      )
                                 );
     quit_count=false;
-    watch_dog.start(1000*60);//do check every 1 minute
+    p_count_thread=new thread(bind(&App::count_fun1,this));
+    //    p_count_thread=new thread([count_fun](){count_fun();});
+    //    _start(&App::count_fun);
 }
 
 App::~App()
 {
-    watch_dog.stop();
     if(udp_fd>0)
         close(udp_fd);
+    quit_count=true;
 
 }
 //deal with clients command
@@ -97,7 +113,7 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     {
         p_cm->set_config(e.Argument.str());//get config
         prt(info,"set config with string:\n %s",e.Argument.str().data());
-        AppInputData dt(DeviceConfigData(p_cm->get_config()).DeviceConfig.data());
+        AppInputData dt(p_cm->get_config());
         private_data=AppInputData(dt);
         restart_all();
         ret=true;
@@ -108,7 +124,7 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     case AppInputData::Operation::INSERT_CAMERA:
     {
         if( add_camera(e.Index,e.Argument)){
-            save_data();
+            p_cm->set_config(private_data.data().str());//get config
             ret=true;
         }
         ReplyPkt p(ret,AppInputData::Operation::MODIFY_CAMERA,JsonPacket());
@@ -118,29 +134,34 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     case AppInputData::Operation::MODIFY_CAMERA:
     {
         if(mod_camera(e.Index,e.Argument)){
-            save_data();
+            p_cm->set_config(private_data.data().str());
             ret=true;
         }
         ReplyPkt p(ret,AppInputData::Operation::MODIFY_CAMERA,JsonPacket());
         r=p;
         break;
     }
+    case AppInputData::Operation::READ_CAMERA:
+    {
+        JsonPacket pk;
+        int index=e.Index;
+        if(index>0&&index<=private_data.CameraData.size()){
+            pk=private_data.CameraData[index-1].data();
+            ret=true;
+        }else{
+            ret=false;
+        }
+        ReplyPkt p(ret,AppInputData::Operation::READ_CAMERA,pk);
+        r=p;
+        break;
+    }
     case AppInputData::Operation::DELETE_CAMERA:
     {
         ret=false;
-
-#if 0
-        Timer2 async_task;
-
-        async_task.AsyncWait(0,bind(&App::del_camera,this,placeholders::_1),e.Index);
-        save_data();
-        ret=true;
-#else
         if(del_camera(e.Index)){
-            save_data();
+            p_cm->set_config(private_data.data().str());
             ret=true;
         }
-#endif
         ReplyPkt p(ret,AppInputData::Operation::DELETE_CAMERA,JsonPacket());
         r=p;
         break;
@@ -189,3 +210,4 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     }
     return ret;
 }
+

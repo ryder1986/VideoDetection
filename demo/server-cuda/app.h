@@ -1,16 +1,30 @@
-#ifndef APP_H
+﻿#ifndef APP_H
 #define APP_H
 
-#include "configmanager.h"
-#include "camera.h"
-#include "app_data.h"
 #include "server.h"
 #include "tool.h"
+#include "camera.h"
+#include "configmanager.h"
+#include "app_data.h"
 #include <mysql/mysql.h>
 #include <list>
+#define MAX_CAM_NUM 100
+class DestClient{
+public:
 
-#define MAX_CAM_NUM 1000
-#define COUNT_SECONDS 300
+    DestClient(string i):ip(i)
+    {
+
+    }
+
+    string get_ip()
+    {
+        return ip;
+    }
+
+private:
+    string ip;
+};
 class DatabaseInstance
 {
 public:
@@ -136,33 +150,520 @@ private:
     bool need_connect;
     // MYSQL_ROW row_str_list;
 };
-
-class DestClient{
-public:
-
-    DestClient(string i):ip(i)
-    {
-
-    }
-
-    string get_ip()
-    {
-        return ip;
-    }
-
-private:
-    string ip;
-};
+#include <strstream>
 class App:public VdData<AppInputData>
 {
 public:
-    App();
+    //define operation for request pkt
+    //    enum Operation{
+    //        GET_CONFIG=1,
+    //        SET_CONFIG,
+    //        INSERT_CAMERA,
+    //        MODIFY_CAMERA,
+    //        DELETE_CAMERA,
+    //        OPEN_CAMERA_DATA,
+    //        CLOSE_CAMERA_DATA,
+    //        HEART_PKT,
+    //        REBOOT
+    //    };
     App(ConfigManager *p);
     ~App();
+
     void start()
     {
     }
 private:
+    //#define COUNT_SECONDS 10
+#define COUNT_SECONDS 300
+    void count_fun()
+    {
+        int camera_size=private_data.CameraData.size();
+        int count_time=COUNT_SECONDS;//10s
+        int person_count[100];
+        int car_count[100];
+        int speed_count[100];
+
+
+        int old_exist[100];//max lane num
+        memset(old_exist,0,100);
+        while(  (get_time_second()%6)){
+            this_thread::sleep_for(chrono::microseconds(1000000));
+        }
+        while(!quit_count){
+
+
+            if(count_time--==1){
+
+                prt(info,"time up , start cal ---------------------------->");
+
+                for(int loop_cams=0;loop_cams<camera_size;loop_cams++){
+                       prt(info,"cam %d",loop_cams);
+                    CameraInputData cd= private_data.CameraData[loop_cams];
+                    int region_size=cd.DetectRegion.size();
+                    vector< MvdProcessorOutputData>  &cam_out=outputs[loop_cams];
+                    for(int loop_regions=0;loop_regions<region_size;loop_regions++){
+                          prt(info,"region %d",loop_regions);
+                        DetectRegionInputData dr=  cd.DetectRegion[loop_regions];
+                        MvdProcessorInputData mvddata(  dr.ProcessorData);
+                        int lane_size=mvddata.LaneData.size();
+                        if(lane_size>=100){
+                            prt(info,"max lane  100 ,err");
+                            continue;
+                        }
+
+                        DatabaseInstance &ins=get_database();
+
+                        for(int i=0;i<cam_out.size();i++){
+                                  prt(info,"frame %d",loop_regions);
+                            MvdProcessorOutputData tmp=cam_out[i];
+                            // tmp.CongestionData
+                            for(int j=0;j<tmp.LaneOutputData.size();j++){
+                                if(old_exist[j]==0&&tmp.LaneOutputData[j].NearCarExist)
+                                {
+                                    car_count[j]++;
+                                    speed_count[j]+=tmp.LaneOutputData[j].VehicleSpeed;
+
+                                }
+                                old_exist[j]=tmp.LaneOutputData[j].NearCarExist;
+
+                            }
+
+
+                            //      person_count+=tmp.PersonFlow1;
+                        }
+                        for(int j=0;j<mvddata.LaneData.size();j++){
+
+                            int vs_record_id=3;
+                            string vs_sst=get_sql_time();
+                            strstream tmp1;
+
+
+                            tmp1<<COUNT_SECONDS;
+
+                            char buf_tmp[100];
+                            memset(buf_tmp,0,100);
+                            sprintf(buf_tmp,"%d",COUNT_SECONDS);
+                            string vs_sp(buf_tmp);
+                            string vs_analyce_id="2";
+                            string vs_savenue="沙河西路";
+                            string vs_CameraID="1";
+
+                            string vs_LaneID="12";
+                            //   string vs_VSum="";car_count
+                            string vs_VPSum="0";
+                            string vs_VNSum="0";
+                            string vs_VTSum="0";
+
+                            string vs_VBSum="0";
+                            //  string vs_VCSum="0";
+                            string vs_VMSum="0";
+                            string vs_VKSum="0";
+
+
+                            if(car_count[j]){
+                                prt(info,"car num %d, speed total %d",car_count[j],speed_count[j]);
+
+
+
+
+                                int average_speed=speed_count[j]/car_count[j];
+                                memset(buf_tmp,0,100);
+                                sprintf(buf_tmp,"%d",average_speed);
+                                //  tmp2<<average_speed;
+                            }else{
+                                  memset(buf_tmp,0,100);
+                                    sprintf(buf_tmp,"%d",0);
+                            }
+                            string vs_ASpeed(buf_tmp);
+
+                            string vs_ATime="1";
+                            string vs_ASpace="1";
+                            string vs_AVM="1";
+                            string vs_AOccupy="1";
+                            string vs_RState="1";
+
+                            //                    char buf[100];
+                            //                    memset(buf,0,100);
+                            //                    sprintf(buf,"%s",);
+
+                            stringstream stream;
+
+                            stream<< "INSERT INTO VS ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `LaneID`, `VSum`, `VPSum`, `VNSum`, `VTSum`, `VBSum`, `VCSum`, `VMSum`, `VKSum`, `ASpeed`, `ATime`, `ASpace`, `AVM`, `AOccupy`,`RState`) VALUES";
+                            stream<< "(";
+                            stream<< "'";
+
+                            stream<<vs_record_id;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+
+                            stream<<vs_sst;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_sp;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_analyce_id;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_savenue;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_CameraID;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+
+                            stream<<vs_LaneID;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+                            prt(info,"car : %d",car_count[j]);
+                            //  stream<<vs_VSum;
+                            stream<<  car_count[j];
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_VPSum;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_VNSum;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+                            stream<<vs_VTSum;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_VBSum;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+                            //  stream<<vs_VCSum;
+                            stream<<car_count[j];
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_VMSum;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_VKSum;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_ASpeed;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+                            stream<<vs_ATime;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_ASpace;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_AVM;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_AOccupy;
+                            stream<< "'";
+                            stream<< ",";
+                            stream<< "'";
+
+
+                            stream<<vs_RState;
+                            stream<< "'";
+                            stream<< ");";
+                            //stream<<
+
+                            prt(info,"%s",stream.str().data());
+                            char buf1[1000];
+                            memset(buf1,0,1000);
+                            sprintf(buf1,"%s",stream.str().data());
+
+                            prt(info,"inserting database cam %d, region %d, lane %d",loop_cams,loop_regions,j);
+                            ins.query(buf1);
+
+
+                            speed_count[j]=0;
+                            car_count[j]=0;
+
+                        }
+
+
+
+
+
+//                        int record_id=1;//no
+//                        string sst;// start time. date type
+//                        //  string count_period="10";//s
+//                        string device_id="123";
+//                        string location_name;
+//                        string camera_id;
+//                        string region_id;
+//                        string person_count;
+//                        string normal_direction_person_count;
+//                        string reverse_direction_person_count;
+//                        string person_density;
+
+
+                        //      ins.query(" INSERT INTO PS ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `RegionID`, `PSum`, `PPSum`, `PNSum`, `PDensity`) \
+                        //         VALUES \
+                        //        ('2', '2018-10-17 16:34:07', '90', '1', '沙河西路', '2', '2', '15', '10', '5', '40');");
+                //        ins.query(" INSERT INTO PS ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `RegionID`, `PSum`, `PPSum`, `PNSum`, `PDensity`) \
+                       //           VALUES \
+                       //           ('2', '2018-10-17 16:34:07', '90', '1', '沙河西路', '2', '2', '15', '10', '5', '40');");
+
+
+                                //                                int vs_record_id=3;
+                                //                        string vs_sst=get_sql_time();
+                                //                        strstream tmp1;
+
+
+                                //                        tmp1<<COUNT_SECONDS;
+
+                                //                        char buf_tmp[100];
+                                //                        memset(buf_tmp,0,100);
+                                //                        sprintf(buf_tmp,"%d",COUNT_SECONDS);
+                                //                        string vs_sp(buf_tmp);
+                                //                        string vs_analyce_id="2";
+                                //                        string vs_savenue="沙河西路";
+                                //                        string vs_CameraID="1";
+
+                                //                        string vs_LaneID="12";
+                                //                        //   string vs_VSum="";car_count
+                                //                        string vs_VPSum="0";
+                                //                        string vs_VNSum="0";
+                                //                        string vs_VTSum="0";
+
+                                //                        string vs_VBSum="0";
+                                //                        //  string vs_VCSum="0";
+                                //                        string vs_VMSum="0";
+                                //                        string vs_VKSum="0";
+
+
+                                //                        if(car_count){
+                                //                            prt(info,"car num %d, speed total %d",car_count,speed_count);
+
+
+
+
+                                //                            int average_speed=speed_count[j]/car_count[j];
+                                //                            memset(buf_tmp,0,100);
+                                //                            sprintf(buf_tmp,"%d",average_speed);
+                                //                            //  tmp2<<average_speed;
+                                //                        }
+                                //                        string vs_ASpeed(buf_tmp);
+
+                                //                        string vs_ATime="1";
+                                //                        string vs_ASpace="1";
+                                //                        string vs_AVM="1";
+                                //                        string vs_AOccupy="1";
+                                //                        string vs_RState="1";
+
+                                //                        //                    char buf[100];
+                                //                        //                    memset(buf,0,100);
+                                //                        //                    sprintf(buf,"%s",);
+
+                                //                        stringstream stream;
+
+                                //                        stream<< "INSERT INTO VS ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `LaneID`, `VSum`, `VPSum`, `VNSum`, `VTSum`, `VBSum`, `VCSum`, `VMSum`, `VKSum`, `ASpeed`, `ATime`, `ASpace`, `AVM`, `AOccupy`,`RState`) VALUES";
+                                //                        stream<< "(";
+                                //                        stream<< "'";
+
+                                //                        stream<<vs_record_id;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+
+                                //                        stream<<vs_sst;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_sp;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_analyce_id;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_savenue;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_CameraID;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+
+                                //                        stream<<vs_LaneID;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        //  stream<<vs_VSum;
+                                //                        stream<<  car_count;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_VPSum;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_VNSum;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+                                //                        stream<<vs_VTSum;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_VBSum;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+                                //                        //  stream<<vs_VCSum;
+                                //                        stream<<car_count;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_VMSum;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_VKSum;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_ASpeed;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+                                //                        stream<<vs_ATime;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_ASpace;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_AVM;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_AOccupy;
+                                //                        stream<< "'";
+                                //                        stream<< ",";
+                                //                        stream<< "'";
+
+
+                                //                        stream<<vs_RState;
+                                //                        stream<< "'";
+                                //                        stream<< ");";
+                                //                        //stream<<
+
+                                //                        prt(info,"%s",stream.str().data());
+                                //                        char buf1[1000];
+                                //                        memset(buf1,0,1000);
+                                //                        sprintf(buf1,"%s",stream.str().data());
+                                //                        ins.query(buf1);
+
+                                //                        count_time=COUNT_SECONDS;
+                                //                        speed_count=0;
+                                //                        car_count=0;
+
+                                //    ins.query( "INSERT INTO VS ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `LaneID`, `VSum`, `VPSum`, `VNSum`, `VTSum`, `VBSum`, `VCSum`, `VMSum`, `VKSum`, `ASpeed`, `ATime`, `ASpace`, `AVM`, `AOccupy`,`RState`) VALUES\
+                                //             ( '2', '2018-10-07 10:39:34', '300', '2', '沙河西路', '1', '2', '15', '10', '5', '1', '2', '3', '4', '5', '65.45', '60.45', '93.7', '48.66', '43.78','1');");
+
+                    }//loop regions
+                }//loop cams
+                for(int i=0;i<100;i++)
+                    outputs[i].clear();
+
+                  count_time=COUNT_SECONDS;
+                    prt(info," stop cal ---------------------------->");
+            }
+
+            this_thread::sleep_for(chrono::microseconds(1000000));
+        }
+    }
     bool process_event(RequestPkt e,ReplyPkt &r);
     void process_client_cmd(Session *clt,char *data,int len);
     void client_data_request(Session *clt, char *data, int len);
@@ -173,18 +674,6 @@ private:
                                     this,placeholders::_1,
                                     placeholders::_2));
     }
-    void save_data()
-    {
-        DeviceConfigData data(private_data);
-        p_cm->set_config(data.data().str());//get
-    }
-    JsonPacket load_data()
-    {
-        DeviceConfigData data( p_cm->get_config());
-        private_data=data.data();
-    }
-
-
     void restart_all()
     {
         stop_cams();
@@ -218,11 +707,7 @@ private:
     bool del_camera(int index)//delete who ? 1~size
     {
         if(1<=index&&index<=cms.size()){
-#if 0
             delete cms[index-1];
-#else
-            thread([this,index](){ delete cms[index-1];}).detach();
-#endif
             vector<Camera*>::iterator it=cms.begin();
             cms.erase(it+index-1);
             private_data.delete_camera(index);
@@ -237,30 +722,12 @@ private:
             vector<Camera*>::iterator it=cms.begin();
             Camera *c=cms[index-1];
             if(c->modify(pkt)){
-                private_data.modify_camera(c->data(),index);
+                private_data.modify_camera(c->get_data(),index);
                 ret=true;
             }
         }
         return ret;
     }
-    void check_point()
-    {
-
-//        while(1){
-//            this_thread::sleep_for(chrono::seconds(1));
-//        }
-        int count=dir_count("/ftphome/pic");
-        prt(info,"check files %d---->",count);
-        int left=1000;
-        if(count>left){
-            delete_dir_files("/ftphome/pic",count,left);
-        }
-    }
-
-
-    //////////db/////////
-
-
     DatabaseInstance  &  get_database()
     {
         DatabaseInstance &ins=DatabaseInstance::get_instance();
@@ -270,6 +737,8 @@ private:
         string host="localhost";
         string fn;
         fn.append("/ftphome/pic/");
+
+
         if(sql_need_connect){
             ins.connect(host,user,passwd,db);
             sql_need_connect=false;
@@ -720,8 +1189,6 @@ private:
         sprintf(buf1,"%s",stream.str().data());
         ins.query(buf1);
     }
-
-    //////db end///////
 private:
     vector <Session*> *stream_cmd;//clients who connected to our server
     string str_stream;//
@@ -731,15 +1198,16 @@ private:
     vector <DestClient > dest_clients;
     string client_tmp_ip;
     int udp_fd;
-    Timer1 watch_dog;
-
     bool sql_need_connect;
     thread *p_count_thread;
+
+    //vector <MvdProcessorOutputData> outputs[100];//support 100 cameras
     vector <Mat> frames;
     bool quit_count;
     vector <EventRegionObjectOutput> last_events;
     vector <MvdProcessorOutputData> outputs[MAX_CAM_NUM];//support 100 cameras
-};
 
+    //int old_event_flag[7];
+};
 
 #endif // APP_H

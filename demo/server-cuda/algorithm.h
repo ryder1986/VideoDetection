@@ -21,7 +21,7 @@ typedef  unsigned char	Uint8;
 
 #define MAX_DETECTOR_TYPES		2			//最大支持两种检测器
 #define MAX_DETECTOR_ONETYPE	8			//每种检测器最大支持8个
-#define MAX_LANE		        8	//	8			//每个检测器最大支持8个车道
+#define MAX_LANE		        8	    	//每个检测器最大支持8个车道
 
 #define FULL_COLS  				(640)
 #define FULL_ROWS  				(480)
@@ -32,8 +32,8 @@ typedef  unsigned char	Uint8;
 #define DETECTRECT_WIDTH_MAX	704//500
 #define DETECTRECT_HEIGHT_MAX	576//240
 
-#define	MAX_SPEEDDETECTOR_DOTS	768*576
-#define MaxDotsInDetect         768*576
+#define	MAX_IMAGE_WIDTH     	1920
+#define MAX_IMAGE_HEIGHT        1080
 
 #define DETECTRECT_WIDTH_DEFAULT	160
 #define DETECTRECT_HEIGHT_DEFAULT	40
@@ -50,7 +50,7 @@ typedef  unsigned char	Uint8;
 #define MAX_TARGET_NUM 100
 #define MAX_DIRECTION_NUM 2
 #define FRAME_FPS  10
-#define MAX_INCIDENT_NUM 10//发生各类事件的最多数量
+#define MAX_INCIDENT_NUM 20//发生各类事件的最多数量
 #define MAX_INCIDENT_TYPE 5//事件类型数量
 #define MAX_REGION_NUM 5//各类事件的最大区域数
 
@@ -108,6 +108,8 @@ typedef struct{
 	bool  cal_flow;
 	int   direction;//目标运动方向
 	int incident_continue_num[MAX_INCIDENT_TYPE];//交通事件持续的帧数
+	int incident_flag[MAX_INCIDENT_TYPE];//交通事件是否标记
+	bool cal_incident[MAX_INCIDENT_TYPE];//交通是否计算
 }CTarget;
 
 ///////////////////////////////////////////////////////////////////////////////////////////检测参数
@@ -267,18 +269,23 @@ typedef struct{
 }PVDOUTBUF;
 
 typedef struct{
+	Uint16 uIncidentID;//事件ID
+	CPoint IncidentBox[4];//事件框
+}INCIDENTBOX;
+
+typedef struct{
 	Uint16 uIllegalParkNum;
-	CRect1 IllegalParkBox[MAX_INCIDENT_NUM];//违法停车
+	INCIDENTBOX IllegalParkBox[MAX_INCIDENT_NUM];//违法停车
 	Uint16 uOppositeDirDriveNum;
-	CRect1 OppositeDirDriveBox[MAX_INCIDENT_NUM];//逆行
+	INCIDENTBOX OppositeDirDriveBox[MAX_INCIDENT_NUM];//逆行
 	Uint16 uCongestionNum; //交通拥堵
-	CPoint CongestionLine[MAX_LANE][2];//拥堵线;
+	INCIDENTBOX CongestionBox[MAX_LANE];//拥堵框;
 	Uint16 uOffLaneNum;
-	CRect1 OffLaneBox[MAX_INCIDENT_NUM];//偏离车道
+	INCIDENTBOX OffLaneBox[MAX_INCIDENT_NUM];//偏离车道
 	Uint16 uNoPersonAllowNum;
-	CRect1 NoPersonAllowBox[MAX_INCIDENT_NUM];//违法行人
+	INCIDENTBOX NoPersonAllowBox[MAX_INCIDENT_NUM];//违法行人
 	Uint16 uAbandonedObjectNum;
-	CRect1 AbandonedObject[MAX_INCIDENT_NUM];//抛洒物
+	INCIDENTBOX AbandonedObject[MAX_INCIDENT_NUM];//抛洒物
 }INCIDENTOUTBUF;
 
 typedef struct{
@@ -329,7 +336,7 @@ typedef struct tagCfgs
 	network* net;
 	char** names;
 	float thresh;
-
+	int classes;
 	//mobileNet检测参数
 
 	//行人检测参数
@@ -409,25 +416,29 @@ typedef struct tagCfgs
 	CTarget incident_targets[MAX_TARGET_NUM];
 	int incident_target_id;
 	int incident_targets_size;
+	Uint32 incidentID;//交通事件ID
 
 	Uint16 uIllegalParkNum;
-	CRect1 IllegalParkBox[MAX_INCIDENT_NUM];//违法停车
+	INCIDENTBOX IllegalParkBox[MAX_INCIDENT_NUM];//违法停车
 
 	Uint16 uOppositeDirDriveNum;
-	CRect1 OppositeDirDriveBox[MAX_INCIDENT_NUM];//逆行
+	INCIDENTBOX OppositeDirDriveBox[MAX_INCIDENT_NUM];//逆行
 	int direction[MAX_REGION_NUM];//区域运行方向
 
 	bool  bCongestion[MAX_LANE];//交通拥堵
+	bool  bStatCongestion[MAX_LANE][150];//统计交通拥堵
+	int   uStatCongestionNum[MAX_LANE];
 	Uint16 uCongestionNum; //交通拥堵
-	CPoint CongestionLine[MAX_LANE][2];//拥堵线;
+	INCIDENTBOX CongestionBox[MAX_LANE];//拥堵线;
 
 	Uint16 uOffLaneNum;
-	CRect1 OffLaneBox[MAX_INCIDENT_NUM];//偏离车道
+	INCIDENTBOX OffLaneBox[MAX_INCIDENT_NUM];//偏离车道
 
 	Uint16 uNoPersonAllowNum;
-	CRect1 NoPersonAllowBox[MAX_INCIDENT_NUM];//违法行人
+	INCIDENTBOX NoPersonAllowBox[MAX_INCIDENT_NUM];//违法行人
 
-	CRect1 AbandonedObject[MAX_INCIDENT_NUM];//抛洒物
+	Uint16 uAbandonedObjectNum;
+	INCIDENTBOX AbandonedObject[MAX_INCIDENT_NUM];//抛洒物
 
 
 }ALGCFGS;

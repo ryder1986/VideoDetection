@@ -10,11 +10,12 @@ using  namespace Json ;
 
 class JsonPacket:public Value
 {
+
 public:
-    typedef Value JsonValue;
+    typedef  Value JsonValue1;
+    typedef  Value JsonValue;
     JsonPacket(string str)
     {
-        str_data=str;
         JsonValue v;
         Reader r;
         bool rst=r.parse(str,v);
@@ -22,6 +23,32 @@ public:
             prt(info,"parse err");
         }else
             val=v;
+    }
+    void set(string str)
+    {
+        JsonValue v;
+        Reader r;
+        bool rst=r.parse(str,v);
+        if(!rst){
+            prt(info,"parse err");
+        }else
+            val=v;
+    }
+    void set(vector<JsonPacket> ar)
+    {
+        JsonValue v;
+        int sz=ar.size();
+        for(int i=0;i<sz;i++){
+            v[i]=ar[i].val;
+        }
+        val=v;
+    }
+    JsonPacket()
+    {
+    }
+    void clear()
+    {
+        val.clear();
     }
 
     JsonPacket(vector<JsonPacket> ar)
@@ -33,47 +60,45 @@ public:
         }
         val=v;
     }
-
-    JsonPacket()
+public:
+    JsonPacket(JsonValue v)
     {
-    }
-
-    void operator =(string str)
-    {
-        JsonValue v;
-        Reader r;
-        bool rst=r.parse(str,v);
-        if(!rst){
-            prt(info,"parse err");
-        }else
-            val=v;
-    }
-
-    void operator =(JsonPacket pkt)
-    {
-        val=pkt.value();
-        str_data=pkt.str();
-    }
-
-    void operator =(vector<JsonPacket> ar)
-    {
-        JsonValue v;
-        int sz=ar.size();
-        for(int i=0;i<sz;i++){
-            v[i]=ar[i].val;
-        }
         val=v;
     }
+    //    JsonPacket(const JsonPacket &v)
+    //    {
+    //        val=v.value();
+    //    }
+public:
+    JsonValue obj()
+    {
+        return val;
+    }
+
+    string str()
+    {
+#if 1
+        //     FastWriter  w;
+        FastWriter  w;
+        //   StyledWriter  w;
+        return  w.write(val);
+#else
+        return val.asString();
+#endif
+    }
+
     template <typename T>
     void set(string name,T value)
     {
         if(!name_exist(name,"set")){
-            prt(info,"no keyword:%s",name.data());
-            // throw Exception("no keyword");
+            prt(info,"setting key: %s fail",name.data());
             //print_backstrace();
         }
         else
             val[name]=value;
+#if 0
+        check_type(val[name]);
+#endif
     }
     void set(string name,JsonPacket p)
     {
@@ -90,6 +115,8 @@ public:
         val[name].clear();
         if(!name_exist(name,"set")){
             prt(info,"setting name: %s fail",name.data());
+            //print_backstrace();
+
         }
         else
         {
@@ -97,126 +124,92 @@ public:
                 val[name].append(p.value());
         }
     }
-    JsonPacket get(string name)
-    {
-        if(name_exist(name,"get")){
-            JsonPacket pkt(val[name]);
-            return pkt;
-        }
-        else{
-            return JsonPacket();
-        }
-    }
-    string get_string(string name)
-    {
-        if(name_exist(name,"get")){
-            return    val[name].asString();
-
-        }
-        else
-            return string();
-    }
-    int get_int(string name)
-    {
-        if(name_exist(name,"get")){
-            return    val[name].asInt();
-
-        }
-        else
-            return 0;
-    }
-    bool get_bool(string name)
-    {
-        if(name_exist(name,"get")){
-            return  val[name].asBool();
-        }
-        else
-            return false;
-    }
-    float get_float(string name)
-    {
-        if(name_exist(name,"get")){
-            return  val[name].asFloat();
-
-        }
-        else
-            return false;
-    }
-    vector <JsonPacket> get_array(string name)
-    {
-        vector <JsonPacket>  pa;
-        if(name_exist(name,"get")){
-            JsonValue v=val[name];
-            bool is_a= v.isArray();
-            if(is_a){
-                int sz=v.size();
-                for(int i=0;i<sz;i++){
-                    pa.push_back(v);
-                }
-            }
-            return pa;
-        }
-        else
-            return pa;
-    }
-public:
-    void clear()
-    {
-        val.clear();
-    }
-
-    string str()
-    {
-#if 1
-        //FastWriter  w;
-        FastWriter  w;
-        //StyledWriter  w;
-        return  w.write(val);
-#else
-        return val.asString();
-#endif
-    }
-    JsonValue &value()
-    {
-        return val;
-    }
-    bool is_null()
-    {
-        return val.isNull();
-    }
-
     void add(string name,vector<JsonPacket> pkts)
     {
         val[name].clear();
+        if(!name_exist(name,"add")){
+
+        }
+        else
+        {
+            //   prt(info,"adding exist name: %s ",name.data());
+            //print_backstrace();
+        }
         for(JsonPacket p:pkts)
             val[name].append(p.value());
     }
     void add(string name,JsonPacket pkt)
     {
         val[name].clear();
-        val[name]=pkt.value();
+        if(!name_exist(name,"add")){
+
+        }
+        else
+        {
+            //   prt(info,"adding exist name: %s ",name.data());
+            //print_backstrace();
+        }
+        val[name]=pkt.obj();
+
     }
     template <typename T>
     void add(string name,T value)
     {
+        if(!name_exist(name,"add")){
+            val[name].clear();
+        }
+        else{
+            //   prt(info,"adding exist key: %s ,already exist",name.data());
+            //print_backstrace();
+        }
         val[name]=value;
+
+
+#if 0
+        check_type(val[name]);
+#endif
     }
     template <typename T>
     void add(string name,vector<T> va)
     {
+        if(!name_exist(name,"add")){
+            val[name].clear();
+        }
+        else{
+            //   prt(info,"adding exist key: %s ,already exist",name.data());
+            //print_backstrace();
+        }
         for(T t:va)
             val[name].append(t);
-    }
 
+
+#if 0
+        check_type(val[name]);
+#endif
+    }
+    //    void add(string name,JsonPacket p)
+    //    {
+    //        if(!name_exist(name,"add"))
+    //            val[name]=p.val;
+    //        else{
+    //            prt(info,"adding key: %s fail,already exist",name.data());
+    //        }
+    //    }
+
+    JsonPacket get(string name)
+    {
+        if(name_exist(name,"get"))
+            return JsonPacket(val[name]);
+        else
+            return JsonPacket();
+    }
     int to_int()
     {
         if(val.empty()){
             //assert(false);
             //int t=1/0;//sig fault deal to error.
 
-            //  prt(info,"to int error :no content,%d",t);
-        //     Exception e("json to int fail");
-            throw exception();
+          //  prt(info,"to int error :no content,%d",t);
             print_backstrace();
             return 0;
         }
@@ -229,7 +222,6 @@ public:
     vector <int> to_int_array()
     {
         if(val.empty()){
-            throw exception();
             prt(info,"to int error :no content");
             print_backstrace();
             return  vector <int>();
@@ -244,7 +236,6 @@ public:
     double to_double()
     {
         if(val.empty()){
-            throw exception();
             prt(info,"to  double :no content");
             return 0;
         }
@@ -257,7 +248,6 @@ public:
     vector <double>to_double_array()
     {
         if(val.empty()){
-            throw exception();
             prt(info,"to  double :no content");
             return  vector <double>();
         }
@@ -271,7 +261,6 @@ public:
     bool to_bool()
     {
         if(val.empty()){
-            throw exception();
             prt(info,"to  bool :no content");
             return false;
         }
@@ -281,15 +270,14 @@ public:
         }
         return val.asBool();
     }
-    vector<bool>to_bool_array()
+    vector<  bool >to_bool_array()
     {
         if(val.empty()){
-            throw exception();
             prt(info,"to  bool :no content");
             return  vector<  bool >();
         }
         vector <bool> rt;
-        int  sz=val.size();
+      int  sz=val.size();
         for(int i=0;i<sz;i++){
             rt.push_back(val[i].asBool());
         }
@@ -298,13 +286,7 @@ public:
     string to_string()
     {
         if(val.empty()){
-            throw exception();
-            assert(!val.empty());
-            //throw Exception();
-        }
-        if(val.empty()){
-            throw exception();
-            prt(info,"to  string :no content, return a null string");
+            prt(info,"to  string :no content");
             return string();
         }
         if(!val.isString()){
@@ -313,10 +295,9 @@ public:
         }
         return val.asString();
     }
-    vector<string> to_string_array()
+   vector<  string> to_string_array()
     {
         if(val.empty()){
-            throw exception();
             prt(info,"to  string :no content");
             return  vector<  string> ();
         }
@@ -326,35 +307,6 @@ public:
             rt.push_back(val[i].asString());
         }
         return rt;
-    }
-    vector<JsonPacket> to_array()
-    {
-        vector<JsonPacket>  ar;
-        if(val.empty()){
-            throw exception();
-            assert(!val.empty());
-            //throw Exception("empty val");
-        }
-        if(val.empty()){
-            return ar;
-        }
-        if(!val.isArray()){
-            prt(info,"get error type:not array");
-            show_value_type(val);
-            return ar;
-        }
-        for(Value v:val){
-            ar.push_back(v);
-        }
-        return ar;
-    }
-
-private:
-    JsonPacket(JsonValue v)
-    {
-
-        val=v;
-        str_data=str();
     }
     void show_value_type(JsonValue val)
     {
@@ -368,13 +320,43 @@ private:
         prt(info,"show value done");
 
     }
+    vector<JsonPacket> to_array()
+    {
+        vector<JsonPacket>  ar;
+        if(val.empty()){
+            //prt(info,"to array :empty");
+
+            return ar;
+        }
+        if(!val.isArray()){
+            prt(info,"get error type:not array");
+            show_value_type(val);
+            return ar;
+        }
+        JsonValue v=val;
+
+        int sz=v.size();
+        for(int i=0;i<sz;i++){
+            ar.push_back( v[i]);
+        }
+        return ar;
+    }
+
+    JsonValue &value()
+    {
+        return val;
+    }
+    bool is_null()
+    {
+        return val.isNull();
+    }
+private:
     bool name_exist(string name,string str)
     {
         bool rst=true;
         JsonValue v=val;
         rst=v[name].isNull();
         if(rst&&(str=="get"||str=="set")){
-            //throw exception();
             //prt(info," (%s) not exist or no data",name.data());
             //print_backstrace();
             return false;
@@ -398,8 +380,9 @@ private:
     }
 private:
     JsonValue val;
-    string str_data;
+
 };
+
 
 class JsonData{
 protected:
@@ -408,55 +391,61 @@ public:
     JsonData(JsonPacket pkt)
     {
         config=pkt;
+        // prt(info,"json string: %s",config.str().data());
     }
     JsonData()
     {
+
     }
     virtual void encode()=0;
     virtual void decode()=0;
-    static JsonPacket get_request_pkt(int op, int index, JsonPacket data);
     JsonPacket data()
     {
         return config;
     }
 };
-class JsonDataWithTitle:public JsonData{
+class JsonObject{
 private:
     string title;
+protected:
+    JsonPacket config;
 public:
-    JsonDataWithTitle(JsonPacket pkt1,string tt):JsonData(pkt1.get(tt))
+    JsonObject(JsonPacket pkt,string tt):title(tt)
     {
-        title=tt;
+        config=pkt.get(title);
+
     }
-    JsonDataWithTitle()
-    {
-    }
-    JsonDataWithTitle(string tt):title(tt)
+    JsonObject()
     {
 
     }
-//    JsonPacket data()
-//    {
-//        JsonPacket pkt;
-//        pkt.set(title,config);
-//    }
+    JsonObject(string tt):title(tt)
+    {
+
+    }
+    virtual void encode()=0;
+    virtual void decode()=0;
+    JsonPacket data()
+    {
+        JsonPacket p;
+        p.add(title,config);
+        return p;
+    }
 };
 template<typename TP>
 class VdData{
 protected:
     TP private_data;
 public:
-    VdData()
-    {
-
-    }
     VdData(TP d):private_data(d)
     {
     }
     virtual ~VdData()
     {
+
     }
-    TP data()
+
+    TP get_data()
     {
         return private_data;
     }
@@ -515,11 +504,6 @@ public:
     {
         decode();
     }
-    RequestPkt()
-    {
-
-    }
-
     void encode()
     {
         ENCODE_INT_MEM(Index);
@@ -655,12 +639,6 @@ public:
     {
 
     }
-//    void    operator =(VdPoint p)
-//    {
-//        x=p.x;
-//        y=p.y;
-//        encode();
-//    }
     void decode()
     {
         DECODE_INT_MEM(x);
@@ -688,106 +666,6 @@ JsonPacket obj_2_pkt(T jd)
 
     return jd.data();
 }
-
-class PaintableData
-{
-public:
-    enum Colour{
-        Red=1,
-        Green,
-        Blue
-    };
-    enum Event{
-        MoveVer=1,
-        MoveAll
-    };
-    PaintableData() {
-        seizing=false;
-        point_index=0;
-        event_type=0;
-        ori_pnt=VdPoint(0,0);
-    }
-//    PaintableData(PaintableData &pd) {
-//        seizing=pd.seizing;
-//        point_index=pd.point_index;
-//        event_type=pd.event_type;
-//        ori_pnt=pd.ori_pnt;
-//    }
-public:
-    inline int p_on_v(const vector <VdPoint> points,VdPoint p,int distance=10)
-    {
-        for(int i=0;i<points.size();i++){
-            //prt(info,"%d -> %d",points[i].x,p.x);
-            if((abs(points[i].x-p.x)<distance)&&((abs(points[i].y-p.y))<distance)){
-                return (i+1);
-            }
-        }
-        return 0;
-    }
-
-    inline bool p_on_l(VdPoint b,VdPoint e, VdPoint dst,int distance=20)
-    {
-        bool v1= (((dst.x<b.x+distance)||(dst.x<e.x+distance))&&((dst.x>b.x-distance)||(dst.x>e.x-distance)));
-        bool v2=(((dst.y<b.y+distance)||(dst.y<e.y+distance))&&((dst.y>b.y-distance)||(dst.y>e.y-distance)));
-        bool v3= (abs(((dst.x-e.x)*(dst.y-b.y))-((dst.y-e.y)*(dst.x-b.x)))<1000);
-        //  bool v3= true;
-        if(v1&&v2&&v3)
-            return true;
-        else
-            return false;
-    }
-    inline bool p_on_ls(const vector <VdPoint> points,VdPoint p,int distance=10)
-    {
-        for(int i=0;i<points.size()-1;i++){
-            if(p_on_l(points[i],points[i+1],p)){
-                return true;
-            }
-        }
-        if(p_on_l(points[0],points[points.size()-1],p)){
-            return true;
-        }
-        return false;
-    }
-    inline bool p_on_vl(const vector <VdPoint> points,  VdPoint dst)
-    {
-        if(points.size()>1){
-            for(int i=1;i<points.size();i++){
-                if(p_on_l(points[i-1],points[i],dst)){
-                    return true;
-                }
-            }
-            if(p_on_l(points.front(),points.back(),dst)){
-                return true;
-            }
-        }
-        return false;
-    }
-#if 0
-    virtual bool press(VdPoint pnt)=0;
-    virtual bool move(VdPoint pnt)=0;
-    virtual bool double_click(VdPoint pnt)=0;
-    virtual void release()=0;
-#else
-    virtual bool press(VdPoint pnt){return false;}
-    virtual bool move(VdPoint pnt){return false;}
-    virtual bool double_click(VdPoint pnt){return false;}
-    virtual void release(){}
-#endif
-    template <typename A,typename B,typename C>
-    void draw(A draw_line,B draw_circle,C draw_text);
-    void release_event()
-    {
-        seizing=false;
-        point_index=0;
-        event_type=0;
-    }
-public:
-    bool seizing;
-    int event_type;
-    VdPoint ori_pnt;
-    int point_index;
-};
-
 static inline VdRect vers_2_rect(vector <VdPoint> area)
 {
     int x_min=10000;
@@ -816,4 +694,5 @@ static inline VdPoint add_point_offset(VdPoint p_ori,VdPoint p_offset)
 {
      return VdPoint(p_ori.x+p_offset.x,p_ori.y+p_offset.y);
 }
+
 #endif // JSONPACKET_H

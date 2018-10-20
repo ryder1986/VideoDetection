@@ -12,7 +12,7 @@
 Mat imgSave;
 #endif
 #define TEST_PROGRAM
-//#undef TEST_PROGRAM
+#undef TEST_PROGRAM
 class MvdProcessor : public VideoProcessor
 {
     m_args *p_cfg;
@@ -895,7 +895,79 @@ public:
 
         vector <EventRegionObjectOutput> EventObjects;
 		//incident 
+        //incident
+        //½ûÍ£
+        for( i = 0; i < p_cfg->p_outbuf->INCIDENToutbuf.uIllegalParkNum; i++)
+        {
+            vector<VdPoint> Vers;
+            for(int j = 0; j < 4; j++)
+            {
+                Vers.push_back(VdPoint(p_cfg->p_outbuf->INCIDENToutbuf.IllegalParkBox[i].IncidentBox[j].x,
+                                       p_cfg->p_outbuf->INCIDENToutbuf.IllegalParkBox[i].IncidentBox[j].y));
+            }
+            //id = p_cfg->p_outbuf->INCIDENToutbuf.IllegalParkBox[i].uIncidentID;
+            EventObjects.push_back(EventRegionObjectOutput(Vers,EventRegion::STOP_INVALID,p_cfg->p_outbuf->INCIDENToutbuf.IllegalParkBox[i].uIncidentID));
+        }
+        //ÄæÐÐ
+        for( i = 0; i < p_cfg->p_outbuf->INCIDENToutbuf.uOppositeDirDriveNum; i++)
+        {
+            vector<VdPoint> Vers;
+            for(int j = 0; j < 4; j++)
+            {
+                Vers.push_back(VdPoint(p_cfg->p_outbuf->INCIDENToutbuf.OppositeDirDriveBox[i].IncidentBox[j].x,
+                                       p_cfg->p_outbuf->INCIDENToutbuf.OppositeDirDriveBox[i].IncidentBox[j].y));
+            }
+            EventObjects.push_back(EventRegionObjectOutput(Vers,EventRegion::REVERSE_DRIVE,p_cfg->p_outbuf->INCIDENToutbuf.OppositeDirDriveBox[i].uIncidentID));
+        }
+        //Ê»Àë
+        for( i = 0; i < p_cfg->p_outbuf->INCIDENToutbuf.uOffLaneNum; i++)
+        {
+            vector<VdPoint> Vers;
+            for(int j = 0; j < 4; j++)
+            {
+                Vers.push_back(VdPoint(p_cfg->p_outbuf->INCIDENToutbuf.OffLaneBox[i].IncidentBox[j].x,
+                                       p_cfg->p_outbuf->INCIDENToutbuf.OffLaneBox[i].IncidentBox[j].y));
+            }
+            EventObjects.push_back(EventRegionObjectOutput(Vers,EventRegion::DRIVE_AWAY,p_cfg->p_outbuf->INCIDENToutbuf.OffLaneBox[i].uIncidentID));
 
+        }
+        //½ûÖ¹ÐÐÈË
+        for( i = 0; i < p_cfg->p_outbuf->INCIDENToutbuf.uNoPersonAllowNum; i++)
+        {
+            vector<VdPoint> Vers;
+            for(int j = 0; j < 4; j++)
+            {
+                Vers.push_back(VdPoint(p_cfg->p_outbuf->INCIDENToutbuf.NoPersonAllowBox[i].IncidentBox[j].x,
+                                       p_cfg->p_outbuf->INCIDENToutbuf.NoPersonAllowBox[i].IncidentBox[j].y));
+            }
+            EventObjects.push_back(EventRegionObjectOutput(Vers,EventRegion::NO_PEDESTRIANTION,p_cfg->p_outbuf->INCIDENToutbuf.NoPersonAllowBox[i].uIncidentID));
+
+        }
+        //Óµ¶Â
+        for( i = 0; i < p_cfg->p_outbuf->INCIDENToutbuf.uCongestionNum; i++)
+        {
+            vector<VdPoint> Vers;
+            for(int j = 0; j < 4; j++)
+            {
+                Vers.push_back(VdPoint(p_cfg->p_outbuf->INCIDENToutbuf.CongestionBox[i].IncidentBox[j].x,
+                                       p_cfg->p_outbuf->INCIDENToutbuf.CongestionBox[i].IncidentBox[j].y));
+            }
+            EventObjects.push_back(EventRegionObjectOutput(Vers, EventRegion::CONGESTION,p_cfg->p_outbuf->INCIDENToutbuf.CongestionBox[i].uIncidentID));
+
+        }
+        //Å×È÷Îï
+        //prt(info,"alg rst %d", p_cfg->p_outbuf->INCIDENToutbuf.uAbandonedObjectNum);
+        for( i = 0; i < p_cfg->p_outbuf->INCIDENToutbuf.uAbandonedObjectNum; i++)
+        {
+            vector<VdPoint> Vers;
+            for(int j = 0; j < 4; j++)
+            {
+                Vers.push_back(VdPoint(p_cfg->p_outbuf->INCIDENToutbuf.AbandonedObject[i].IncidentBox[j].x,
+                                       p_cfg->p_outbuf->INCIDENToutbuf.AbandonedObject[i].IncidentBox[j].y));
+            }
+            EventObjects.push_back(EventRegionObjectOutput(Vers,EventRegion::AbANDON_OBJECT,p_cfg->p_outbuf->INCIDENToutbuf.AbandonedObject[i].uIncidentID));
+
+        }
         MvdProcessorOutputData out(MvdDetectedObjects,
                                    CurrentVehicleNumber,
                                    Visibility,
