@@ -5,7 +5,7 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     testclass1.cpp
+include(../common.pri)
 
 HEADERS += \
     testclass1.h
-

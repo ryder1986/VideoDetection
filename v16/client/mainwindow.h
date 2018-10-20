@@ -155,7 +155,11 @@ private slots:
         for(PlayerWidget *w:players){
             widget_remove_camera(w);
             w->hide();
+#if 0
             delete w;//TODO: add deleting method
+#else
+            std::thread([w](){ delete w;}).detach();
+#endif
         }
         players.clear();
         thread_lock.unlock();

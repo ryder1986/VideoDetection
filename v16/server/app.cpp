@@ -125,10 +125,19 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
     case AppInputData::Operation::DELETE_CAMERA:
     {
         ret=false;
+
+#if 0
+        Timer2 async_task;
+
+        async_task.AsyncWait(0,bind(&App::del_camera,this,placeholders::_1),e.Index);
+        save_data();
+        ret=true;
+#else
         if(del_camera(e.Index)){
             save_data();
             ret=true;
         }
+#endif
         ReplyPkt p(ret,AppInputData::Operation::DELETE_CAMERA,JsonPacket());
         r=p;
         break;

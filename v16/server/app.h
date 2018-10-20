@@ -87,7 +87,11 @@ private:
     bool del_camera(int index)//delete who ? 1~size
     {
         if(1<=index&&index<=cms.size()){
+#if 0
             delete cms[index-1];
+#else
+            thread([this,index](){ delete cms[index-1];}).detach();
+#endif
             vector<Camera*>::iterator it=cms.begin();
             cms.erase(it+index-1);
             private_data.delete_camera(index);
