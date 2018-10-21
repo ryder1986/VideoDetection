@@ -249,6 +249,10 @@ private slots:
 
     void on_pushButton_waitms_clicked();
 
+    void on_checkBox_show_text_clicked(bool checked);
+
+    void on_checkBox_show_info_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *udpSocket;

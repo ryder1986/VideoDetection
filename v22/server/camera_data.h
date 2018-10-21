@@ -212,6 +212,10 @@ public:
             DetectRegionInputData &dt= DetectRegion[i];
             dt.draw(draw_line,draw_circle,draw_text);
         }
+
+        if(ClientConfig::show_camera_state){
+            draw_text(Url,VdPoint(200,200),100,PaintableData::Blue,30);
+        }
     }
     static CameraInputData get_camera_test_data(vector <DetectRegionInputData> regions,string url)
     {
@@ -268,8 +272,11 @@ public:
                 prt(info,"region %d outof range ",i);
                 continue;
             }
+
             dt.draw(draw_line,draw_circle,draw_text,data.DetectRegion[i]);
-            draw_text(data.Url,VdPoint(200,200),100,PaintableData::Blue,30);
+//            if(ClientConfig::show_camera_state){
+//                draw_text(data.Url,VdPoint(200,200),100,PaintableData::Blue,30);
+//            }
 #if 0
             char buf[20];
             sprintf(buf,"data  ts:%d",Timestamp);

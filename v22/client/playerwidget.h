@@ -396,6 +396,10 @@ public slots:
         }
     }
 
+    void show_text_info(bool show)
+    {
+        ClientConfig::show_processor_text=show;
+    }
 
 private:
     inline QPoint map_point(QPoint p)
@@ -436,6 +440,7 @@ private:
     QMenu menu;
     bool show_input;
     bool show_output;
+    //bool show_text;
     int delay_frames;
 };
 

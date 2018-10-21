@@ -79,6 +79,26 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="checkBox_show_text">
+         <property name="text">
+          <string>show text</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_show_info">
+         <property name="text">
+          <string>show info</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLineEdit" name="lineEdit_wait_ms">
          <property name="text">
           <string>wait ms,input here</string>
@@ -290,7 +310,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

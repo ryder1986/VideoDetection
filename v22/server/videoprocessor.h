@@ -895,19 +895,19 @@ public:
     }
     void reverse_event(int idx,int type)
     {
-       EventRegion &e= Events[idx-1];
-       int t=e.Type;
-       int ori=(e.Type>>(type-1))&0x1;
-       int tmp=0xff;
-       if(ori){
-           tmp=~(0x1<<(type-1));
-           e.Type=e.Type&tmp;//tmp like this: 1111011
-       }else{
-           tmp=(0x1<<(type-1));
-           e.Type=e.Type|tmp;//tmp:like this: 0000100
-       }
-       e.encode();
-       encode();
+        EventRegion &e= Events[idx-1];
+        int t=e.Type;
+        int ori=(e.Type>>(type-1))&0x1;
+        int tmp=0xff;
+        if(ori){
+            tmp=~(0x1<<(type-1));
+            e.Type=e.Type&tmp;//tmp like this: 1111011
+        }else{
+            tmp=(0x1<<(type-1));
+            e.Type=e.Type|tmp;//tmp:like this: 0000100
+        }
+        e.encode();
+        encode();
     }
 
     void del_event_rect(int index)
@@ -1321,6 +1321,8 @@ public:
             }
             draw_vers_line(ps,draw_line);
             //if(r.Type)
+            draw_text("EventRegion",VdPoint(ps[0].x,ps[0].y),1,PaintableData::Colour::Green,4);
+#if 0
             if(r.Type&0x1)
                 draw_text("type1",VdPoint(ps[0].x+70*0,ps[0].y),1,PaintableData::Colour::Green,4);
             if(r.Type>>1&0x1)
@@ -1335,6 +1337,7 @@ public:
                 draw_text("type6",VdPoint(ps[0].x+70*5,ps[0].y),1,PaintableData::Colour::Green,4);
             if(r.Type>>6&0x1)
                 draw_text("type7",VdPoint(ps[0].x+70*6,ps[0].y),1,PaintableData::Colour::Green,4);
+#endif
         }
 
     }
@@ -1498,9 +1501,7 @@ public:
               A draw_line,
               B draw_circle,C draw_text)
     {
-        //        for(VdPoint p:Points){
-        //            draw_circle(VdPoint(p.x+offx,p.y+offy),Radii,PaintableData::Colour::Red,2);
-        //        }
+        // graphic output
         if(EventObjects.size()){
             //  prt(info,"event  sz%d",EventObjects.size());
             for(EventRegionObjectOutput o:EventObjects){
@@ -1545,6 +1546,15 @@ public:
                 i++;
             }
         }
+
+
+
+        ///////////text output////
+        char buf[100];memset(buf,0,100);sprintf(buf,"total object number %d",MvdDetectedObjects.size());
+        if(ClientConfig::show_processor_text){
+            draw_text(buf,VdPoint(10,10),1,PaintableData::Colour::Red,4);
+        }
+
     }
 };
 #endif // VIDEOPROCESSOR_H

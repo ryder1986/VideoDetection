@@ -166,12 +166,25 @@ void MainWindow::on_checkBox_showinput_clicked(bool checked)
 
 void MainWindow::on_pushButton_waitms_clicked()
 {
-     int ms=(ui->lineEdit_wait_ms->text().toInt());
-     if(ms>0){
-         ms=(ms<10000)?ms:10000;
-     }
-     for(PlayerWidget *w:players){
-         w->set_delay(ms/40);
-     }
+    int ms=(ui->lineEdit_wait_ms->text().toInt());
+    if(ms>0){
+        ms=(ms<10000)?ms:10000;
+    }
+    for(PlayerWidget *w:players){
+        w->set_delay(ms/40);
+    }
 
+}
+
+void MainWindow::on_checkBox_show_text_clicked(bool checked)
+{
+    ClientConfig::show_processor_text=checked;
+    //    for(PlayerWidget *w:players){
+    //        w->show_text_info(checked);
+    //    }
+}
+
+void MainWindow::on_checkBox_show_info_clicked(bool checked)
+{
+    ClientConfig::show_camera_state=checked;
 }

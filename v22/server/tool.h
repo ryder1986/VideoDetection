@@ -662,4 +662,10 @@ inline char * get_time_string()
 
 #define PRT_DECODE_EXCEPTION prt(info,"error in decoding %s data:=>%s<=",typeid(this).name(),config.str().data());
 #define PRT_ENCODE_EXCEPTION prt(info,"error in encoding %s data:=>%s<=",typeid(this).name(),config.str().data());
+class ClientConfig{
+public:
+    static bool show_processor_text;
+    static bool show_camera_state;
+};
+
 #endif // TOOL1_H

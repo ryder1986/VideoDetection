@@ -608,26 +608,27 @@ public:
         else
             draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Red,2);
 
-
+        if(ClientConfig::show_camera_state){
+            if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
+            {
+                draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
+            }
+            if(SelectedProcessor== LABEL_PROCESSOR_MVD)
+            {
+                draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
+            }
+        }
         if(SelectedProcessor== LABEL_PROCESSOR_DUMMY)
         {
-            draw_text(LABEL_PROCESSOR_DUMMY,VdPoint(100,200),100,PaintableData::Blue,30);
-            VdRect r= reshape_2_rect(ExpectedAreaVers);
-            // DummyProcessorInputData data=Result;
-            //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
-            //                       draw_circle, draw_text);
+
         }
         if(SelectedProcessor== LABEL_PROCESSOR_MVD)
         {
-            draw_text(LABEL_PROCESSOR_MVD,VdPoint(100,200),100,PaintableData::Blue,30);
             VdRect r= reshape_2_rect(ExpectedAreaVers);
             MvdProcessorInputData data(ProcessorData);
             data.draw(r.x,r.y,draw_line, draw_circle,draw_text);
-            //       MvdProcessorInputData data=Result;
-            //     dat
-            //            data.draw(DetectionRect.x,DetectionRect.y, draw_line,
-            //                       draw_circle, draw_text);
         }
+
 
     }
 
