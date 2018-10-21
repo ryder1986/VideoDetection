@@ -351,6 +351,17 @@ public:
                         itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
                         items_ret.push_back(itm);
                     }
+
+
+                    {
+                        itm.text="revert direction";
+                        int dir=mi->Events[idx].Direction;
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.set_event_direction(idx,!dir);
+                        itm.checkable=false;
+                        itm.checked=false;
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
 #if 0
                     itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
                     itm.text="REVERSE_DRIVE";

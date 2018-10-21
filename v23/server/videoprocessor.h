@@ -590,11 +590,11 @@ public:
 class LaneOutputJsonData:public JsonData{
 public:
     int LaneNo; // lane name index
-    int QueueLength;// length of queue
+    int QueueLength;//
     VdPoint StartQueuePoint;// queue start point
     VdPoint EndQueuePoint;// queue end point
     int LaneVehicleNumber;// lane car count now
-    int VehicleFlow;// flow total
+    int VehicleFlow;//
     int VehicleSpeed;// near rect car's speed
     int NearActualLength;// near rect real size
     int FarActualLength;// far rect real size
@@ -876,6 +876,13 @@ public:
             PRT_DECODE_EXCEPTION
         }
     }
+    void set_event_direction(int index,int dir)
+    {
+        Events[index-1].Direction=dir;
+        Events[index-1].encode();
+        encode();
+    }
+
     void add_lane()
     {
         LaneDataJsonData  la=get_test_lane();
@@ -1378,16 +1385,16 @@ public:
 };
 class MvdProcessorOutputData:public JsonData{
 public:
-    vector <ObjectRect> MvdDetectedObjects;//all rects of car
-    int CurrentVehicleNumber; // cars number count on screen now;
-    int Visibility;// visiable or not
-    int VideoState;// video state
-    vector <LaneOutputJsonData> LaneOutputData;// output
+    vector <ObjectRect> MvdDetectedObjects;
+    int CurrentVehicleNumber; //
+    int Visibility;//
+    int VideoState;//
+    vector <LaneOutputJsonData> LaneOutputData;//
     vector <DegreeJsonData> DegreeData; // on  lane points
-    int PersonFlow1;
-    int PersonFlow2;
-    int CurrentPersionCount;
-    vector <EventRegionObjectOutput> EventObjects;
+    int PersonFlow1;//
+    int PersonFlow2;//
+    int CurrentPersionCount;//
+    vector <EventRegionObjectOutput> EventObjects;//
     MvdProcessorOutputData(JsonPacket p):JsonData(p)
     {
         decode();
@@ -1511,7 +1518,22 @@ public:
                     ps.push_back(VdPoint(p.x+offx,p.y+offy));
 #if 1
                 draw_vers(ps,draw_line,PaintableData::Colour::Green);
-                char buf[100];memset(buf,0,100);sprintf(buf,"id:%d,type%d",o.EventID,o.Type);
+                char buf[100];memset(buf,0,100);
+                //sprintf(buf,"id:%d,type%d",o.EventID,o.Type);
+                if(o.Type==EventRegion::OVER_SPEED)
+                    sprintf(buf,"%s","OVER_SPEED");
+                if(o.Type==EventRegion::REVERSE_DRIVE)
+                    sprintf(buf,"%s","REVERSE_DRIVE");
+                if(o.Type==EventRegion::STOP_INVALID)
+                    sprintf(buf,"%s","STOP_INVALID");
+                if(o.Type==EventRegion::NO_PEDESTRIANTION)
+                    sprintf(buf,"%s","NO_PEDESTRIANTION");
+                if(o.Type==EventRegion::DRIVE_AWAY)
+                    sprintf(buf,"%s","DRIVE_AWAY");
+                if(o.Type==EventRegion::CONGESTION)
+                    sprintf(buf,"%s","CONGESTION");
+                if(o.Type==EventRegion::AbANDON_OBJECT)
+                    sprintf(buf,"%s","AbANDON_OBJECT");
                 draw_text(buf,ps[0],1,PaintableData::Colour::Green,4);
 #endif
                 //    draw_text(o.Type,VdPoint(ps[0].x+100,ps[0].y),1,PaintableData::Colour::Green,4);
@@ -1550,10 +1572,31 @@ public:
 
 
         ///////////text output////
-        char buf[100];memset(buf,0,100);sprintf(buf,"total object number %d",MvdDetectedObjects.size());
+        char buf[100];
+        int x=10,y=10;
+        memset(buf,0,100);sprintf(buf,"当前车辆总数 %d", CurrentVehicleNumber);
         if(ClientConfig::show_processor_text){
-            draw_text(buf,VdPoint(10,10),1,PaintableData::Colour::Red,4);
+            draw_text(buf,VdPoint(x,y),1,PaintableData::Colour::Green,4);
         }
+        y+=10;
+        memset(buf,0,100);sprintf(buf,"当前事件 %d",EventObjects.size());
+        if(ClientConfig::show_processor_text){
+            draw_text(buf,VdPoint(x,y),1,PaintableData::Colour::Green,4);
+        }
+        y+=10;
+
+    //    memset(buf,0,100);sprintf(buf,"当前事件 %d",EventObjects.size());
+        int cnt=0;
+        for(LaneOutputJsonData ld:LaneOutputData){
+
+            memset(buf,0,100);sprintf(buf,"车道%d:%d",cnt+1,ld.VehicleFlow);
+            draw_text(buf,VdPoint(x,y),1,PaintableData::Colour::Green,4);
+            x+=80;
+            y+10;
+
+            cnt++;
+        }
+
 
     }
 };
