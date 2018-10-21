@@ -557,10 +557,30 @@ private:
 
         char buf[1000];memset(buf,0,1000);
 #if 1
+
+//        sprintf(buf,"INSERT INTO TIS \
+//                ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `RegionID`, `TEType`, `TEPAddr`, `TEVAddr`)\
+//                   VALUES\
+//                ( '3', '%s', '60', '32', 'abcde', '12', '12', '%d', '%s', 'video_path');",sql_time,type,pic_path);
+        string type_str;
+        if(type==EventRegion::OVER_SPEED)
+            type_str="超速";
+        if(type==EventRegion::REVERSE_DRIVE)
+            type_str="逆行";
+        if(type==EventRegion::STOP_INVALID)
+            type_str="违停";
+        if(type==EventRegion::NO_PEDESTRIANTION)
+            type_str="禁行";
+        if(type==EventRegion::DRIVE_AWAY)
+            type_str="驶离";
+        if(type==EventRegion::CONGESTION)
+            type_str="拥堵";
+        if(type==EventRegion::AbANDON_OBJECT)
+            type_str="抛洒物";
         sprintf(buf,"INSERT INTO TIS \
                 ( `RecordID`, `SST`, `SP`, `AnalyceID`, `SAvenue`, `CameraID`, `RegionID`, `TEType`, `TEPAddr`, `TEVAddr`)\
                    VALUES\
-                ( '3', '%s', '60', '32', 'abcde', '12', '12', '%d', '%s', 'video_path');",sql_time,type,pic_path);
+                ( '3', '%s', '60', '32', 'abcde', '12', '12', '%d', '%s', 'video_path');",sql_time,type_str.data(),pic_path);
         #else
 
                 sprintf(buf,"INSERT INTO TIS \
