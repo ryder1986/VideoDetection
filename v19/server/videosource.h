@@ -28,16 +28,20 @@ public:
     VideoSource(string path,bool only_key_frame);
     ~VideoSource()
     {
-        lock.lock();
-        Timer2 t2;
-        t2.AsyncWait(0,bind(&VideoSource::quit_src,this));
-        lock.unlock();
+        //lock.lock();
+
+        //Timer2 t2;
+        //t2.AsyncWait(0,bind(&VideoSource::quit_src,this));
+        quit_src();
+       //lock.unlock();
     }
     void quit_src()
     {
-#if 0
+#if 1
+        lock.lock();
         prt(info,"quiting video %s", url.data());
         quit_flg=true;
+        lock.unlock();
         if(src_trd){
             if(src_trd->joinable())
                 src_trd->join();

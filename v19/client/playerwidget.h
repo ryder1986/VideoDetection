@@ -58,6 +58,7 @@ public:
     explicit PlayerWidget(CameraInputData data,QWidget *parent = nullptr);
     ~PlayerWidget()
     {
+        delete src;
         tick_timer->stop();
         delete tick_timer;
     }
@@ -90,7 +91,7 @@ public:
     void set_delay(int frames)
     {
         delay_frames=frames;
-        src.set_buffer_size(frames);
+        src->set_buffer_size(frames);
     }
 
 protected:
@@ -341,7 +342,7 @@ private:
         cv::Mat bgr_frame;
         int ts;
         //   bool ret=src.get_frame(bgr_frame);
-        bool ret=src.get_frame(bgr_frame,ts);
+        bool ret=src->get_frame(bgr_frame,ts);
         timestamp=ts;
         //prt(info,"get ts %d",ts);
         if(ret){
@@ -353,7 +354,7 @@ private:
         }
         return ret;
     }
-    VideoSource src;
+    VideoSource *src;
     QMutex lock;
     QImage img;
     int timestamp;
