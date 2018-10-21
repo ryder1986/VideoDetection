@@ -107,7 +107,7 @@ public:
             DetectRegionInputData &dt= DetectRegion[i];
             if(dt.right_press(pnt,items_ret)){
                 for(int j=0;j<items_ret.size();j++){
-                    right_press_menu_item &p=items_ret[i];
+                    right_press_menu_item &p=items_ret[j];
                     p.pkt=get_request_pkt(CameraInputData::MODIFY_REGION,i+1,\
                                           p.pkt.data());
                 }
