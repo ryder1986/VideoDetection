@@ -247,13 +247,13 @@ public:
             right_press_menu_item itmmvd;
             itmmvd.text="change to mvd";
             itmmvd.pkt=get_request(DetectRegionInputData::CHANGE_PROCESSOR,0,
-                          get_region_test_data(MvdProcessorInputData::get_mvd_test_data().data(),LABEL_PROCESSOR_MVD).data());
+                                   get_region_test_data(MvdProcessorInputData::get_mvd_test_data().data(),LABEL_PROCESSOR_MVD).data());
             items_ret.push_back(itmmvd);
 
             right_press_menu_item itmdummy;
             itmdummy.text="change to dummy";
             itmdummy.pkt=get_request(DetectRegionInputData::CHANGE_PROCESSOR,0,
-                          get_region_test_data(DummyProcessorInputData::get_dummy_test_data().data(),LABEL_PROCESSOR_DUMMY).data());
+                                     get_region_test_data(DummyProcessorInputData::get_dummy_test_data().data(),LABEL_PROCESSOR_DUMMY).data());
             items_ret.push_back(itmdummy);
             return true;
         }
@@ -271,24 +271,128 @@ public:
 
 
             MvdProcessorInputData *mi=(MvdProcessorInputData *)p_processor;
-          //  bool ret=mi->right_press(pnt_new,pkts,text);
+            //  bool ret=mi->right_press(pnt_new,pkts,text);
             bool ret=mi->right_press(pnt_new,items_ret);
-             if(ret){
-                  right_press_menu_item itm4;
+            if(ret){
+                right_press_menu_item itm4;
                 if(mi->point_index>(mi->LaneData.size()*12)){
                     MvdProcessorInputData d4(mi->data());
                     int idx=(mi->point_index-12*mi->LaneData.size()-1)/4+1;
+
                     d4.del_event_rect(idx);
-                    prt(info,"deling event ");
-
-
                     itm4.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,d4.data());
                     itm4.text="del event";
                     items_ret.push_back(itm4);
+
+                    right_press_menu_item itm;
+
+                    vector <bool > types=mi->get_events_attr(idx);
+
+
+                    {
+                        itm.text="OVER_SPEED";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::OVER_SPEED);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::OVER_SPEED-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+
+                    {
+                        itm.text="REVERSE_DRIVE";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::REVERSE_DRIVE);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::REVERSE_DRIVE-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+
+                    {
+                        itm.text="STOP_INVALID";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::STOP_INVALID);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::STOP_INVALID-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+
+                    {
+                        itm.text="NO_PEDESTRIANTION";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::NO_PEDESTRIANTION);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::NO_PEDESTRIANTION-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+
+                    {
+                        itm.text="DRIVE_AWAY";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::DRIVE_AWAY);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::DRIVE_AWAY-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+
+                    {
+                        itm.text="CONGESTION";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::CONGESTION);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::CONGESTION-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+
+                    {
+                        itm.text="AbANDON_OBJECT";
+                        MvdProcessorInputData tmp_os(mi->data());tmp_os.reverse_event(idx,EventRegion::AbANDON_OBJECT);
+                        itm.checkable=true;
+                        itm.checked=types[EventRegion::AbANDON_OBJECT-1];
+                        itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,tmp_os.data());
+                        items_ret.push_back(itm);
+                    }
+#if 0
+                    itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                    itm.text="REVERSE_DRIVE";
+                    itm.checkable=true;
+                    itm.checked=types[1];
+                    items_ret.push_back(itm);
+
+                    itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                    itm.text="STOP_INVALID";
+                    itm.checkable=true;
+                    itm.checked=types[2];
+                    items_ret.push_back(itm);
+
+                    itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                    itm.text="NO_PEDESTRIANTION";
+                    itm.checkable=true;
+                    itm.checked=types[3];
+                    items_ret.push_back(itm);
+
+                    itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                    itm.text="DRIVE_AWAY";
+                    itm.checkable=true;
+                    itm.checked=types[4];
+                    items_ret.push_back(itm);
+
+                    itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                    itm.text="CONGESTION";
+                    itm.checkable=true;
+                    itm.checked=types[5];
+                    items_ret.push_back(itm);
+
+                    itm.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,mi->data());
+                    itm.text="AbANDON_OBJECT";
+                    itm.checkable=true;
+                    itm.checked=types[6];
+                    items_ret.push_back(itm);
+#endif
+
                 }else{
                     MvdProcessorInputData d1(mi->data());
                     d1.add_lane();
-                      right_press_menu_item itm1;
+                    right_press_menu_item itm1;
                     itm1.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,d1.data());
                     itm1.text="add lane";
                     items_ret.push_back(itm1);
@@ -296,8 +400,8 @@ public:
                     MvdProcessorInputData d2(mi->data());
                     d2.del_lane((mi->point_index-1)/12+1);
                     prt(info,"deling lane %d",(mi->point_index-1)/12+1);
-\
-                      right_press_menu_item itm2;
+                    \
+                    right_press_menu_item itm2;
                     itm2.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,d2.data());
                     itm2.text="del lane";
                     items_ret.push_back(itm2);
@@ -305,7 +409,7 @@ public:
 
                     MvdProcessorInputData d3(mi->data());
                     d3.add_event_rect();
-                      right_press_menu_item itm3;
+                    right_press_menu_item itm3;
                     itm3.pkt=get_request(DetectRegionInputData::MODIFY_PROCESSOR,0,d3.data());
                     itm3.text="add event";
                     items_ret.push_back(itm3);
@@ -315,6 +419,7 @@ public:
         }
         return false;
     }
+#if 0
     bool right_press(VdPoint pnt,vector<RequestPkt> &pkts,vector<string> &text)
     {
         RequestPkt p;
@@ -379,6 +484,7 @@ public:
         }
         return false;
     }
+#endif
     void change_processor_2_dummy()
     {
         prt(info,"change processor to dummy");

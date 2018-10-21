@@ -29,7 +29,33 @@ public:
 
         txt=text;
         pkt=pk;
+        checked=false;
+        checkable=false;
         this->setText(QString(txt.data()));
+    }
+    MyAction(bool chkd,bool chka,RequestPkt pk,string text,QWidget *w):QAction(w)
+    {
+        connect(this,SIGNAL(triggered(bool)),this,SLOT(trig(bool)));
+
+
+        // connect(this,SIGNAL(()),this,SLOT(dest(QObject *)));
+
+        txt=text;
+        pkt=pk;
+        checked=chkd;
+        checkable=chka;
+        this->setText(QString(txt.data()));
+    }
+    void set_checked(bool chkd)
+    {
+        checked=chkd;
+
+        this->setChecked(chkd);
+    }
+    void set_checkable(bool chka)
+    {
+        checkable=chka;
+        this->setCheckable(chka);
     }
 
 signals:
@@ -40,14 +66,16 @@ public slots:
     {
         prt(info,"des %s",txt.data());
     }
-    void trig(bool )
+    void trig(bool checked)
     {
+        prt(info,"checked ?  %d",checked);
         emit choose(this);
     }
 public:
     RequestPkt pkt;
     string txt;
     bool checked;
+    bool checkable;
 
 
 };
@@ -120,7 +148,7 @@ protected:
                                       placeholders::_5)
                                  );
             }
-           // if(0){
+            // if(0){
             if(show_output){
                 // draw output
                 if(camera_data.data().str().size()>10)//TODO:better way?
@@ -295,18 +323,23 @@ public slots:
     {
         prt(info,"mouse press");
         if(e->button()==Qt::RightButton){
-           // vector <RequestPkt> reqs;
-          //  vector <string> texts;
+            // vector <RequestPkt> reqs;
+            //  vector <string> texts;
             vector <right_press_menu_item>  itms;
             camera_data.right_press(QPoint_2_VdPoint(map_point(e->pos())),itms);
 
             if(itms.size()>0){
                 for(int i=0;i<itms.size();i++){
                     MyAction *ma=new MyAction(itms[i].pkt,itms[i].text,this);
-                    if(itms[i].checkable)
-                        ma->setCheckable(true);
-                    if(itms[i].checked)
-                        ma->setChecked(true);
+
+                    ma->set_checkable(itms[i].checkable);
+                    ma->set_checked(itms[i].checked);
+                    //                    if(itms[i].checkable)
+
+                    //                        ma->setCheckable(true);
+                    //                    if(itms[i].checked)
+
+                    //                        ma->setChecked(true);
                     connect(ma,&MyAction::choose,this,&PlayerWidget::choose_item,Qt::DirectConnection);
 
                     actions.push_back(ma);

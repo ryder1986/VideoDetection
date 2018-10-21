@@ -107,9 +107,9 @@ public:
             DetectRegionInputData &dt= DetectRegion[i];
             if(dt.right_press(pnt,items_ret)){
                 for(int j=0;j<items_ret.size();j++){
-                    right_press_menu_item &p=items_ret[j];
-                    p.pkt=get_request_pkt(CameraInputData::MODIFY_REGION,i+1,\
-                                          p.pkt.data());
+                    //right_press_menu_item &p=items_ret[j];
+                    JsonPacket pk=items_ret[j].pkt.data();
+                    items_ret[j].pkt=get_request_pkt(CameraInputData::MODIFY_REGION,i+1,pk);
                 }
 #if 1
                 //del this  region///
@@ -130,7 +130,7 @@ public:
         items_ret.push_back(itm1);
         return false;
     }
-
+#if 0
     virtual bool right_press(VdPoint pnt,vector<RequestPkt> &pkts,vector<string> &text)
     {
         vector<RequestPkt> pkts_tmp;
@@ -159,6 +159,7 @@ public:
         text.push_back("reset url");
         return true;
     }
+#endif
     virtual bool move(VdPoint pnt)
     {
         for(int i=0;i<DetectRegion.size();i++){

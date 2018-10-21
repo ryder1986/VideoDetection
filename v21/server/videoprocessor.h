@@ -893,12 +893,69 @@ public:
         Events.push_back(er);
         encode();
     }
+    void reverse_event(int idx,int type)
+    {
+       EventRegion &e= Events[idx-1];
+       int t=e.Type;
+       int ori=(e.Type>>(type-1))&0x1;
+       int tmp=0xff;
+       if(ori){
+           tmp=~(0x1<<(type-1));
+           e.Type=e.Type&tmp;//tmp like this: 1111011
+       }else{
+           tmp=(0x1<<(type-1));
+           e.Type=e.Type|tmp;//tmp:like this: 0000100
+       }
+       e.encode();
+       encode();
+    }
+
     void del_event_rect(int index)
     {
         Events.erase(Events.begin()+index-1);
         encode();
     }
 
+    vector<bool> get_events_attr(int index)
+    {
+        EventRegion r=Events[index-1];
+        vector<bool> types;
+        if(r.Type&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+
+        if(r.Type>>1&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+
+        if(r.Type>>2&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+
+        if(r.Type>>3&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+
+        if(r.Type>>4&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+
+        if(r.Type>>5&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+
+        if(r.Type>>6&0x1)
+            types.push_back(true);
+        else
+            types.push_back(false);
+        return types;
+    }
 
     static LaneDataJsonData get_test_lane()
     {
