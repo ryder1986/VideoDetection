@@ -1,0 +1,12 @@
+SERVER_PATH=../../server
+
+INCLUDEPATH+=$$SERVER_PATH
+HEADERS+=$$SERVER_PATH/tool.h
+SOURCES+=$$SERVER_PATH/tool.cpp
+
+win32{
+    DEFINES+=IS_WIN
+}
+unix{
+    DEFINES+=IS_UNIX
+}
