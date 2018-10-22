@@ -103,11 +103,11 @@ void MainWindow::server_msg(QString msg)
 
 void MainWindow::widget_append_camera(CameraInputData d)
 {
-
+    int rows_count=3;
     PlayerWidget *player=new PlayerWidget(d);
     connect(player,SIGNAL(camera_request(RequestPkt,PlayerWidget *)),this,SLOT(camera_request(RequestPkt,PlayerWidget*)));
     players.push_back(player);
-    ui->gridLayout_video->addWidget(player);
+    ui->gridLayout_video->addWidget(player,(players.size()-1)/rows_count,(players.size()-1)%rows_count,1,1);
 }
 void MainWindow::widget_remove_camera(QWidget *w)
 {
