@@ -7,6 +7,50 @@
 #include "misc.h"
 #include "playerwidget.h"
 #include "app_data.h"
+#include <ActiveQt>
+
+
+//# 设置内存执行编码 UTF-8
+#ifdef Q_OS_WIN
+#pragma execution_character_set("UTF-8")
+#endif
+
+// ObjectSafety
+//# 控件安全标记类
+#include <QAxAggregated>
+#include <objsafe.h>
+#include <QUuid>
+class ObjectSafety : public QAxAggregated, public IObjectSafety
+{
+public:
+    ObjectSafety(){
+    }
+    QAXAGG_IUNKNOWN;
+    long queryInterface(const QUuid &iid, void **iface)
+    {
+        *iface = NULL;
+        if (iid == IID_IObjectSafety)
+        {
+            *iface = (IObjectSafety*)this;
+        }
+        else
+        {
+            return E_NOINTERFACE;
+        }
+        AddRef();
+        return S_OK;
+    }
+    HRESULT WINAPI GetInterfaceSafetyOptions(REFIID riid, DWORD *pdwSupportedOptions, DWORD *pdwEnabledOptions)
+    {
+        *pdwSupportedOptions = INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACESAFE_FOR_UNTRUSTED_CALLER;
+        *pdwEnabledOptions = INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACESAFE_FOR_UNTRUSTED_CALLER;
+        return S_OK;
+    }
+    HRESULT WINAPI SetInterfaceSafetyOptions(REFIID riid, DWORD pdwSupportedOptions, DWORD pdwEnabledOptions)
+    {
+        return S_OK;
+    }
+};
 namespace Ui {
 class MainWindow;
 }
