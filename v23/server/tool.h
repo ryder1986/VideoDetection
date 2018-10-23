@@ -667,5 +667,8 @@ public:
     static bool show_processor_text;
     static bool show_camera_state;
 };
-
+#define SLEEP_HERE     \
+while(true){\
+this_thread::sleep_for(chrono::microseconds(1000));\
+}
 #endif // TOOL1_H
