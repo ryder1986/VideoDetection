@@ -1291,16 +1291,18 @@ public:
             for(int i=0;i<r.FarArea.size();i++){
                 r.FarArea[i].x+=offx;
                 r.FarArea[i].y+=offy;
-                draw_circle(r.FarArea[i],4,PaintableData::Colour::Red,2);
-                draw_text("f",r.FarArea[i],1,PaintableData::Colour::Green,2);
+                draw_circle(r.FarArea[i],3,PaintableData::Colour::Red,2);
+                draw_circle(r.FarArea[i],1,PaintableData::Colour::Blue,2);
+                //draw_text("f",r.FarArea[i],1,PaintableData::Colour::Green,2);
             }
             draw_vers_line(r.FarArea,draw_line);
 
             for(int i=0;i<r.NearArea.size();i++){
                 r.NearArea[i].x+=offx;
                 r.NearArea[i].y+=offy;
-                draw_circle(r.NearArea[i],4,PaintableData::Colour::Red,2);
-                draw_text("n",r.NearArea[i],1,PaintableData::Colour::Green,2);
+                draw_circle(r.NearArea[i],3,PaintableData::Colour::Red,2);
+                draw_circle(r.NearArea[i],1,PaintableData::Colour::Red,2);
+                //draw_text("n",r.NearArea[i],1,PaintableData::Colour::Green,2);
 
             }
             draw_vers_line(r.NearArea,draw_line);
@@ -1308,9 +1310,9 @@ public:
             for(int i=0;i<r.LaneArea.size();i++){
                 r.LaneArea[i].x+=offx;
                 r.LaneArea[i].y+=offy;
-                draw_circle(r.LaneArea[i],4,PaintableData::Colour::Red,2);
-                draw_text("l",r.LaneArea[i],1,PaintableData::Colour::Green,2);
-
+                draw_circle(r.LaneArea[i],3,PaintableData::Colour::Red,2);
+                draw_circle(r.LaneArea[i],1,PaintableData::Colour::Red,2);
+                //draw_text("l",r.LaneArea[i],1,PaintableData::Colour::Green,2);
             }
             draw_vers_line(r.LaneArea,draw_line);
 
@@ -1325,6 +1327,7 @@ public:
             ps.clear();
             for(VdPoint p:r.Vers){
                 ps.push_back(VdPoint(p.x+offx,p.y+offy));
+                draw_circle(ps.back(),2,PaintableData::Colour::Red,2);
             }
             draw_vers_line(ps,draw_line);
             //if(r.Type)

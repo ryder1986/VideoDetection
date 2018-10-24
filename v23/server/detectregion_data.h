@@ -613,7 +613,13 @@ public:
                 draw_line(ExpectedAreaVers[i-1],ExpectedAreaVers[i],PaintableData::Colour::Blue,2);
             else
                 draw_line(ExpectedAreaVers[i-1],ExpectedAreaVers[i],PaintableData::Colour::Red,2);
+
+            draw_circle(ExpectedAreaVers[i-1],3,PaintableData::Colour::Red,2);
+
         }
+
+        draw_circle(ExpectedAreaVers.front(),3,PaintableData::Colour::Red,2);
+        draw_circle(ExpectedAreaVers.back(),3,PaintableData::Colour::Red,2);
         if(!seizing)
             draw_line(ExpectedAreaVers.front(),ExpectedAreaVers.back(),PaintableData::Colour::Blue,2);
         else
