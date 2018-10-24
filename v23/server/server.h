@@ -239,43 +239,35 @@ private:
     }
 };
 class TcpClient{
-   // function <void(Session *,char *,int)>fct;
+    function <void(char *,int)>recv_fun=[](char *data,int len){ prt(info,"get %s",data);};
+    bool connected;
 public:
+#if 0
     TcpClient(int p):port(p),quit(false)
     {
+        connected=false;
         skt=Socket::CreateTcpClientSock(0,1000);
         if(skt<=0){
             prt(info,"skt err");
-        }
-        fd= Socket::ConnectTcpClient(skt,"192.168.1.216",6789);
-
-        if(fd>0){
-//            auto func=bind(&TcpClient::listen,this);
-//            trd=new thread([func](){func();});
-        }else{
-            prt(info,"connect  server port fail");
         }
 
         thread([this](){
             while(1){
                 lock.lock();
-                    printf(" fd %d ... \n",fd);fflush(NULL);
-                if(fd<=0){
-                     printf(" connecting ... \n");fflush(NULL);
-                    fd= Socket::ConnectTcpClient(skt,"192.168.1.216",6789);
-                    if(fd>0){
-                        printf("ok \n");fflush(NULL);
-                        //prt(info,"reconnect ok,fd %d",fd);
+                if(!connected){
+                    skt=Socket::CreateTcpClientSock(0,1000);
+
+                    int tmp= Socket::ConnectTcpClient(skt,"192.168.1.219",6789);
+                    if(tmp>0){
+                        connected=true;
                     }else{
-                        printf("err \n");fflush(NULL);
-                        //prt(info,"reconnect err");
                     }
                 }
                 lock.unlock();
                 this_thread::sleep_for(chrono::microseconds(1000000));
             }
 
-            }).detach();
+        }).detach();
 
 
         auto func_recv=bind(&TcpClient::recv,this);
@@ -283,61 +275,65 @@ public:
         trd=new thread([func_recv](){func_recv();});
 
     }
-//    TcpClient(int p,function <void(Session *,char *,int)>fc):port(p),quit(false),fct(fc)
-//    {
-//        fd= Socket::StartTcpServerSock(port,1000,1000);
-//        if(fd>0){
-//            auto func=bind(&Tcpserver::listen,this);
-//            trd=new thread([func](){func();});
-//        }else{
-//            prt(info,"bind port fail");
-//        }
-//    }
-//    TcpClient(vector<Session*> *&clts,int p,function <void(Session *,char *,int)>fc):port(p),quit(false),fct(fc)
-//    {
-//        clts=&clients;
-//        fd= Socket::StartTcpServerSock(port,1000,1000);
-//        if(fd>0){
-//            auto func=bind(&Tcpserver::listen,this);
-//            trd=new thread([func](){func();});
-//        }else{
-//            prt(info,"bind port fail");
-//        }
-//    }
+#endif
+    TcpClient(string ip,int p,function <void(char *,int)>fc):ipaddr(ip),port(p),quit(false),recv_fun(fc)
+    {
+        connected=false;
+        skt=Socket::CreateTcpClientSock(0,100000);
+        if(skt<=0){
+            prt(info,"skt err");
+        }
+
+        thread([this](){
+            while(1){
+                lock.lock();
+                if(!connected){
+                    close(skt);
+                    skt=Socket::CreateTcpClientSock(0,1000);
+
+                    int tmp= Socket::ConnectTcpClient(skt,ipaddr.data(),port);
+                    if(tmp>0){
+                        connected=true;
+                        prt(info,"connect ok(%d)",skt);
+                    }else{
+                        prt(info,"connect err(%d)",skt);
+                        // close(skt);
+                    }
+                }
+                lock.unlock();
+                this_thread::sleep_for(chrono::microseconds(1000000));
+            }
+
+        }).detach();
+
+
+        auto func_recv=bind(&TcpClient::recv,this);
+
+        trd=new thread([func_recv](){func_recv();});
+    }
     ~TcpClient()
     {
-//        quit=true;
-//        if(trd){
-//            trd->join();
-//            int sz=clients.size();
-//            for(int i=sz-1;i>=0;i--)
-//            {
-//                delete clients[i];
-//                clients.pop_back();
-//            }
-//            delete trd;
-//        }
+        //        quit=true;
+        //        if(trd){
+        //            trd->join();
+        //            int sz=clients.size();
+        //            for(int i=sz-1;i>=0;i--)
+        //            {
+        //                delete clients[i];
+        //                clients.pop_back();
+        //            }
+        //            delete trd;
+        //        }
     }
-
-//    void listen()
-//    {
-//        while(!quit){
-
-//            memset(peer_ip,0,IP_STR_LEN);
-//            int cl_fd=Socket::WaitTcpConnect(fd,1,peer_ip,&peer_port);
-//            if(cl_fd>0){
-//                prt(info,"get connect from %s:%d",peer_ip,peer_port);
-//                Session *s=new Session(cl_fd,peer_ip,peer_port);
-//                s->end_this=bind(&Tcpserver::quit_session,this,placeholders::_1);
-//                s->process_data=fct;
-//                clients.push_back(s);
-//            }
-//        }
-//    }
 
     int send(const char *buf,int len)
     {
-        int ret= Socket::SendDataByTcp(skt,buf,len);
+        int ret=0;
+         prt(info,"send1");
+        //lock.lock();
+         prt(info,"send2");
+        if(connected){
+        ret= Socket::SendDataByTcp(skt,buf,len);
 
         if(ret){
             prt(info,"send start(%d bytes)<========",ret);
@@ -346,66 +342,57 @@ public:
         }else{
             prt(info,"send fail",ret);
         }
+        }else{
+             prt(info,"send : you cant send without connect");
+        }
+       // lock.unlock();
         return ret;
     }
     int recv()
     {
         while(!quit){
-            int ret=Socket::RecvDataByTcp1(skt,buf,BUF_SIZE);
-            if(ret){
-                prt(info,"read %d bytes",ret);fflush(NULL);
-                //process_data(this,buf,ret);
-            }else{
+            if(skt>0){
+                memset(buf,0,10000);
                 lock.lock();
-                prt(info,"read socket error");
-                printf("-->\n");fflush(NULL);
-                shutdown(fd,SHUT_RDWR);
-                //close(fd);
-                fd=-1;
-                   printf("--1>\n");fflush(NULL);
+                int ret=Socket::RecvDataByTcp1(skt,buf,BUF_SIZE);
+                prt(info,"read done ");
+                if(ret){
+                    connected=true;
+                    prt(info,"read %d bytes ok",ret);
+                    recv_fun(buf,ret);
+                    //process_data(this,buf,ret);
+                }else{
+                    prt(info,"read  error ");
+
+                    connected=false;
+                    //close(skt);
+
+                    //this_thread::sleep_for(chrono::seconds(1));
+                }
                 lock.unlock();
-                   printf("-->2\n");fflush(NULL);
-                //break;
-                cout<<"socket maybe closed,retry read after 1sec"  <<endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                if(ret<=0)
+                    this_thread::sleep_for(chrono::seconds(1));
+
             }
+
         }
-    //    end_this(this);
+        //    end_this(this);
         return 0;
     }
-//    void send_test()
-//    {
-//        if(clients.size())
-//        {
-//            clients[0]->send("123456",6);
-//        }
-//    }
-//    void size()
-//    {
-//        cout<<clients.size();
-//    }
-private:
-//    void quit_session(Session *s)
-//    {
-//        vector <Session *>::iterator e=find(clients.begin(),clients.end(),s);
-//        clients.erase(e);
-//        thread([s](){
-//            delete s;
-//        }).detach();
-//        s=NULL;
-//    }
 
+private:
     bool quit;
+    string ipaddr;
     int port;
     std::thread *trd;
     unsigned short peer_port;
-    int fd;
+    //  int fd;
     char peer_ip[IP_STR_LEN];
     int skt;
     char buf[10000];
     mutex lock;
 public:
- //   vector <Session *> clients;
+    //   vector <Session *> clients;
 
 };
 

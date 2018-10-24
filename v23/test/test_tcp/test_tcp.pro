@@ -4,11 +4,13 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    test1.cpp
 
 include(../common.pri)
 
-HEADERS+=$$SERVER_PATH/server.h
+HEADERS+=$$SERVER_PATH/server.h \
+    test1.h
 SOURCES+=$$SERVER_PATH/server.cpp
 
     LIBS+=-lpthread

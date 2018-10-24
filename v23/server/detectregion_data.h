@@ -355,7 +355,7 @@ public:
 
                     {
                         itm.text="revert direction";
-                        int dir=mi->Events[idx].Direction;
+                        int dir=mi->Events[idx-1].Direction;
                         MvdProcessorInputData tmp_os(mi->data());tmp_os.set_event_direction(idx,!dir);
                         itm.checkable=false;
                         itm.checked=false;
