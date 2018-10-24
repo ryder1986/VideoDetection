@@ -7,16 +7,16 @@
 #include "misc.h"
 #include "playerwidget.h"
 #include "app_data.h"
-#ifdef IS_WIN
+#ifdef ACTIVEX
 #include <ActiveQt>
-#endif
+
 
 //# 设置内存执行编码 UTF-8
 #ifdef Q_OS_WIN
 #pragma execution_character_set("UTF-8")
 #endif
 
-#ifdef IS_WIN
+
 #include <QAxAggregated>
 #include <objsafe.h>
 #include <QUuid>
