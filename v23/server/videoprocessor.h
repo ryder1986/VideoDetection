@@ -4,14 +4,14 @@
 #include "opencv2/core.hpp"
 #include "jsonpacket.h"
 using namespace std;
-using namespace cv;
+
 #define LABEL_PROCESSOR_DUMMY "Dummy"
 #define LABEL_PROCESSOR_MVD "Mvd"
 namespace VideoProcessorNS{
 typedef struct args{
     double scale_ratio;
     int scan_step;
-    Rect area;
+    cv::Rect area;
     int no;
     string ratio;
 
@@ -52,9 +52,9 @@ public:
         return true;
     }
 
-    virtual bool process(Mat img_src,JsonPacket &pkt)=0;
+    virtual bool process(cv::Mat img_src,JsonPacket &pkt)=0;
 
-    virtual bool process_whole_pic(Mat img_src,JsonPacket &pkt,Rect rct)
+    virtual bool process_whole_pic(cv::Mat img_src,JsonPacket &pkt,cv::Rect rct)
     {
 
     }

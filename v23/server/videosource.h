@@ -20,7 +20,6 @@
 #include "ffmpegvideocapture.h"
 #endif
 using namespace std;
-using namespace cv;
 class VideoSource
 {
 public:
@@ -89,7 +88,7 @@ public:
         }
         return ret;
     }
-    bool get_frame(Mat &frame)
+    bool get_frame(cv::Mat &frame)
     {
         if(get_pic(frame))
             return true;
@@ -120,7 +119,7 @@ public:
         prt(info,"quit video: %s done", url.data());
     }
 
-    inline  bool get_pic(Mat &frame)
+    inline  bool get_pic(cv::Mat &frame)
     {
 
         bool ret=false;
@@ -135,7 +134,7 @@ public:
 
     }
 
-    bool get_frame(Mat &frame, int &timestamp)
+    bool get_frame(cv::Mat &frame, int &timestamp)
     {
         if(get_pic(frame))
             return true;
@@ -201,14 +200,14 @@ private:
     }
 private:
 #ifdef USE_CVCAP
-    VideoCapture  vcap;
+    cv::VideoCapture  vcap;
 #else
     FfmpegVideoCapture vcap;
 #endif
     Timer1 watch_dog;
     //  PdVideoCapture vcap;
     //  VideoCapture vcap;
-    vector <Mat> frame_list;
+    vector <cv::Mat> frame_list;
     vector <int> cur_ms_list;
 
     int frame_wait_time;
@@ -220,7 +219,7 @@ private:
 
 
     thread *src_trd;
-    Mat png_frame;
+    cv::Mat png_frame;
     bool is_pic;
     int try_times;
 

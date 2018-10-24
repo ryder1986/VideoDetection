@@ -20,7 +20,7 @@ VideoSource::VideoSource(string path):watch_dog(bind(&VideoSource::check_point,t
     // _start_async(bind(&VideoSource::run,this));
 
     if(end_with_str(url,"png")){
-        imread(url).copyTo(png_frame);
+        cv::imread(url).copyTo(png_frame);
         prt(info,"read png");
         is_pic=true;
     }else
@@ -40,7 +40,7 @@ VideoSource::VideoSource(string path,bool only_keyframe):watch_dog(bind(&VideoSo
     quit_flg=false;
     queue_length=3;
     if(end_with_str(url,"png")){
-        imread(url).copyTo(png_frame);
+        cv::imread(url).copyTo(png_frame);
         prt(info,"read png");
         is_pic=true;
     }else
@@ -52,7 +52,7 @@ void VideoSource::run()
     //     vcap.open(path);
     lock.lock();
 #ifdef USE_CVCAP
-    vcap=VideoCapture(url);
+    vcap=cv::VideoCapture(url);
 #else
     vcap=FfmpegVideoCapture(url);
 #endif
@@ -70,7 +70,7 @@ void VideoSource::run()
     }
 
     lock.unlock();
-    Mat frame;
+    cv::Mat frame;
     int flag_retry=0;
     while(true){
 
@@ -89,7 +89,7 @@ void VideoSource::run()
                 prt(info,"get frame fail,restart video capture %s", url.data());
                 vcap.release();
 #ifdef USE_CVCAP
-                vcap=VideoCapture(url);
+                vcap=cv::VideoCapture(url);
 #else
                 vcap=FfmpegVideoCapture(url);
 #endif
@@ -157,7 +157,7 @@ void VideoSource::run()
             }
 #endif
 #ifdef USE_CVCAP
-            vcap=VideoCapture(url);
+            vcap=cv::VideoCapture(url);
 #else
             vcap=FfmpegVideoCapture(url);
 #endif
