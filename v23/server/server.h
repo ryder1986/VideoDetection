@@ -329,9 +329,7 @@ public:
     int send(const char *buf,int len)
     {
         int ret=0;
-         prt(info,"send1");
         //lock.lock();
-         prt(info,"send2");
         if(connected){
         ret= Socket::SendDataByTcp(skt,buf,len);
 
@@ -354,12 +352,17 @@ public:
             if(skt>0){
                 memset(buf,0,10000);
                 lock.lock();
+               //   printf("\nflush  355\n");
                 int ret=Socket::RecvDataByTcp1(skt,buf,BUF_SIZE);
-                prt(info,"read done ");
+
+                 // printf("\nflush 358 \n");
+               // prt(info,"read done ");
                 if(ret){
                     connected=true;
-                    prt(info,"read %d bytes ok",ret);
+                     fflush(NULL);
+                  //  prt(info,"read %d bytes ok",ret);
                     recv_fun(buf,ret);
+                     fflush(NULL);
                     //process_data(this,buf,ret);
                 }else{
                     prt(info,"read  error ");

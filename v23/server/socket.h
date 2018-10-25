@@ -284,16 +284,20 @@ public:
 
     static   int RecvDataByTcp1(int sock,char* buffer,int len)
     {
-        //prt(info,"get buffer len : %d",len);
+        memset(buffer,0,len);
         int offset=0;
+       // prt(info,"sock %d",sock);
         while(len>0){
+           // printf("\nrecving...\n");fflush(NULL);
             int re = recv(sock,buffer+offset,len,0);
+          //  printf("\nget %d\n",re);fflush(NULL);
             if(re<=0){
                 if(re<0 && EINTR == errno){
                     //Log0("recv continue: re[%d] errno:[%s]", re, strerror(errno));
                     continue;
                 }
                 else{
+                   // prt(info,"get buffer len : %d",re);
                     //Log0("recv error: re[%d] errno:[%s]", re, strerror(errno));
                     return offset;
                 }
