@@ -336,9 +336,9 @@ public:
         ret= Socket::SendDataByTcp(skt,buf,len);
 
         if(ret){
-            prt(info,"send start(%d bytes)<========",ret);
+            //prt(info,"send start(%d bytes)<========",ret);
             printf("%s",buf);
-            prt(info,"send end(%d bytes)<========",ret);
+            //prt(info,"send end(%d bytes)<========",ret);
         }else{
             prt(info,"send fail",ret);
         }

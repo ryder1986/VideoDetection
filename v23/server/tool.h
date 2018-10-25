@@ -671,4 +671,8 @@ public:
 while(true){\
 this_thread::sleep_for(chrono::microseconds(1000));\
 }
+#define PAUSE_HERE     \
+while(true){\
+this_thread::sleep_for(chrono::microseconds(1000));\
+}
 #endif // TOOL1_H
