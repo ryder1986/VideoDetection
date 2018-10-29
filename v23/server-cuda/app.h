@@ -251,7 +251,7 @@ private:
 //        }
         int count=dir_count("/ftphome/pic");
         prt(info,"check files %d---->",count);
-        int left=1000;
+        int left=30;
         if(count>left){
             delete_dir_files("/ftphome/pic",count,left);
         }

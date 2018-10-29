@@ -47,6 +47,7 @@ inline int dir_count(char *dirname)
     }
     return -1;
 }
+#if 0
 inline void delete_dir_files(char *dirname,int total,int left)
 {
     DIR *d;
@@ -69,7 +70,34 @@ inline void delete_dir_files(char *dirname,int total,int left)
         closedir(d);
     }
 }
+#else
+// ls -tp | grep -v '/$' | tail -n +20 | xargs -d '\n' -r rm -- ; ls
+// cd /ftphome/pic/ ; ls -tp  | grep -v '/$' | tail -n +20 | xargs -d '\n' -r rm --
+inline void delete_dir_files(char *dirname,int total,int left)
+{
+   // system("cd  /ftphome/pic ; ls > /root/test.txt");
+    system("cd /ftphome/pic/ ; ls -tp  | grep -v '/$' | tail -n +1000 | xargs -d '\n' -r rm --;cd -");
+  //    DIR *d;
+//    struct dirent *dir;
+//    d = opendir(dirname);
+//    if (d) {
+//        int num=0;
+//        while ((dir = readdir(d)) != NULL&&  num++<(total-left)) {
 
+//               printf("Deleteing %s,type %d  \n",dir->d_name,dir->d_type);
+//               char buf[1000];
+//               memset(buf,0,1000);
+//               sprintf(buf,"%s/%s",dirname,dir->d_name);
+//              // printf("%s\n",buf);
+//            if (remove(buf) == 0)
+//                printf("Deleted %s successfully\n",dir->d_name);
+//            else
+//                printf("Unable to  delete  %s \n",dir->d_name);
+//        }
+//        closedir(d);
+//    }
+}
+#endif
 inline string get_last_sub_string(string str,char t)
 {
     unsigned int pos;
