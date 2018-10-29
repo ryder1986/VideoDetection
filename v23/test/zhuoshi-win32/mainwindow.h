@@ -109,7 +109,8 @@ class AppInputData:public JsonData{
 public:
 
     vector <DetectionDevice> Devices;
-
+    string ip;
+    string name;
     //AppInputData(JsonPacket pkt1):JsonDataWithTitle(pkt1,"DeviceConfig")
     AppInputData(JsonPacket pkt1):JsonData(pkt1)
     {
@@ -123,6 +124,8 @@ public:
     {
         try{
             DECODE_JSONDATA_ARRAY_MEM(Devices);
+            DECODE_STRING_MEM(ip);
+            DECODE_STRING_MEM(name);
         }catch(exception e){
             PRT_DECODE_EXCEPTION
         }
@@ -131,6 +134,8 @@ public:
     {
         try{
             ENCODE_JSONDATA_ARRAY_MEM(Devices);
+            ENCODE_STRING_MEM(ip);
+            ENCODE_STRING_MEM(name);
         }catch(exception e){
             PRT_DECODE_EXCEPTION
         }
@@ -349,6 +354,9 @@ private:
 #include <QtSql>
 class Database{
 public:
+
+    static string ip;
+    static string dbname;
     static Database &get_instance()
     {
         static Database database;
@@ -365,8 +373,10 @@ private:
     Database()
     {
         db = QSqlDatabase::addDatabase("QMYSQL");
-        db.setHostName("192.168.1.4");
-        db.setDatabaseName("datainfo");
+//        db.setHostName("192.168.1.4");
+//        db.setDatabaseName("datainfo");
+        db.setHostName(ip.data());
+        db.setDatabaseName(dbname.data());
         db.setUserName("root");
         db.setPassword("myadmin");
 
@@ -384,6 +394,7 @@ private:
 
     }
     QSqlDatabase db;
+
 };
 class DetectorConnection:public QObject
 {

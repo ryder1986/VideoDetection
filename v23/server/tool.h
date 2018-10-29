@@ -381,7 +381,7 @@ public:
             tmp_str.append("[").append(time).append("][").append(label).append("][").\
                     append(last_substr(last_substr(fn,'/'),'\\').data()).append(",").append(buf1).append(",").append(func_name).append("]===>").append(buf).append("\n");
             cout<<tmp_str;
-            //log_file1.write(tmp_str.data());
+            log_file1.write(tmp_str.data());
             fflush(stdout);
             //  fflush(NULL);
         }
