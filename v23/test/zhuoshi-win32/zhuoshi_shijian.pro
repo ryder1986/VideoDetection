@@ -52,8 +52,8 @@ HEADERS+=  $$SERVER_PATH/configmanager.h\
   $$SERVER_PATH/jsonpacket.h
 
 
-install_files.files+=res/
-install_files.path=$$OUT_PWD/
+install_files.files+=res/ res/libmysql.dll
+install_files.path=$$OUT_PWD/debug/
 INSTALLS+=install_files
 
 
