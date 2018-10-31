@@ -154,16 +154,30 @@ public:
         frame_lock.unlock();
         return ret;
     }
+    void quit_this()
+    {
+        lock.lock();
+        watch_dog.stop();
+        vcap.release();
+        quit_flg=true;
+        //delete src_trd;
+        src_trd->detach();//TODO delete it?
+        lock.unlock();
+
+    }
+
 private:
     void run();
     void check_point()
     {
+        lock.lock();
        // prt(info,"%s runing , queue len %d",url.data(),queue_length);
         if(vcap.isOpened()){
             //double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
         }else{
             prt(info,"url: %s is Not running",url.data());
         }
+        lock.unlock();
     }
 private:
 #ifdef USE_CVCAP

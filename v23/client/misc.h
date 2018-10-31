@@ -246,7 +246,7 @@ public:
                 if(src[i+1]=='\n')
                     dst.truncate(i+2);
                 else
-                    dst.truncate(i+i);
+                    dst.truncate(i+1);
             }
         }
         return ret;
@@ -405,6 +405,7 @@ signals:
 public:
     bool send(const QByteArray ba)
     {
+        prt(info,"sending---------------> %s",ba.data());
         emit send_done(ba);
         bool ret=false;
         int write_bytes=0;

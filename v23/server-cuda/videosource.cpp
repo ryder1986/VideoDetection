@@ -48,7 +48,12 @@ VideoSource::VideoSource(string path,bool only_keyframe):watch_dog(bind(&VideoSo
 }
 VideoSource::~VideoSource()
 {
-    lock.lock();
+   quit_this();
+//    auto qf=bind(&VideoSource::quit_this,this);
+//    Timer2 t2;
+//    t2.AsyncWait(0,qf);
+
+
 #if 0
     prt(info,"quiting video %s", url.data());
     quit_flg=true;
@@ -60,15 +65,18 @@ VideoSource::~VideoSource()
     }
     watch_dog.stop();
     prt(info,"quit video: %s done", url.data());
-#else
+//#else
+    lock.lock();
     vcap.release();
     watch_dog.stop();
     quit_flg=true;
-    src_trd->detach();
+    delete src_trd;
+    lock.unlock();
+    //src_trd->detach();
     //new thread(bind(&VideoSource::close_src,this));
 
 #endif
-    lock.unlock();
+
 }
 void VideoSource::run()
 {

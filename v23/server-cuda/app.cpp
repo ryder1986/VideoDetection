@@ -33,6 +33,8 @@ App::~App()
 //deal with clients command
 void App::process_client_cmd(Session *clt, char *data, int len)
 {
+    prt(info,"tcp %d bytes -->%s--<",len,data);
+
     str_stream.append(string(data,len));
     string valid_buf;
     valid_buf.clear();
@@ -51,6 +53,7 @@ void App::process_client_cmd(Session *clt, char *data, int len)
 
 void App::process_camera_data(Camera *camera, CameraOutputData data)
 {
+  //  lock.lock();
     vector<Camera *>::iterator itr;
     int idx=0;
     itr=cms.begin();
@@ -62,6 +65,7 @@ void App::process_camera_data(Camera *camera, CameraOutputData data)
         //prt(info,"process camera %d",idx+1);
     }else{
         prt(info,"process invalid camera index %d, sz %d",idx,cms.size());
+      //  lock.unlock();
         return;
     }
     insert_database(data,idx+1,cms[idx]->screenshot);
@@ -77,11 +81,13 @@ void App::process_camera_data(Camera *camera, CameraOutputData data)
     for(DestClient dst:dest_clients){
         Socket::UdpSendData(udp_fd,dst.get_ip().data(),12349,rst.data().str().data(),rst.data().str().length());
     }
+ //   lock.unlock();
 
 }
 
 bool App::process_event(RequestPkt e, ReplyPkt &r)
 {
+    lock.lock();
     bool ret=false;
     prt(info,"handle cmd type %d",e.Operation);
     switch(e.Operation){
@@ -187,5 +193,6 @@ bool App::process_event(RequestPkt e, ReplyPkt &r)
         prt(info,"unknow cmd %d",e.Operation);
         break;
     }
+    lock.unlock();
     return ret;
 }

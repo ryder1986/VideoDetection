@@ -49,11 +49,11 @@ public:
             val=v;
     }
 
-    void operator =(JsonPacket pkt)
-    {
-        val=pkt.value();
-        str_data=pkt.str();
-    }
+//    void operator =(JsonPacket pkt)
+//    {
+//        val=pkt.value();
+//        str_data=pkt.str();
+//    }
 
     void operator =(vector<JsonPacket> ar)
     {
@@ -654,6 +654,12 @@ public:
     VdPoint()
     {
 
+    }
+    void operator =(VdPoint pkt)
+    {
+        x=pkt.x;
+        y=pkt.y;
+        config=pkt.data();
     }
 //    void    operator =(VdPoint p)
 //    {

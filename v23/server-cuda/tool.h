@@ -562,10 +562,10 @@ private:
                 ret=true;
                 if(src[i+1]=='\n')
                     //   dst.truncate(i+2);
-                    dst.substr(0,i+2);
+                    dst=dst.substr(0,i+2);
                 else
                     // dst.truncate(i+i);
-                    dst.substr(0,i+1);
+                    dst=dst.substr(0,i+1);
             }
         }
         return ret;
@@ -687,6 +687,8 @@ inline char * get_time_string()
 }
 #endif
 
-#define PRT_DECODE_EXCEPTION prt(info,"error in decoding %s data:=>%s<=",typeid(this).name(),config.str().data());
-#define PRT_ENCODE_EXCEPTION prt(info,"error in encoding %s data:=>%s<=",typeid(this).name(),config.str().data());
+#define PRT_DECODE_EXCEPTION prt(debug,"error in decoding %s data:=>%s<=",typeid(this).name(),config.str().data());
+//#define PRT_DECODE_EXCEPTION prt(info,"error in decoding %s data:=>%s<=",typeid(this).name(),config.str().data());
+//#define PRT_ENCODE_EXCEPTION prt(info,"error in encoding %s data:=>%s<=",typeid(this).name(),config.str().data());
+#define PRT_ENCODE_EXCEPTION prt(debug,"error in encoding %s data:=>%s<=",typeid(this).name(),config.str().data());
 #endif // TOOL1_H

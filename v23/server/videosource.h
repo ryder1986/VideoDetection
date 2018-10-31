@@ -20,46 +20,13 @@
 #include "ffmpegvideocapture.h"
 #endif
 using namespace std;
+using namespace cv;
 class VideoSource
 {
 public:
     VideoSource(string path);
     VideoSource(string path,bool only_key_frame);
-    ~VideoSource()
-    {
-        //lock.lock();
-
-        //Timer2 t2;
-        //t2.AsyncWait(0,bind(&VideoSource::quit_src,this));
-        quit_src();
-       //lock.unlock();
-    }
-    void quit_src()
-    {
-#if 1
-        lock.lock();
-        prt(info,"quiting video %s", url.data());
-        quit_flg=true;
-        lock.unlock();
-        if(src_trd){
-            if(src_trd->joinable())
-                src_trd->join();
-            delete src_trd;
-            prt(info,"quiting video thread %s", url.data());
-        }
-        watch_dog.stop();
-        prt(info,"quit video: %s done", url.data());
-#else
-        if(vcap.isOpened())
-            vcap.release();
-        watch_dog.stop();
-        quit_flg=true;
-        src_trd->detach();
-        //new thread(bind(&VideoSource::close_src,this));
-
-#endif
-    }
-
+     ~VideoSource();
     void set_buffer_size(int frames)
     {
         queue_length=frames;
@@ -88,7 +55,7 @@ public:
         }
         return ret;
     }
-    bool get_frame(cv::Mat &frame)
+    bool get_frame(Mat &frame)
     {
         if(get_pic(frame))
             return true;
@@ -119,7 +86,7 @@ public:
         prt(info,"quit video: %s done", url.data());
     }
 
-    inline  bool get_pic(cv::Mat &frame)
+    inline  bool get_pic(Mat &frame)
     {
 
         bool ret=false;
@@ -134,7 +101,7 @@ public:
 
     }
 
-    bool get_frame(cv::Mat &frame, int &timestamp)
+    bool get_frame(Mat &frame, int &timestamp)
     {
         if(get_pic(frame))
             return true;
@@ -187,27 +154,41 @@ public:
         frame_lock.unlock();
         return ret;
     }
+    void quit_this()
+    {
+        lock.lock();
+        watch_dog.stop();
+        vcap.release();
+        quit_flg=true;
+        //delete src_trd;
+        src_trd->detach();//TODO delete it?
+        lock.unlock();
+
+    }
+
 private:
     void run();
     void check_point()
     {
+        lock.lock();
        // prt(info,"%s runing , queue len %d",url.data(),queue_length);
         if(vcap.isOpened()){
             //double w= vcap.get(CV_CAP_PROP_POS_FRAMES);
         }else{
             prt(info,"url: %s is Not running",url.data());
         }
+        lock.unlock();
     }
 private:
 #ifdef USE_CVCAP
-    cv::VideoCapture  vcap;
+    VideoCapture  vcap;
 #else
     FfmpegVideoCapture vcap;
 #endif
     Timer1 watch_dog;
     //  PdVideoCapture vcap;
     //  VideoCapture vcap;
-    vector <cv::Mat> frame_list;
+    vector <Mat> frame_list;
     vector <int> cur_ms_list;
 
     int frame_wait_time;
@@ -219,7 +200,7 @@ private:
 
 
     thread *src_trd;
-    cv::Mat png_frame;
+    Mat png_frame;
     bool is_pic;
     int try_times;
 

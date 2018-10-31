@@ -86,9 +86,14 @@ public:
     explicit PlayerWidget(CameraInputData data,QWidget *parent = nullptr);
     ~PlayerWidget()
     {
-        delete src;
+         lock.lock();
+
         tick_timer->stop();
         delete tick_timer;
+         lock.unlock();
+        VideoSource *tmp=src;
+         std::thread([this,tmp](){ delete tmp;}).detach();
+
     }
 
     void set_output_data(CameraOutputData data)
@@ -254,6 +259,7 @@ protected:
 
 signals:
     void camera_request(RequestPkt req,PlayerWidget *w);
+    void double_click_event(PlayerWidget *w);
 public slots:
 
     void timeout()
@@ -375,7 +381,8 @@ public slots:
 
     void mouseDoubleClickEvent(QMouseEvent *e)
     {
-        // emit double_click_event(this);//TODO:set full screen?
+        prt(info,"double");
+        emit double_click_event(this);//TODO:set full screen?
     }
 
 

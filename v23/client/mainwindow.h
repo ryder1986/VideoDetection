@@ -123,11 +123,13 @@ public:
                      }
                      thread_lock.unlock();
                  }else{
-                     if(play_index==rst.CameraIndex)
+                     thread_lock.lock();
+                     if(play_index==rst.CameraIndex&&players.size())
                      {
                          PlayerWidget *w= players[0];
                          w->set_output_data(rst.CameraOutput);
                      }
+                     thread_lock.unlock();
 
                  }
              }else{
@@ -258,11 +260,17 @@ private slots:
 #if 1
             delete w;//TODO: add deleting method
 #else
-            std::thread([this,w](){ delete w;}).detach();
+           // std::thread([this,w](){ delete w;}).detach();
+            QTimer::singleShot(1000, this, [w] () {delete w;});
+       //     QTimer::singleShot(1000, this, &MainWindow::del_widget,w);
 #endif
         }
         players.clear();
         thread_lock.unlock();
+    }
+    void del_widget(PlayerWidget *w)
+    {
+        delete w;
     }
 
     void camera_request(RequestPkt req,PlayerWidget *wgt)
@@ -276,6 +284,7 @@ private slots:
         clt.send(get_request_pkt(AppInputData::MODIFY_CAMERA,idx+1,req.data()).data().str());
     }
 
+    void cameras_show_mode(PlayerWidget *wgt);
     void on_pushButton_play_clicked();
 
     void on_pushButton_stop_clicked();
@@ -298,6 +307,8 @@ private slots:
 
     void on_checkBox_show_info_clicked(bool checked);
 
+    void on_comboBox_play_index_activated(int index);
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *udpSocket;
@@ -312,6 +323,7 @@ private:
     int play_index;
     int deleting_index;
     Timer1 tmr1;
+    bool fullscreen_mode;
 };
 
 #endif // MAINWINDOW_H

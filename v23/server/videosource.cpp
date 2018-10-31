@@ -20,7 +20,7 @@ VideoSource::VideoSource(string path):watch_dog(bind(&VideoSource::check_point,t
     // _start_async(bind(&VideoSource::run,this));
 
     if(end_with_str(url,"png")){
-        cv::imread(url).copyTo(png_frame);
+        imread(url).copyTo(png_frame);
         prt(info,"read png");
         is_pic=true;
     }else
@@ -40,19 +40,50 @@ VideoSource::VideoSource(string path,bool only_keyframe):watch_dog(bind(&VideoSo
     quit_flg=false;
     queue_length=3;
     if(end_with_str(url,"png")){
-        cv::imread(url).copyTo(png_frame);
+        imread(url).copyTo(png_frame);
         prt(info,"read png");
         is_pic=true;
     }else
         src_trd=new thread(bind(&VideoSource::run,this));
 }
+VideoSource::~VideoSource()
+{
+   quit_this();
+//    auto qf=bind(&VideoSource::quit_this,this);
+//    Timer2 t2;
+//    t2.AsyncWait(0,qf);
 
+
+#if 0
+    prt(info,"quiting video %s", url.data());
+    quit_flg=true;
+    if(src_trd){
+        if(src_trd->joinable())
+            src_trd->join();
+        delete src_trd;
+        prt(info,"quiting video thread %s", url.data());
+    }
+    watch_dog.stop();
+    prt(info,"quit video: %s done", url.data());
+//#else
+    lock.lock();
+    vcap.release();
+    watch_dog.stop();
+    quit_flg=true;
+    delete src_trd;
+    lock.unlock();
+    //src_trd->detach();
+    //new thread(bind(&VideoSource::close_src,this));
+
+#endif
+
+}
 void VideoSource::run()
 {
     //     vcap.open(path);
     lock.lock();
 #ifdef USE_CVCAP
-    vcap=cv::VideoCapture(url);
+    vcap=VideoCapture(url);
 #else
     vcap=FfmpegVideoCapture(url);
 #endif
@@ -70,13 +101,12 @@ void VideoSource::run()
     }
 
     lock.unlock();
-    cv::Mat frame;
+    Mat frame;
     int flag_retry=0;
     while(true){
 
         lock.lock();
         if(quit_flg){
-            lock.unlock();
             break;
         }
 
@@ -89,7 +119,7 @@ void VideoSource::run()
                 prt(info,"get frame fail,restart video capture %s", url.data());
                 vcap.release();
 #ifdef USE_CVCAP
-                vcap=cv::VideoCapture(url);
+                vcap=VideoCapture(url);
 #else
                 vcap=FfmpegVideoCapture(url);
 #endif
@@ -157,7 +187,7 @@ void VideoSource::run()
             }
 #endif
 #ifdef USE_CVCAP
-            vcap=cv::VideoCapture(url);
+            vcap=VideoCapture(url);
 #else
             vcap=FfmpegVideoCapture(url);
 #endif

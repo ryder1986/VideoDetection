@@ -973,7 +973,15 @@ inline QString utf82gbk(const std::string &inStr)
 //   QTextCodec::setCodecForLocale(codec);
 //prt(info,"===>%s",QString(packetFlow.device_name).toStdString().data());
 
-        sprintf(buf,"INSERT INTO flow (  `video_channe_number`, \
+
+
+
+
+
+
+ #if 0
+
+           sprintf(buf,"INSERT INTO flow (  `video_channe_number`, \
         `equipment_number`, `equipment_name`, `flow_time_second`, `flow_time_millisecond`,\
         `flow_length`)\
         VALUES  ( '%d', '%d', '%s', '%d', '%d', '%d')",
@@ -982,16 +990,75 @@ inline QString utf82gbk(const std::string &inStr)
                 packetFlow.no,packetFlow.device_NO,name.data(),packetFlow.record_time_s,
                //   packetFlow.record_time_ms,packetFlow.period);
         packetFlow.record_time_s,packetFlow.period);
-        Database  &ins=  Database::get_instance();
-        prt(info,"===>> %s ", buf);
-        printf("%s\n",buf);
-        bool ret=ins.query(buf);
-        if(ret){
-            prt(info,"insert flow ok");
-        }else{
-            prt(info,"insert flow err");
+
+
+
+
+#else
+
+           int cnt=0;
+           for(cnt=0;cnt<10;cnt++){
+            //  if(packetFlow.lane_no[cnt]==0xffffffff||packetFlow.lane_no[cnt]==0){
+                   if(packetFlow.lane_no[cnt]==0xffffffff){
+                    prt(info,"lane cnt %d",cnt);
+                   break;
+               }
+           }
+           int tmp=0;
+        for(tmp=0;tmp<cnt;tmp++){
+             char buf[1000];memset(buf,0,1000);
+                     if(packetFlow.lane_no[tmp]==0){
+                        continue;
+                     }
+           sprintf(buf,"INSERT INTO flow (  `video_channe_number`, \
+        `equipment_number`, `equipment_name`, `flow_time_second`, `flow_time_millisecond`,\
+        `flow_length`\
+        ,lane_number,max_car_flow, min_car_flow,average_velocity, maximum_queue_length,\
+           time_share, spatial_occupancy_rate, average_vehicle_spacing)\
+        VALUES  ( '%d', '%d', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d')",
+               //   packetFlow.no,packetFlow.device_NO,"深圳123test",packetFlow.record_time_s,
+            //    packetFlow.no,packetFlow.device_NO,packetFlow.device_name,packetFlow.record_time_s,
+                packetFlow.no,packetFlow.device_NO,name.data(),packetFlow.record_time_s,
+               //   packetFlow.record_time_ms,packetFlow.period);
+        packetFlow.record_time_s,packetFlow.period,
+                   packetFlow.lane_no[tmp],
+                   packetFlow.bigcar[tmp],
+                   packetFlow.smallcar[tmp],
+                   packetFlow.averagespeed[tmp],
+                   packetFlow.max_queue[tmp],
+                   packetFlow.dur_ocuppy[tmp],
+                   packetFlow.dis_ocuppy[tmp],
+                   packetFlow.average_dis[tmp]
+                   );
+
+           Database  &ins=  Database::get_instance();
+           prt(info,"===>> %s ", buf);
+           printf("%s\n",buf);
+           bool ret=ins.query(buf);
+           if(ret){
+               prt(info,"insert flow ok");
+           }else{
+               prt(info,"insert flow err");
+
+           }
 
         }
+            prt(info,"lane cnt %d",cnt);
+//           memcpy(packetFlow.lane_no,flow_buf+52+20*0,20);
+//           memcpy(packetFlow.bigcar,flow_buf+52+20*1,20);
+//           memcpy(packetFlow.smallcar,flow_buf+52+20*2,20);
+//           memcpy(packetFlow.averagespeed,flow_buf+52+20*3,20);
+//           memcpy(packetFlow.max_queue,flow_buf+52+20*4,20);
+//           memcpy(packetFlow.dur_ocuppy,flow_buf+52+20*5,20);
+//           memcpy(packetFlow.dis_ocuppy,flow_buf+52+20*6,20);
+//           memcpy(packetFlow.average_dis,flow_buf+52+20*7,20);
+
+
+#endif
+
+
+
+
 
     }
 

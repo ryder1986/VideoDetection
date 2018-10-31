@@ -1150,6 +1150,17 @@ public:
 #endif
         }
 
+
+        if((point_index=p_on_v(DetectLine,pnt))>0){
+            seizing=true;
+            event_type=PaintableData::Event::MoveVer;
+            point_index+=LaneData.size()*12;
+            point_index+=Events.size()*4;
+            prt(info,"mvd press index %d",point_index)
+                    return true;
+        }
+
+
         return false;
     }
     virtual bool right_press(VdPoint pnt,vector<right_press_menu_item>&items_ret)
@@ -1236,6 +1247,14 @@ public:
                     e->Vers[e_order-1]=pnt;
                     e->encode();
                 }
+                if(point_index>LaneData.size()*12+Events.size()*4&&point_index<=(LaneData.size()*12+Events.size()*4+2)){
+                    int idx=point_index-LaneData.size()*12-Events.size()*4;
+
+                    VdPoint *e= &DetectLine[idx-1];
+                    pnt.encode();
+                    *e=pnt;
+                    e->encode();
+                }
             }
             //            if(event_type==PaintableData::Event::MoveAll){
             //                if(point_index>=1&&LaneData.size()>(point_index-1)/12){
@@ -1279,6 +1298,11 @@ public:
             draw_line(ps.front(),ps.back(),color,2);
 
         }
+    }
+    VdPoint offset(VdPoint p,int offx,int offy)
+    {
+        VdPoint pnt(p.x+offx,p.y+offy);
+        return pnt;
     }
 
     template <typename A,typename B,typename C>
@@ -1348,6 +1372,14 @@ public:
             if(r.Type>>6&0x1)
                 draw_text("type7",VdPoint(ps[0].x+70*6,ps[0].y),1,PaintableData::Colour::Green,4);
 #endif
+        }
+        if(DetectLine.size()==2){
+            draw_line(offset(DetectLine[0],offx,offy),offset(DetectLine[1],offx,offy),PaintableData::Colour::Blue,2);
+            draw_text("pedestrian line",offset(DetectLine[0],offx,offy),1,PaintableData::Colour::Green,4);
+
+            draw_circle(offset(DetectLine[0],offx,offy),2,PaintableData::Colour::Red,2);
+            draw_circle(offset(DetectLine[1],offx,offy),2,PaintableData::Colour::Red,2);
+
         }
 
     }
@@ -1588,7 +1620,7 @@ public:
         }
         y+=10;
 
-    //    memset(buf,0,100);sprintf(buf,"当前事件 %d",EventObjects.size());
+        //    memset(buf,0,100);sprintf(buf,"当前事件 %d",EventObjects.size());
         int cnt=0;
         for(LaneOutputJsonData ld:LaneOutputData){
 

@@ -218,14 +218,17 @@ private:
     bool del_camera(int index)//delete who ? 1~size
     {
         if(1<=index&&index<=cms.size()){
-#if 0
-            delete cms[index-1];
-#else
-            thread([this,index](){ delete cms[index-1];}).detach();
-#endif
+            Camera *cm=cms[index-1];
+
             vector<Camera*>::iterator it=cms.begin();
             cms.erase(it+index-1);
             private_data.delete_camera(index);
+
+#if 0
+            delete cms[index-1];
+#else
+            thread([this,index,cm](){ delete cm;}).detach();
+#endif
             return true;
         }
         return false;
@@ -245,12 +248,14 @@ private:
     }
     void check_point()
     {
+        return ;
 
 //        while(1){
 //            this_thread::sleep_for(chrono::seconds(1));
 //        }
         int count=dir_count("/ftphome/pic");
-        prt(info,"check files %d---->",count);
+      //  prt(info,"/ftphome/pic pics count %d---->",count);
+       // prt(info,"server camera count %d---->",cms.size());
         int left=30;
         if(count>left){
             delete_dir_files("/ftphome/pic",count,left);
@@ -573,7 +578,7 @@ private:
 
     void count_fun1()
     {
-        int camera_size=private_data.CameraData.size();
+
         int count_time=COUNT_SECONDS;//10s
         int person_count[100];
         int car_count[100];
@@ -588,13 +593,15 @@ private:
         while(!quit_count){
             if(count_time--==1){
                 prt(info,"time up , start cal ---------------------------->");
+               // lock.lock();
+                int camera_size=private_data.CameraData.size();
                 for(int loop_cams=0;loop_cams<camera_size;loop_cams++){
                     prt(info,"cam %d",loop_cams);
                     CameraInputData cd= private_data.CameraData[loop_cams];
                     int region_size=cd.DetectRegion.size();
                     vector< MvdProcessorOutputData>  &cam_out=outputs[loop_cams];
                     for(int loop_regions=0;loop_regions<region_size;loop_regions++){
-                          prt(info,"region %d",loop_regions);
+                        prt(info,"region %d",loop_regions);
                         DetectRegionInputData dr=  cd.DetectRegion[loop_regions];
                         MvdProcessorInputData mvddata(  dr.ProcessorData);
                         int lane_size=mvddata.LaneData.size();
@@ -740,6 +747,7 @@ private:
     bool quit_count;
     vector <EventRegionObjectOutput> last_events;
     vector <MvdProcessorOutputData> outputs[MAX_CAM_NUM];//support 100 cameras
+    mutex lock;
 };
 
 

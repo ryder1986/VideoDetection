@@ -46,6 +46,7 @@ public:
     int recv()
     {
         while(!quit){
+            memset(buf,0,BUF_SIZE);
             int ret=Socket::RecvDataByTcp1(skt,buf,BUF_SIZE);
             if(ret){
                 prt(info,"read %d bytes",ret);

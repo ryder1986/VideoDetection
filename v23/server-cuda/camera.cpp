@@ -55,8 +55,11 @@ bool Camera::modify(RequestPkt req)
     }
     case CameraInputData::OP::DELETE_REGION:
     {
-        if(index<=0)
+        if(index<=0){
+            prt(info,"error index %d",index);
+            lock.unlock();
             return false;
+        }
         vector<DetectRegion*>::iterator it=drs.begin();
         delete drs[index-1];
         drs.erase(it+index-1);
@@ -65,8 +68,11 @@ bool Camera::modify(RequestPkt req)
     }
     case CameraInputData::OP::MODIFY_REGION:
     {
-        if(index<=0)
+        if(index<=0){
+            prt(info,"error index %d",index);
+            lock.unlock();
             return false;
+        }
         vector<DetectRegion*>::iterator it=drs.begin();
         DetectRegion *rg= drs[index-1];
         // rg->modify(req.Argument.get("ModifyRegion"));
@@ -74,9 +80,7 @@ bool Camera::modify(RequestPkt req)
         private_data.set_region(rg->get_data().data(),index);
         break;
     }
-        break;
-    default:
-        break;
+        default: break;
     }
     lock.unlock();
     return true;

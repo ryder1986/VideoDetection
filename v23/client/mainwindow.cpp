@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),tmr1(std::bind(&MainWindow::handle_output,this)),
     ui(new Ui::MainWindow)
 {
+    fullscreen_mode=false;
     ui->setupUi(this);
     connect(&searcher,SIGNAL(find_ip(QString)),this,SLOT(search_server_result(QString)));
     connect(&clt,SIGNAL(server_msg(QString)),this,SLOT(server_msg(QString)));
@@ -52,7 +53,13 @@ void MainWindow::on_pushButton_addcam_clicked()
 
 void MainWindow::on_pushButton_delcam_clicked()
 {
-    int del_index=ui->comboBox_del_index->itemText(deleting_index).toInt();
+    int del_index=deleting_index;
+  //  int del_index=ui->comboBox_del_index->itemText(deleting_index).toInt();
+    if(del_index==0){
+        for(int i=0;i<cfg.CameraData.size();i++){
+            request_del_cam(cfg.CameraData.size()-i);
+        }
+    }
     if(del_index>0&&del_index<=cfg.CameraData.size()){
         prt(info,"del index %d",del_index);
         request_del_cam(del_index);
@@ -71,7 +78,9 @@ void MainWindow::server_msg(QString msg)
 {
     //ui->plainTextEdit_recive->setPlainText(msg);//show what we got
     string str(msg.toUtf8());
-    ui->textEdit_netbuffer->setPlainText(msg);
+    QString old_msg=ui->textEdit_netbuffer->toPlainText();
+  //  ui->textEdit_netbuffer->setPlainText(msg);
+    ui->textEdit_netbuffer->setPlainText(old_msg.append("------\n").append(msg));
     ReplyPkt event(str);
     switch(event.Operation){
     case AppInputData::Operation::GET_CONFIG:
@@ -83,12 +92,15 @@ void MainWindow::server_msg(QString msg)
         ui->comboBox_play_index->clear();
         ui->comboBox_play_index->addItem("all");
         for(int i=0;i<cam_sz;i++){
-            ui->comboBox_play_index->addItem(QString::number(i+1));
+            ui->comboBox_play_index->addItem(QString::number(i+1).append("(").append(cfg.CameraData[i].Url.data()).append(")"));
         }
 
         ui->comboBox_del_index->clear();
+        ui->comboBox_del_index->addItem("all");
         for(int i=0;i<cam_sz;i++){
-            ui->comboBox_del_index->addItem(QString::number(i+1));
+          //  ui->comboBox_del_index->addItem(QString::number(i+1));
+            ui->comboBox_del_index->addItem(QString::number(i+1).append("(").append(cfg.CameraData[i].Url.data()).append(")"));
+
         }
         prt(info,"%s",cfg.data().str().data());
         break;
@@ -106,12 +118,32 @@ void MainWindow::widget_append_camera(CameraInputData d)
     int rows_count=3;
     PlayerWidget *player=new PlayerWidget(d);
     connect(player,SIGNAL(camera_request(RequestPkt,PlayerWidget *)),this,SLOT(camera_request(RequestPkt,PlayerWidget*)));
+    connect(player,SIGNAL(double_click_event(PlayerWidget *)),this,SLOT(cameras_show_mode(PlayerWidget*)));
+
+
     players.push_back(player);
     ui->gridLayout_video->addWidget(player,(players.size()-1)/rows_count,(players.size()-1)%rows_count,1,1);
 }
 void MainWindow::widget_remove_camera(QWidget *w)
 {
     ui->gridLayout_video->removeWidget(w);
+}
+
+void MainWindow::cameras_show_mode(PlayerWidget *wgt)
+{
+    prt(info,"set full screen");
+    if(fullscreen_mode==false){
+        prt(info,"set full screen");
+        fullscreen_mode=true;
+        ui->widget_text->hide();
+        ui->widget_video_text->hide();
+
+    }else{
+        prt(info,"quit full screen");
+        fullscreen_mode=false;
+        ui->widget_text->show();
+        ui->widget_video_text->show();
+    }
 }
 
 void MainWindow::on_pushButton_play_clicked()
@@ -127,7 +159,9 @@ void MainWindow::on_pushButton_stop_clicked()
 
 void MainWindow::on_pushButton_clear_buffer_clicked()
 {
+#if 1
     ui->textEdit_netbuffer->clear();
+#endif
 }
 
 void MainWindow::on_pushButton_connect_clicked()
@@ -137,12 +171,14 @@ void MainWindow::on_pushButton_connect_clicked()
 
 void MainWindow::on_comboBox_play_index_activated(const QString &arg1)
 {
-    prt(info,"%s selected",arg1.toStdString().data());
+//    prt(info,"%s selected",arg1.toStdString().data());
+#if 0
     if(arg1=="all"){
         play_all_cam();
     }else{
         play_one_cam(arg1.toInt());
     }
+#endif
 }
 
 void MainWindow::on_comboBox_del_index_activated(int index)
@@ -187,4 +223,14 @@ void MainWindow::on_checkBox_show_text_clicked(bool checked)
 void MainWindow::on_checkBox_show_info_clicked(bool checked)
 {
     ClientConfig::show_camera_state=checked;
+}
+
+void MainWindow::on_comboBox_play_index_activated(int index)
+{
+
+    if(index==0){
+        play_all_cam();
+    }else{
+        play_one_cam(index);
+    }
 }
